@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Artesana</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+
+        .profile-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .profile-header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .cover-photo {
+            height: 200px;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            border-radius: 15px;
+            margin-bottom: 60px;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            position: absolute;
+            top: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-pic:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .profile-bio {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: #f0f2f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .skill-tag:hover {
+            background: #e2e8f0;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2c3e50;
+            text-decoration: none;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+            background: #e2e8f0;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 20px;
+            }
+            
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="cover-photo"></div>
+            <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-pic">
+            <h1 class="profile-name">Tu Nombre</h1>
+            <p class="profile-bio">Artesano Creativo | Diseñador | Emprendedor</p>
+            
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-number">125</div>
+                    <div class="stat-label">Proyectos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1.2K</div>
+                    <div class="stat-label">Seguidores</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4.8</div>
+                    <div class="stat-label">Calificación</div>
+                </div>
+            </div>
+
+            <div class="social-links">
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-pinterest"></i></a>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <div class="content-card">
+                <div class="card-header">
+                    <i class="fas fa-user-circle"></i> Sobre Mí
+                </div>
+                <p>Soy un artesano apasionado por crear piezas únicas y hermosas. Me especializo en artesanía tradicional con un toque moderno.</p>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <i class="fas fa-tools"></i> Habilidades
+                </div>
+                <div class="skill-list">
+                    <span class="skill-tag">Cerámica</span>
+                    <span class="skill-tag">Tejido</span>
+                    <span class="skill-tag">Pintura</span>
+                    <span class="skill-tag">Diseño</span>
+                    <span class="skill-tag">Joyería</span>
+                    <span class="skill-tag">Restauración</span>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <i class="fas fa-images"></i> Galería
+                </div>
+                <div class="gallery">
+                    <div class="gallery-item">
+                        <img src="https://via.placeholder.com/140" alt="Trabajo 1">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://via.placeholder.com/140" alt="Trabajo 2">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://via.placeholder.com/140" alt="Trabajo 3">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://via.placeholder.com/140" alt="Trabajo 4">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://via.placeholder.com/140" alt="Trabajo 5">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://via.placeholder.com/140" alt="Trabajo 6">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactivity
+        document.querySelectorAll('.skill-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);
+            });
+        });
+
+        // Profile picture click handler
+        document.querySelector('.profile-pic').addEventListener('click', () => {
+            alert('¡Haz clic para cambiar tu foto de perfil!');
+        });
+
+        // Gallery image click handler
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    item.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
