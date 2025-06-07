@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore - ArteSana</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Component -->
+    <div id="header-component"></div>
+
+    <!-- Explore Hero -->
+    <section class="explore-hero" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://i.ibb.co/M6ZYWB3/ceramic1.jpg');">
+        <div class="container text-center">
+            <h1 class="display-4" data-aos="fade-up">Explore Artisanal Treasures</h1>
+            <p class="lead" data-aos="fade-up" data-aos-delay="100">Discover unique handcrafted pieces from Panama's finest artisans</p>
+            <div class="search-box mt-4" data-aos="fade-up" data-aos-delay="200">
+                <input type="text" class="form-control" placeholder="Search for artisanal products...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-wrapper">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>All Categories</option>
+                            <option>Ceramics</option>
+                            <option>Textiles</option>
+                            <option>Jewelry</option>
+                            <option>Sculptures</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>Price Range</option>
+                            <option>Under $50</option>
+                            <option>$50 - $100</option>
+                            <option>$100 - $200</option>
+                            <option>Over $200</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>Sort By</option>
+                            <option>Newest First</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Most Popular</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>Artisan Region</option>
+                            <option>Guna Yala</option>
+                            <option>Emberá-Wounaan</option>
+                            <option>Los Santos</option>
+                            <option>Herrera</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="featured-categories">
+        <div class="container">
+            <h2 class="text-center mb-5">Featured Categories</h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://i.ibb.co/M6ZYWB3/ceramic1.jpg')">
+                        <div class="category-content">
+                            <h3>Ceramics</h3>
+                            <p>Traditional pottery and decorative pieces</p>
+                            <a href="ceramics.html" class="btn btn-outline-light">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://i.ibb.co/VvCnzz1/mola-pixel.png')">
+                        <div class="category-content">
+                            <h3>Textiles</h3>
+                            <p>Handwoven fabrics and traditional designs</p>
+                            <a href="textiles.html" class="btn btn-outline-light">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://i.ibb.co/h9Lv4Gy/chaquiras-pixel.png')">
+                        <div class="category-content">
+                            <h3>Jewelry</h3>
+                            <p>Handcrafted jewelry with cultural significance</p>
+                            <a href="jewelry.html" class="btn btn-outline-light">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://i.ibb.co/0MZ3Z1w/mascara-pixel.png')">
+                        <div class="category-content">
+                            <h3>Sculptures</h3>
+                            <p>Traditional carved masks and figures</p>
+                            <a href="sculpture.html" class="btn btn-outline-light">Explore</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Featured Products</h2>
+                <div class="view-options">
+                    <button class="btn btn-outline-primary active">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row g-4">
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/400x300" alt="Traditional Vessel">
+                            <div class="product-tags">
+                                <span class="tag featured">Featured</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Traditional Vessel</h3>
+                            <div class="artisan-info">
+                                <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Artisan">
+                                <span>By Maria Gonzalez</span>
+                            </div>
+                            <p class="description">Handcrafted ceramic vessel with traditional Panamanian designs</p>
+                            <div class="product-meta">
+                                <span class="price">$85.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/400x300" alt="Traditional Mola">
+                            <div class="product-tags">
+                                <span class="tag limited">Limited Edition</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Traditional Guna Mola</h3>
+                            <div class="artisan-info">
+                                <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Artisan">
+                                <span>By Lisa Perez</span>
+                            </div>
+                            <p class="description">Handmade Guna mola with intricate traditional patterns</p>
+                            <div class="product-meta">
+                                <span class="price">$120.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.9</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://via.placeholder.com/400x300" alt="Emberá Beaded Necklace">
+                            <div class="product-tags">
+                                <span class="tag category">New</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Emberá Beaded Necklace</h3>
+                            <div class="artisan-info">
+                                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Artisan">
+                                <span>By Ana Guainora</span>
+                            </div>
+                            <p class="description">Traditional Emberá beaded necklace with cultural symbols</p>
+                            <div class="product-meta">
+                                <span class="price">$95.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More -->
+            <div class="text-center mt-5">
+                <button class="btn btn-primary">Load More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <div id="footer-component"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+</body>
+</html> 
