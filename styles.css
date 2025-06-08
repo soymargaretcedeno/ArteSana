@@ -2269,3 +2269,47 @@ body {
         left: 1rem;
     }
 }
+
+/* Auth Background Carousel */
+#authCarousel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.auth-background {
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Custom Carousel Transitions */
+.carousel-fade .carousel-item {
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.carousel-fade .carousel-item.active {
+    opacity: 1;
+}
+
+.carousel-fade .carousel-item-next:not(.carousel-item-start),
+.carousel-fade .carousel-item-prev:not(.carousel-item-end) {
+    opacity: 0;
+}
+
+.carousel-fade .carousel-item-next.carousel-item-start,
+.carousel-fade .carousel-item-prev.carousel-item-end {
+    opacity: 1;
+}
+
+.auth-container {
+    position: relative;
+    z-index: 1;
+}
