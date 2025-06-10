@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore - ArteSana</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Component -->
+    <div id="header-component"></div>
+
+    <!-- Hero Section with Carousel -->
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://buscandoviajes.com/files/1/page-contents/p2023038-2_2302262539.jpg');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://i.pinimg.com/originals/68/2b/9b/682b9bc136b9f758cdcd0718732ab82f.jpg');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.DhUimks8kfhPeiLVeceKUgHaD0?w=299&h=179&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.D53hsJ6YabourEN6PINJhAHaEr?pid=ImgDet&w=178&h=112&c=7&dpr=1,5');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://finantechcolombia.com.co/wp-content/uploads/2016/03/valoracion-de-empresas-de-artesanias-en-barranquilla-colombia-940x460.jpg');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.vQEBmLL01B3PGNljeklfPAHaEL?rs=1&pid=ImgDetMain');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://live.staticflickr.com/4195/34915369915_a55efaa4b2_b.jpg');">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Hero Content -->
+    <div class="hero-content-overlay">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title" data-aos="fade-up">Explore Artisanal Treasures</h1>
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">Discover unique handcrafted pieces from Panama's finest artisans</p>
+                <div class="search-box mt-4" data-aos="fade-up" data-aos-delay="400">
+                    <input type="text" class="form-control" placeholder="Search for artisanal products...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-wrapper">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>All Categories</option>
+                            <option>Ceramics</option>
+                            <option>Textiles</option>
+                            <option>Jewelry</option>
+                            <option>Sculptures</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>Price Range</option>
+                            <option>Under $50</option>
+                            <option>$50 - $100</option>
+                            <option>$100 - $200</option>
+                            <option>Over $200</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>Sort By</option>
+                            <option>Newest First</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Most Popular</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>Artisan Region</option>
+                            <option>Guna Yala</option>
+                            <option>Emberá-Wounaan</option>
+                            <option>Los Santos</option>
+                            <option>Herrera</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="featured-categories">
+        <div class="container">
+            <h2 class="text-center mb-5">Featured Categories</h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://humanidades.com/wp-content/uploads/2016/09/porcelana-e1560626226618.jpg')">
+                        <div class="category-content">
+                            <h3>Ceramics</h3>
+                            <p>Traditional pottery and decorative pieces</p>
+                            <a href="ceramics.html" class="btn btn-outline-light">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://thumbs.dreamstime.com/b/artes-de-panam%C3%A1-18961136.jpg')">
+                        <div class="category-content">
+                            <h3>Textiles</h3>
+                            <p>Handwoven fabrics and traditional designs</p>
+                            <a href="textiles.html" class="btn btn-outline-light">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://th.bing.com/th/id/OIP.vQEBmLL01B3PGNljeklfPAHaEL?rs=1&pid=ImgDetMain')">
+                        <div class="category-content">
+                            <h3>Jewelry</h3>
+                            <p>Handcrafted jewelry with cultural significance</p>
+                            <a href="jewelry.html" class="btn btn-outline-light">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://media.istockphoto.com/id/675469478/photo/nicaragua-handmade-ceramic-pots-on-sell-like-souvenir.jpg?s=612x612&w=0&k=20&c=TdJGd0ZgaSP6oMk8hsIxbYg8fcx-mlvDA9Py2EeoIWY=')">
+                        <div class="category-content">
+                            <h3>Sculptures</h3>
+                            <p>Traditional carved masks and figures</p>
+                            <a href="sculpture.html" class="btn btn-outline-light">Explore</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Featured Products</h2>
+                <div class="view-options">
+                    <button class="btn btn-outline-primary active">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row g-4">
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://th.bing.com/th/id/R.1b32c1b2827ba4e4c84550d131b11ce4?rik=j8%2fbx0mUWFBkdw&riu=http%3a%2f%2fwww.diaadia.com.pa%2fsites%2fdefault%2ffiles%2f2022-01%2fvidreadas+1.jpg&ehk=Mp0CZwpLdt5L8v3kKSB4zV92l4DI310G73oTkUgtWRA%3d&risl=&pid=ImgRaw&r=0" alt="Traditional Vessel">
+                            <div class="product-tags">
+                                <span class="tag featured">Featured</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Traditional Vessel</h3>
+                            <div class="artisan-info">
+                                <img src="https://th.bing.com/th/id/R.1b32c1b2827ba4e4c84550d131b11ce4?rik=j8%2fbx0mUWFBkdw&riu=http%3a%2f%2fwww.diaadia.com.pa%2fsites%2fdefault%2ffiles%2f2022-01%2fvidreadas+1.jpg&ehk=Mp0CZwpLdt5L8v3kKSB4zV92l4DI310G73oTkUgtWRA%3d&risl=&pid=ImgRaw&r=0" alt="Artisan">
+                                <span>By Maria Gonzalez</span>
+                            </div>
+                            <p class="description">Handcrafted ceramic vessel with traditional Panamanian designs</p>
+                            <div class="product-meta">
+                                <span class="price">$85.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://i.pinimg.com/236x/3c/b4/34/3cb43405e2743c559af87e7f52a45e9b.jpg" alt="Traditional Mola">
+                            <div class="product-tags">
+                                <span class="tag limited">Limited Edition</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Traditional Guna Mola</h3>
+                            <div class="artisan-info">
+                                <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Artisan">
+                                <span>By Lisa Perez</span>
+                            </div>
+                            <p class="description">Handmade Guna mola with intricate traditional patterns</p>
+                            <div class="product-meta">
+                                <span class="price">$120.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.9</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://i.etsystatic.com/19591055/r/il/9d752b/3083844437/il_fullxfull.3083844437_eh8s.jpg" alt="Emberá Beaded Necklace">
+                            <div class="product-tags">
+                                <span class="tag category">New</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Emberá Beaded Necklace</h3>
+                            <div class="artisan-info">
+                                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Artisan">
+                                <span>By Ana Guainora</span>
+                            </div>
+                            <p class="description">Traditional Emberá beaded necklace with cultural symbols</p>
+                            <div class="product-meta">
+                                <span class="price">$95.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More -->
+            <div class="text-center mt-5">
+                <button class="btn btn-primary">Load More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <div id="footer-component"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+</body>
+</html> 

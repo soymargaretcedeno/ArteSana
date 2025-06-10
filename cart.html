@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - ArteSana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Component -->
+    <div id="header-component"></div>
+
+    <!-- Cart Section -->
+    <section class="cart-section py-5">
+        <div class="container">
+            <h1 class="mb-4">Shopping Cart</h1>
+            
+            <!-- Cart Content -->
+            <div class="row">
+                <!-- Cart Items -->
+                <div class="col-lg-8">
+                    <div class="cart-items">
+                        <!-- Cart Item -->
+                        <div class="cart-item" data-aos="fade-up">
+                            <div class="item-image">
+                                <img src="https://th.bing.com/th/id/R.1b32c1b2827ba4e4c84550d131b11ce4?rik=j8%2fbx0mUWFBkdw&riu=http%3a%2f%2fwww.diaadia.com.pa%2fsites%2fdefault%2ffiles%2f2022-01%2fvidreadas+1.jpg&ehk=Mp0CZwpLdt5L8v3kKSB4zV92l4DI310G73oTkUgtWRA%3d&risl=&pid=ImgRaw&r=0" alt="Traditional Vessel">
+                            </div>
+                            <div class="item-details">
+                                <h3>Traditional Vessel</h3>
+                                <p class="artisan">By Maria Gonzalez</p>
+                                <div class="item-meta">
+                                    <span class="price">$85.00</span>
+                                    <div class="quantity-control">
+                                        <button class="qty-btn">-</button>
+                                        <input type="number" value="1" min="1">
+                                        <button class="qty-btn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="remove-item">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <!-- Cart Item -->
+                        <div class="cart-item" data-aos="fade-up" data-aos-delay="100">
+                            <div class="item-image">
+                                <img src="https://i.pinimg.com/236x/3c/b4/34/3cb43405e2743c559af87e7f52a45e9b.jpg" alt="Traditional Mola">
+                            </div>
+                            <div class="item-details">
+                                <h3>Traditional Guna Mola</h3>
+                                <p class="artisan">By Lisa Perez</p>
+                                <div class="item-meta">
+                                    <span class="price">$120.00</span>
+                                    <div class="quantity-control">
+                                        <button class="qty-btn">-</button>
+                                        <input type="number" value="1" min="1">
+                                        <button class="qty-btn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="remove-item">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cart Actions -->
+                    <div class="cart-actions mt-4">
+                        <button class="btn btn-outline-primary">Continue Shopping</button>
+                        <button class="btn btn-outline-danger">Clear Cart</button>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="order-summary" data-aos="fade-left">
+                        <h3>Order Summary</h3>
+                        <div class="summary-item">
+                            <span>Subtotal</span>
+                            <span>$205.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Shipping</span>
+                            <span>$15.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Tax</span>
+                            <span>$20.50</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span>$240.50</span>
+                        </div>
+                        <button class="btn btn-primary w-100">Proceed to Checkout</button>
+                    </div>
+
+                    <!-- Promo Code -->
+                    <div class="promo-code mt-4" data-aos="fade-left" data-aos-delay="100">
+                        <h4>Promo Code</h4>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter code">
+                            <button class="btn btn-outline-primary">Apply</button>
+                        </div>
+                    </div>
+
+                    <!-- Secure Checkout -->
+                    <div class="secure-checkout mt-4" data-aos="fade-left" data-aos-delay="200">
+                        <h4>Secure Checkout</h4>
+                        <div class="payment-methods">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-amex"></i>
+                            <i class="fab fa-cc-paypal"></i>
+                        </div>
+                        <p class="security-note">
+                            <i class="fas fa-lock"></i>
+                            Your payment information is secure
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <div id="footer-component"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+</body>
+</html> 
