@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore - ArteSana</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Enhanced product card styles */
+        .product-card-explore {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card-explore:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            transition: transform 0.3s ease;
+        }
+
+        .product-card-explore:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .quick-add-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card-explore:hover .quick-add-overlay {
+            opacity: 1;
+        }
+
+        .quick-add-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .quick-add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .action-btn {
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .add-to-cart-btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+        }
+
+        .add-to-cart-btn:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+        }
+
+        /* Floating notification styles */
+        .floating-notification {
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Product card click feedback */
+        .product-card-explore:active {
+            transform: scale(0.98);
+        }
+
+        /* Enhanced product info */
+        .product-info {
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .product-info h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .artisan-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .artisan-info img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #28a745;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: #ffc107;
+        }
+
+        /* Cart options modal styles */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h4 {
+            margin: 0;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .modal-body p {
+            margin-bottom: 1.5rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .cart-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .cart-options .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .cart-options .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
+    <script src="js/ecommerce-confirmation.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="components/header-component.js"></script>
+    <script src="components/header-user-component.js"></script>
+    <script>window.renderHeader();</script>
+    <script src="components/footer-component.js"></script>
+    <script src="components/cta-section.js"></script>
+
+    <!-- Hero Section with Carousel -->
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://buscandoviajes.com/files/1/page-contents/p2023038-2_2302262539.jpg');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://i.pinimg.com/originals/68/2b/9b/682b9bc136b9f758cdcd0718732ab82f.jpg');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.DhUimks8kfhPeiLVeceKUgHaD0?w=299&h=179&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.D53hsJ6YabourEN6PINJhAHaEr?pid=ImgDet&w=178&h=112&c=7&dpr=1,5');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://finantechcolombia.com.co/wp-content/uploads/2016/03/valoracion-de-empresas-de-artesanias-en-barranquilla-colombia-940x460.jpg');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.vQEBmLL01B3PGNljeklfPAHaEL?rs=1&pid=ImgDetMain');">
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://live.staticflickr.com/4195/34915369915_a55efaa4b2_b.jpg');">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Hero Content -->
+    <div class="hero-content-overlay">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title" data-aos="fade-up" data-i18n="explore_hero_title">Explore Artisanal Treasures</h1>
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200" data-i18n="explore_hero_subtitle">Discover unique handcrafted pieces from Panama's finest artisans</p>
+                <div class="search-box mt-4" data-aos="fade-up" data-aos-delay="400">
+                    <input type="text" class="form-control" placeholder="Search for artisanal products..." data-i18n="explore_search_placeholder">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-wrapper">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="search-categories">
+                            <button class="btn btn-outline-light dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" data-i18n="explore_all_categories">All Categories</button>
+                            <ul class="dropdown-menu w-100">
+                                <li><a class="dropdown-item" href="ceramics.html">Ceramics</a></li>
+                                <li><a class="dropdown-item" href="textiles.html">Textiles</a></li>
+                                <li><a class="dropdown-item" href="jewelry.html">Jewelry</a></li>
+                                <li><a class="dropdown-item" href="sculpture.html">Sculpture</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected data-i18n="explore_price_range">Price Range</option>
+                            <option data-i18n="explore_price_under_50">Under $50</option>
+                            <option data-i18n="explore_price_50_100">$50 - $100</option>
+                            <option data-i18n="explore_price_100_200">$100 - $200</option>
+                            <option data-i18n="explore_price_over_200">Over $200</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected data-i18n="explore_sort_by">Sort By</option>
+                            <option data-i18n="explore_sort_newest">Newest First</option>
+                            <option data-i18n="explore_sort_low_high">Price: Low to High</option>
+                            <option data-i18n="explore_sort_high_low">Price: High to Low</option>
+                            <option data-i18n="explore_sort_popular">Most Popular</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected data-i18n="explore_region">Artisan Region</option>
+                            <option data-i18n="explore_region_guna">Guna Yala</option>
+                            <option data-i18n="explore_region_embera">Emberá-Wounaan</option>
+                            <option data-i18n="explore_region_los_santos">Los Santos</option>
+                            <option data-i18n="explore_region_herrera">Herrera</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="featured-categories">
+        <div class="container">
+            <h2 class="text-center mb-5" data-i18n="explore_featured_categories">Featured Categories</h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://humanidades.com/wp-content/uploads/2016/09/porcelana-e1560626226618.jpg')">
+                        <div class="category-content">
+                            <h3 style="color:#000;" data-i18n="explore_ceramics">Ceramics</h3>
+                            <p style="color:#000;" data-i18n="explore_ceramics_desc">Traditional pottery and decorative pieces</p>
+                            <a href="ceramics.html" class="btn btn-outline-light" data-i18n="explore_explore_btn">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://thumbs.dreamstime.com/b/artes-de-panam%C3%A1-18961136.jpg')">
+                        <div class="category-content">
+                            <h3 style="color:#000;" data-i18n="explore_textiles">Textiles</h3>
+                            <p style="color:#000;" data-i18n="explore_textiles_desc">Handwoven fabrics and traditional designs</p>
+                            <a href="textiles.html" class="btn btn-outline-light" data-i18n="explore_explore_btn">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://th.bing.com/th/id/OIP.vQEBmLL01B3PGNljeklfPAHaEL?rs=1&pid=ImgDetMain')">
+                        <div class="category-content">
+                            <h3 style="color:#000;" data-i18n="explore_jewelry">Jewelry</h3>
+                            <p style="color:#000;" data-i18n="explore_jewelry_desc">Handcrafted jewelry with cultural significance</p>
+                            <a href="jewelry.html" class="btn btn-outline-light" data-i18n="explore_explore_btn">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="category-card" style="background-image: url('https://media.istockphoto.com/id/675469478/photo/nicaragua-handmade-ceramic-pots-on-sell-like-souvenir.jpg?s=612x612&w=0&k=20&c=TdJGd0ZgaSP6oMk8hsIxbYg8fcx-mlvDA9Py2EeoIWY=')">
+                        <div class="category-content">
+                            <h3 style="color:#000;" data-i18n="explore_sculptures">Sculptures</h3>
+                            <p style="color:#000;" data-i18n="explore_sculptures_desc">Traditional carved masks and figures</p>
+                            <a href="sculpture.html" class="btn btn-outline-light" data-i18n="explore_explore_btn">Explore</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 data-i18n="explore_featured_products">Featured Products</h2>
+                <div class="view-options">
+                    <button class="btn btn-outline-primary active">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row g-4" id="productsGrid">
+                <!-- Products will be loaded dynamically -->
+            </div>
+
+            <!-- Load More -->
+            <div class="text-center mt-5">
+                <button class="btn btn-primary" data-i18n="explore_load_more">Load More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <cta-section 
+      title="Empower Your Creativity"
+      subtitle="Join ArteSana and showcase your unique handcrafts to the world, or discover treasures made by Panamanian artisans."
+      button-text="Start Your Journey"
+      button-link="perfil.html#my-store-section"
+      style="--primary-color:#E9EDC9; --mola-yellow:#A22A2A; --cream-white:#800000; --mola-red:#E5989B; --mola-orange:#FF9F1C;">
+    </cta-section>
+    <!-- Footer Component -->
+    <footer-component></footer-component>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Load products on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+        });
+
+        // Load products
+        function loadProducts() {
+            const allProducts = window.userProductsDB.getAllProducts();
+            const container = document.getElementById('productsGrid');
+            
+            container.innerHTML = allProducts.map((product, index) => `
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="${index * 100}">
+                    <div class="product-card-explore" onclick="handleProductClick(${product.id}, event)">
+                        <div class="product-image">
+                            <img src="${product.mainImage}" alt="${product.name}">
+                            <div class="product-tags">
+                                ${product.isUserProduct ? '<span class="tag user-product">User Product</span>' : ''}
+                                ${product.tags.includes('featured') ? '<span class="tag featured">Featured</span>' : ''}
+                                ${product.tags.includes('limited') ? '<span class="tag limited">Limited Edition</span>' : ''}
+                                ${product.tags.includes('new') ? '<span class="tag category">New</span>' : ''}
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite(${product.id})">
+                                    <i class="fas fa-heart" id="favorite-${product.id}" style="color: ${window.userProductsDB.isInFavorites(product.id) ? '#e74c3c' : '#fff'}"></i>
+                                </button>
+                                <button class="action-btn" onclick="event.stopPropagation(); toggleComparison(${product.id})">
+                                    <i class="fas fa-balance-scale" id="compare-${product.id}" style="color: ${window.userProductsDB.isInComparison(product.id) ? '#a22a22' : '#fff'}"></i>
+                                </button>
+                                <button class="action-btn add-to-cart-btn" onclick="event.stopPropagation(); addToCart(${product.id})" title="Add to Cart">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <div class="quick-add-overlay">
+                                <button class="btn btn-primary quick-add-btn" onclick="event.stopPropagation(); addToCart(${product.id})">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>${product.name}</h3>
+                            <div class="artisan-info">
+                                <img src="${product.artisan.avatar}" alt="${product.artisan.name}">
+                                <span>By ${product.artisan.name}</span>
+                            </div>
+                            <p class="description">${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}</p>
+                            <div class="product-meta">
+                                <span class="price">$${product.price.toFixed(2)}</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>${product.rating}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle product card click
+        function handleProductClick(productId, event) {
+            // Check if the click was on an action button or quick add button
+            if (event.target.closest('.action-btn') || event.target.closest('.quick-add-btn')) {
+                return; // Let the button handle the action
+            }
+            
+            // Show a confirmation dialog for adding to cart
+            const product = window.userProductsDB.getProductById(productId);
+            if (product) {
+                const confirmed = confirm(`¿Deseas agregar "${product.name}" al carrito de compras?`);
+                if (confirmed) {
+                    addToCart(productId);
+                }
+            }
+        }
+
+        // Add to cart with enhanced feedback
+        function addToCart(productId) {
+            const product = window.userProductsDB.getProductById(productId);
+            if (!product) {
+                showToast('Producto no encontrado', 'error');
+                return;
+            }
+
+            const success = window.productsDB.addToCart(productId, 1);
+            if (success) {
+                // Show success animation
+                const cartBtn = event.target.closest('.add-to-cart-btn') || event.target.closest('.quick-add-btn');
+                if (cartBtn) {
+                    cartBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    cartBtn.style.backgroundColor = '#28a745';
+                    cartBtn.style.borderColor = '#28a745';
+                }
+                
+                // Show confirmation
+                window.ecommerceConfirmation.showCartConfirmation(productId, 1);
+                
+                // Update cart count in header
+                window.productsDB.updateCartCount();
+                
+                // Show floating notification
+                showFloatingNotification(`"${product.name}" added to cart!`);
+                
+                // Show cart options modal
+                showCartOptionsModal(product.name);
+            } else {
+                window.ecommerceConfirmation.showEnhancedToast('Error al agregar producto al carrito', 'error');
+            }
+        }
+
+        // Toggle favorite
+        function toggleFavorite(productId) {
+            const isInFavorites = window.userProductsDB.isInFavorites(productId);
+            const heartIcon = document.getElementById(`favorite-${productId}`);
+            
+            if (isInFavorites) {
+                window.userProductsDB.removeFromFavorites(productId);
+                heartIcon.style.color = '#fff';
+                window.ecommerceConfirmation.showFavoriteConfirmation(productId, false);
+            } else {
+                window.userProductsDB.addToFavorites(productId);
+                heartIcon.style.color = '#e74c3c';
+                window.ecommerceConfirmation.showFavoriteConfirmation(productId, true);
+            }
+        }
+
+        // Toggle comparison
+        function toggleComparison(productId) {
+            const isInComparison = window.userProductsDB.isInComparison(productId);
+            const compareIcon = document.getElementById(`compare-${productId}`);
+            
+            if (isInComparison) {
+                window.userProductsDB.removeFromComparison(productId);
+                compareIcon.style.color = '#fff';
+                window.ecommerceConfirmation.showComparisonConfirmation(productId, false);
+            } else {
+                window.userProductsDB.addToComparison(productId);
+                compareIcon.style.color = '#a22a22';
+                window.ecommerceConfirmation.showComparisonConfirmation(productId, true);
+            }
+        }
+
+        // Show floating notification
+        function showFloatingNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'floating-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 50px;
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                font-weight: 500;
+                max-width: 300px;
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Show cart options modal
+        function showCartOptionsModal(productName) {
+            const modal = document.createElement('div');
+            modal.className = 'cart-options-modal';
+            modal.innerHTML = `
+                <div class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4>Product Added!</h4>
+                            <button class="close-btn" onclick="closeCartModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>"${productName}" has been added to cart!</p>
+                            <div class="cart-options">
+                                <button class="btn btn-primary" onclick="goToCart()">
+                                    <i class="fas fa-shopping-cart"></i> View Cart
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="continueShopping()">
+                                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Close cart modal
+        function closeCartModal() {
+            const modal = document.querySelector('.cart-options-modal');
+            if (modal) {
+                modal.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+
+        // Go to cart
+        function goToCart() {
+            window.location.href = 'cart.html';
+        }
+
+        // Continue shopping
+        function continueShopping() {
+            closeCartModal();
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#4caf50' : '#f44336'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+    <script src="components/auth-modal.js"></script>
+    <auth-modal></auth-modal>
+</body>
+</html> 

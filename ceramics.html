@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artisanal Ceramics - ArteSana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        /* Enhanced product card styles */
+        .product-card-explore {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card-explore:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            transition: transform 0.3s ease;
+        }
+
+        .product-card-explore:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .quick-add-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card-explore:hover .quick-add-overlay {
+            opacity: 1;
+        }
+
+        .quick-add-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .quick-add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .action-btn {
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .add-to-cart-btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+        }
+
+        .add-to-cart-btn:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+        }
+
+        /* Floating notification styles */
+        .floating-notification {
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Product card click feedback */
+        .product-card-explore:active {
+            transform: scale(0.98);
+        }
+
+        /* Enhanced product info */
+        .product-info {
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .product-info h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .artisan-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .artisan-info img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #28a745;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: #ffc107;
+        }
+
+        /* Cart options modal styles */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h4 {
+            margin: 0;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .modal-body p {
+            margin-bottom: 1.5rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .cart-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .cart-options .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .cart-options .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
+    <script src="js/ecommerce-confirmation.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="components/header-component.js"></script>
+    <script src="components/header-user-component.js"></script>
+    <script>window.renderHeader();</script>
+
+    <!-- Category Hero Section -->
+    <section class="category-hero ceramics-hero">
+        <div class="container text-center">
+            <h1 class="display-4" data-aos="fade-up" data-i18n="ceramics_hero_title">Artisanal Ceramics</h1>
+            <p class="lead" data-aos="fade-up" data-aos-delay="100" data-i18n="ceramics_hero_subtitle">Discover the beauty of traditional Panamanian ceramics</p>
+        </div>
+    </section>
+
+    <!-- Category Description -->
+    <section class="category-description py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h2 data-i18n="ceramics_section_title">The Art of Panamanian Ceramics</h2>
+                    <p data-i18n="ceramics_section_desc">Our ceramics represent centuries of artisanal tradition, combining ancestral techniques with contemporary designs. Each piece tells a unique story of our culture.</p>
+                    <div class="category-features">
+                        <div class="feature">
+                            <i class="fas fa-paint-brush"></i>
+                            <span data-i18n="ceramics_feature_designs">Unique Designs</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hands"></i>
+                            <span data-i18n="ceramics_feature_handmade">Handmade</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-history"></i>
+                            <span data-i18n="ceramics_feature_tradition">Traditional Techniques</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="category-image-grid">
+                        <img src="https://www.angelvillazon.com/wp-content/uploads/2022/11/Barro-Cocido-4.png"
+                        <img src="https://i.pinimg.com/originals/68/2b/9b/682b9bc136b9f758cdcd0718732ab82f.jpg" alt="Artisanal Vessel">
+                        <img src="https://humanidades.com/wp-content/uploads/2016/09/porcelana-e1560626226618.jpg" alt="Decorative Plate">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-section py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Product Card -->
+                <div class="col-md-4" data-aos="fade-up">
+                    <div class="product-card-explore" onclick="handleProductClick(1, event)">
+                        <div class="product-image">
+                            <img src="https://th.bing.com/th/id/OIP.SjnLFQojpUQnaF5IWK7GYwHaE8?w=253&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3" alt="Traditional Vessel">
+                            <div class="product-tags">
+                                <span class="tag featured" data-i18n="ceramics_tag_featured">Featured</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite(1)">
+                                    <i class="fas fa-heart" id="favorite-1" style="color: #fff"></i>
+                                </button>
+                                <button class="action-btn add-to-cart-btn" onclick="event.stopPropagation(); addToCart(1)" title="Add to Cart">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <div class="quick-add-overlay">
+                                <button class="btn btn-primary quick-add-btn" onclick="event.stopPropagation(); addToCart(1)">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 data-i18n="ceramics_product1_title">Traditional Vessel</h3>
+                            <div class="artisan-info">
+                                <img src="https://th.bing.com/th/id/R.1b32c1b2827ba4e4c84550d131b11ce4?rik=j8%2fbx0mUWFBkdw&riu=http%3a%2f%2fwww.diaadia.com.pa%2fsites%2fdefault%2ffiles%2f2022-01%2fvidreadas+1.jpg&ehk=Mp0CZwpLdt5L8v3kKSB4zV92l4DI310G73oTkUgtWRA%3d&risl=&pid=ImgRaw&r=0" alt="Artisan">
+                                <span>By Maria Gonzalez</span>
+                            </div>
+                            <div class="product-meta">
+                                <span class="price">$85.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="product-card-explore" onclick="handleProductClick(2, event)">
+                        <div class="product-image">
+                            <img src="https://http2.mlstatic.com/vajillas-de-barro-artesanal-sin-plomo-excelente-calidad-D_NQ_NP_17611-MLM20140858392_082014-F.jpg" alt="Decorative Plate">
+                            <div class="product-tags">
+                                <span class="tag limited" data-i18n="ceramics_tag_limited">Limited Edition</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite(2)">
+                                    <i class="fas fa-heart" id="favorite-2" style="color: #fff"></i>
+                                </button>
+                                <button class="action-btn add-to-cart-btn" onclick="event.stopPropagation(); addToCart(2)" title="Add to Cart">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <div class="quick-add-overlay">
+                                <button class="btn btn-primary quick-add-btn" onclick="event.stopPropagation(); addToCart(2)">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 data-i18n="ceramics_product2_title">Decorative Plate</h3>
+                            <div class="artisan-info">
+                                <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Artisan">
+                                <span>By Ana Torres</span>
+                            </div>
+                            <div class="product-meta">
+                                <span class="price">$65.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.9</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="product-card-explore" onclick="handleProductClick(3, event)">
+                        <div class="product-image">
+                            <img src="https://nestasia.in/cdn/shop/files/Greencoffeemugs_8.jpg?v=1699368644&width=600" alt="Cup Set">
+                            <div class="product-tags">
+                                <span class="tag category" data-i18n="ceramics_tag_new">New</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite(3)">
+                                    <i class="fas fa-heart" id="favorite-3" style="color: #fff"></i>
+                                </button>
+                                <button class="action-btn add-to-cart-btn" onclick="event.stopPropagation(); addToCart(3)" title="Add to Cart">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <div class="quick-add-overlay">
+                                <button class="btn btn-primary quick-add-btn" onclick="event.stopPropagation(); addToCart(3)">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 data-i18n="ceramics_product3_title">Cup Set</h3>
+                            <div class="artisan-info">
+                                <img src="https://nestasia.in/cdn/shop/files/Greencoffeemugs_8.jpg?v=1699368644&width=600" alt="Artisan">
+                                <span>By Carmen Ruiz</span>
+                            </div>
+                            <div class="product-meta">
+                                <span class="price">$95.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <footer-component></footer-component>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="components/footer-component.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Handle product card click
+        function handleProductClick(productId, event) {
+            // Check if the click was on an action button or quick add button
+            if (event.target.closest('.action-btn') || event.target.closest('.quick-add-btn')) {
+                return; // Let the button handle the action
+            }
+            
+            // Show a confirmation dialog for adding to cart
+            const productNames = {
+                1: 'Traditional Vessel',
+                2: 'Decorative Plate',
+                3: 'Cup Set'
+            };
+            const productName = productNames[productId];
+            if (productName) {
+                const confirmed = confirm(`¿Deseas agregar "${productName}" al carrito de compras?`);
+                if (confirmed) {
+                    addToCart(productId);
+                }
+            }
+        }
+
+        // Add to cart with enhanced feedback
+        function addToCart(productId) {
+            const productNames = {
+                1: 'Traditional Vessel',
+                2: 'Decorative Plate',
+                3: 'Cup Set'
+            };
+            const productName = productNames[productId];
+            
+            if (!productName) {
+                showToast('Producto no encontrado', 'error');
+                return;
+            }
+
+            const success = window.productsDB.addToCart(productId, 1);
+            if (success) {
+                // Show success animation
+                const cartBtn = event.target.closest('.add-to-cart-btn') || event.target.closest('.quick-add-btn');
+                if (cartBtn) {
+                    cartBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    cartBtn.style.backgroundColor = '#28a745';
+                    cartBtn.style.borderColor = '#28a745';
+                }
+                
+                // Show confirmation
+                window.ecommerceConfirmation.showCartConfirmation(productId, 1);
+                
+                // Update cart count in header
+                window.productsDB.updateCartCount();
+                
+                // Show floating notification
+                showFloatingNotification(`"${productName}" added to cart!`);
+                
+                // Show cart options modal
+                showCartOptionsModal(productName);
+            } else {
+                window.ecommerceConfirmation.showEnhancedToast('Error al agregar producto al carrito', 'error');
+            }
+        }
+
+        // Toggle favorite
+        function toggleFavorite(productId) {
+            const isInFavorites = window.userProductsDB.isInFavorites(productId);
+            const heartIcon = document.getElementById(`favorite-${productId}`);
+            
+            if (isInFavorites) {
+                window.userProductsDB.removeFromFavorites(productId);
+                heartIcon.style.color = '#fff';
+                window.ecommerceConfirmation.showFavoriteConfirmation(productId, false);
+            } else {
+                window.userProductsDB.addToFavorites(productId);
+                heartIcon.style.color = '#e74c3c';
+                window.ecommerceConfirmation.showFavoriteConfirmation(productId, true);
+            }
+        }
+
+        // Show floating notification
+        function showFloatingNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'floating-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 50px;
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                font-weight: 500;
+                max-width: 300px;
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Show cart options modal
+        function showCartOptionsModal(productName) {
+            const modal = document.createElement('div');
+            modal.className = 'cart-options-modal';
+            modal.innerHTML = `
+                <div class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4>Product Added!</h4>
+                            <button class="close-btn" onclick="closeCartModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>"${productName}" has been added to cart!</p>
+                            <div class="cart-options">
+                                <button class="btn btn-primary" onclick="goToCart()">
+                                    <i class="fas fa-shopping-cart"></i> View Cart
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="continueShopping()">
+                                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Close cart modal
+        function closeCartModal() {
+            const modal = document.querySelector('.cart-options-modal');
+            if (modal) {
+                modal.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+
+        // Go to cart
+        function goToCart() {
+            window.location.href = 'cart.html';
+        }
+
+        // Continue shopping
+        function continueShopping() {
+            closeCartModal();
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#4caf50' : '#f44336'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+    <script src="components/auth-modal.js"></script>
+    <auth-modal></auth-modal>
+</body>
+</html> 

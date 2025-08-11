@@ -1,0 +1,122 @@
+/* store.css - Estilos originales y llamativos para la sección de tiendas */
+
+.store-banner {
+  background: linear-gradient(120deg, #a22a22 0%, #fcf7de 100%);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(162,42,34,0.08);
+  border-radius: 0 0 32px 32px;
+  margin-bottom: 2rem;
+}
+.store-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: #fff;
+  text-shadow: 1px 2px 8px rgba(80,0,0,0.08);
+}
+.store-subtitle {
+  font-size: 1.3rem;
+  color: #fbeee0;
+  margin-bottom: 2rem;
+}
+.btn-create-store {
+  background: #fff;
+  color: #a22a22;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 12px 36px;
+  border: 2px solid #a22a22;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-create-store:hover {
+  background: #a22a22;
+  color: #fff;
+}
+.stores-list-section {
+  padding: 40px 0 60px 0;
+}
+.store-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(80,0,0,0.07);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+  min-width: 270px;
+  max-width: 340px;
+  margin: 0 auto;
+}
+.store-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(162,42,34,0.13);
+}
+.store-card .store-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #a22a22;
+  margin-bottom: 1rem;
+}
+.store-card .store-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: #a22a22;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.store-card .store-desc {
+  color: #6b6657;
+  font-size: 1.05rem;
+  margin-bottom: 1.1rem;
+}
+.store-card .store-meta {
+  font-size: 0.98rem;
+  color: #a22a22;
+  margin-bottom: 0.7rem;
+}
+.store-card .store-products {
+  margin-top: 1.2rem;
+}
+.store-card .product-badge {
+  display: inline-block;
+  background: #fcf7de;
+  color: #a22a22;
+  border-radius: 12px;
+  padding: 2px 12px;
+  font-size: 0.95rem;
+  margin-right: 6px;
+  margin-bottom: 4px;
+}
+.store-card .product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.store-card .product-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #f3e9d2;
+  font-size: 1.05rem;
+  color: #575443;
+}
+.store-card .product-list li:last-child {
+  border-bottom: none;
+}
+/* Fix fuerte: Forzar color y visibilidad del header/navbar en store */
+body .navbar.navbar {
+  background: #800000 !important;
+  color: #fff !important;
+  z-index: 10000 !important;
+}
+body .navbar.navbar .nav-link,
+body .navbar.navbar .navbar-brand,
+body .navbar.navbar .fa,
+body .navbar.navbar .fas,
+body .navbar.navbar .translate-toggle,
+body .navbar.navbar .theme-toggle {
+  color: #fff !important;
+}
+body .navbar.navbar .nav-link:hover,
+body .navbar.navbar .navbar-brand:hover {
+  color: #FFD700 !important;
+} 

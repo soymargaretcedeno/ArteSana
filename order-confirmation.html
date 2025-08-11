@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - ArteSana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .confirmation-container {
+            background: var(--light-bg, #FEFAE0);
+            min-height: 100vh;
+            padding: 4rem 0;
+        }
+        
+        .confirmation-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(162,42,34,0.15);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            color: white;
+            font-size: 2rem;
+        }
+        
+        .confirmation-title {
+            font-family: 'Playfair Display', serif;
+            color: #a22a22;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .confirmation-subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .order-details {
+            background: #f8f6ee;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .order-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #a22a22;
+            margin-bottom: 1rem;
+        }
+        
+        .order-date {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .order-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #a22a22;
+        }
+        
+        .order-items {
+            margin-bottom: 2rem;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .item-details h5 {
+            margin: 0;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        .item-artisan {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 0;
+        }
+        
+        .item-price {
+            font-weight: 600;
+            color: #a22a22;
+        }
+        
+        .shipping-info {
+            background: #e3f2fd;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .shipping-title {
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: #800000;
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary:hover {
+            background: #600000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(128,0,0,0.3);
+            color: white;
+        }
+        
+        .btn-outline {
+            border: 2px solid #800000;
+            color: #800000;
+            background: transparent;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-outline:hover {
+            background: #800000;
+            color: white;
+        }
+        
+        .estimated-delivery {
+            background: #e8f5e8;
+            color: #2d5a2d;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            border-left: 4px solid #4caf50;
+        }
+        
+        @media (max-width: 768px) {
+            .confirmation-card {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+            
+            .confirmation-title {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .order-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="components/header-component.js"></script>
+    <script src="components/header-user-component.js"></script>
+    <script>window.renderHeader();</script>
+
+    <div class="confirmation-container">
+        <div class="container">
+            <div class="confirmation-card" data-aos="fade-up">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                
+                <h1 class="confirmation-title">¡Order Confirmed!</h1>
+                <p class="confirmation-subtitle">Thank you for your purchase. Your order has been successfully placed.</p>
+                
+                <div class="order-details" id="orderDetails">
+                    <!-- Order details will be loaded here -->
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="explorar.html" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag"></i> Continue Shopping
+                    </a>
+                    <a href="perfil.html" class="btn btn-outline">
+                        <i class="fas fa-user"></i> View My Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer-component></footer-component>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="components/footer-component.js"></script>
+    <script src="components/auth-modal.js"></script>
+    <auth-modal></auth-modal>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Get order ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
+
+        // Load order details
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderDetails();
+        });
+
+        function loadOrderDetails() {
+            if (!orderId) {
+                showError('Order not found');
+                return;
+            }
+
+            const orders = window.productsDB.getUserOrders();
+            const order = orders.find(o => o.id == orderId);
+
+            if (!order) {
+                showError('Order not found');
+                return;
+            }
+
+            const container = document.getElementById('orderDetails');
+            const orderDate = new Date(order.createdAt).toLocaleDateString();
+            const deliveryDate = new Date(order.estimatedDelivery).toLocaleDateString();
+
+            container.innerHTML = `
+                <div class="order-number">Order #${order.id}</div>
+                <div class="order-date">Placed on ${orderDate}</div>
+                
+                <div class="order-summary">
+                    <div class="summary-item">
+                        <div class="summary-label">Subtotal</div>
+                        <div class="summary-value">$${order.subtotal.toFixed(2)}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Shipping</div>
+                        <div class="summary-value">$${order.shipping.toFixed(2)}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Tax</div>
+                        <div class="summary-value">$${order.tax.toFixed(2)}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Total</div>
+                        <div class="summary-value">$${order.total.toFixed(2)}</div>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    <h5 style="margin-bottom: 1rem;">Order Items</h5>
+                    ${order.items.map(item => `
+                        <div class="order-item">
+                            <img src="${item.product.mainImage}" alt="${item.product.name}" class="item-image">
+                            <div class="item-details flex-fill">
+                                <h5>${item.product.name}</h5>
+                                <p class="item-artisan">By ${item.product.artisan.name}</p>
+                                <p class="item-artisan">Qty: ${item.quantity}</p>
+                            </div>
+                            <div class="item-price">$${(item.product.price * item.quantity).toFixed(2)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="shipping-info">
+                    <div class="shipping-title">
+                        <i class="fas fa-shipping-fast"></i> Shipping Information
+                    </div>
+                    <p style="margin: 0;">
+                        <strong>${order.shippingInfo.firstName} ${order.shippingInfo.lastName}</strong><br>
+                        ${order.shippingInfo.address}<br>
+                        ${order.shippingInfo.city}, ${order.shippingInfo.state} ${order.shippingInfo.zipCode}<br>
+                        ${order.shippingInfo.country}<br>
+                        ${order.shippingInfo.email}<br>
+                        ${order.shippingInfo.phone}
+                    </p>
+                    <div class="estimated-delivery">
+                        <i class="fas fa-calendar-alt"></i>
+                        <strong>Estimated Delivery:</strong> ${deliveryDate}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const container = document.getElementById('orderDetails');
+            container.innerHTML = `
+                <div style="text-align: center; color: #f44336;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <h3>${message}</h3>
+                    <p>Please check your order ID or contact support.</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html> 

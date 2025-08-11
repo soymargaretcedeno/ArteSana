@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - ArteSana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="components/header-component.js"></script>
+    <script src="components/header-user-component.js"></script>
+    <script>window.renderHeader();</script>
+
+    <!-- Cart Section -->
+    <section class="cart-section py-5">
+        <div class="container">
+            <h1 class="mb-4" data-i18n="cart_title">Shopping Cart</h1>
+            
+            <!-- Cart Content -->
+            <div class="row">
+                <!-- Cart Items -->
+                <div class="col-lg-8">
+                    <div id="cartItemsContainer">
+                        <!-- Cart items will be loaded dynamically -->
+                    </div>
+                    
+                    <!-- Empty Cart Message -->
+                    <div id="emptyCartMessage" class="text-center py-5" style="display: none;">
+                        <i class="fas fa-shopping-cart" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <h3 style="color: #666;">Your cart is empty</h3>
+                        <p style="color: #999;">Add some beautiful handcrafted products to get started!</p>
+                        <a href="explorar.html" class="btn btn-primary">Continue Shopping</a>
+                    </div>
+
+                    <!-- Cart Actions -->
+                    <div class="cart-actions mt-4" id="cartActions" style="display: none;">
+                        <a href="explorar.html" class="btn btn-outline-primary" data-i18n="cart_continue_shopping">Continue Shopping</a>
+                        <button class="btn btn-outline-danger" onclick="clearCart()" data-i18n="cart_clear_cart">Clear Cart</button>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="order-summary" data-aos="fade-left" id="orderSummary" style="display: none;">
+                        <h3 data-i18n="cart_order_summary">Order Summary</h3>
+                        <div class="summary-item">
+                            <span data-i18n="cart_subtotal">Subtotal</span>
+                            <span id="subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span data-i18n="cart_discount">Discount</span>
+                            <span id="discount">-$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span data-i18n="cart_shipping">Shipping</span>
+                            <span id="shipping">$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span data-i18n="cart_tax">Tax</span>
+                            <span id="tax">$0.00</span>
+                        </div>
+                        <div class="summary-total">
+                            <span data-i18n="cart_total">Total</span>
+                            <span id="total">$0.00</span>
+                        </div>
+                        <button class="btn btn-primary w-100" onclick="proceedToCheckout()" data-i18n="cart_checkout">Proceed to Checkout</button>
+                    </div>
+
+                    <!-- Promo Code -->
+                    <div class="promo-code mt-4" data-aos="fade-left" data-aos-delay="100" id="promoCodeSection" style="display: none;">
+                        <h4 data-i18n="cart_promo_code">Promo Code</h4>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="promoCodeInput" placeholder="Enter code" data-i18n="cart_promo_placeholder">
+                            <button class="btn btn-outline-primary" onclick="applyPromoCode()" data-i18n="cart_apply">Apply</button>
+                        </div>
+                        <div id="promoMessage" class="mt-2" style="display: none;"></div>
+                    </div>
+
+                    <!-- Secure Checkout -->
+                    <div class="secure-checkout mt-4" data-aos="fade-left" data-aos-delay="200" id="secureCheckoutSection" style="display: none;">
+                        <h4 data-i18n="cart_secure_checkout">Secure Checkout</h4>
+                        <div class="payment-methods">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-amex"></i>
+                            <i class="fab fa-cc-paypal"></i>
+                        </div>
+                        <p class="security-note">
+                            <i class="fas fa-lock"></i>
+                            <span data-i18n="cart_secure_note">Your payment information is secure</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <script src="components/footer-component.js"></script>
+    <footer-component></footer-component>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Cart functionality
+        let appliedDiscount = 0;
+        let appliedPromoCode = '';
+
+        // Load cart on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCart();
+        });
+
+        // Load cart items
+        function loadCart() {
+            const cartItems = window.productsDB.getCartItems();
+            const container = document.getElementById('cartItemsContainer');
+            const emptyMessage = document.getElementById('emptyCartMessage');
+            const cartActions = document.getElementById('cartActions');
+            const orderSummary = document.getElementById('orderSummary');
+            const promoSection = document.getElementById('promoCodeSection');
+            const secureSection = document.getElementById('secureCheckoutSection');
+
+            if (cartItems.length === 0) {
+                container.style.display = 'none';
+                emptyMessage.style.display = 'block';
+                cartActions.style.display = 'none';
+                orderSummary.style.display = 'none';
+                promoSection.style.display = 'none';
+                secureSection.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            emptyMessage.style.display = 'none';
+            cartActions.style.display = 'block';
+            orderSummary.style.display = 'block';
+            promoSection.style.display = 'block';
+            secureSection.style.display = 'block';
+
+            container.innerHTML = cartItems.map((item, index) => `
+                <div class="cart-item" data-aos="fade-up" data-aos-delay="${index * 100}">
+                    <div class="item-image">
+                        <img src="${item.product.mainImage}" alt="${item.product.name}">
+                    </div>
+                    <div class="item-details">
+                        <h3>${item.product.name}</h3>
+                        <p class="artisan">By ${item.product.artisan.name}</p>
+                        <div class="item-meta">
+                            <span class="price">$${item.product.price.toFixed(2)}</span>
+                            <div class="quantity-control">
+                                <button class="qty-btn" onclick="updateQuantity(${item.productId}, -1)">-</button>
+                                <input type="number" value="${item.quantity}" min="1" max="${item.product.stock}" 
+                                       onchange="updateQuantity(${item.productId}, 0, this.value)">
+                                <button class="qty-btn" onclick="updateQuantity(${item.productId}, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="remove-item" onclick="removeFromCart(${item.productId})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            updateOrderSummary();
+        }
+
+        // Update quantity
+        function updateQuantity(productId, delta, newValue = null) {
+            let quantity;
+            if (newValue !== null) {
+                quantity = parseInt(newValue);
+            } else {
+                const currentQuantity = window.productsDB.cart.find(item => item.productId === productId)?.quantity || 0;
+                quantity = currentQuantity + delta;
+            }
+
+            window.productsDB.updateCartQuantity(productId, quantity);
+            loadCart();
+        }
+
+        // Remove from cart
+        function removeFromCart(productId) {
+            window.productsDB.removeFromCart(productId);
+            loadCart();
+        }
+
+        // Clear cart
+        function clearCart() {
+            if (confirm('Are you sure you want to clear your cart?')) {
+                window.productsDB.clearCart();
+                loadCart();
+            }
+        }
+
+        // Update order summary
+        function updateOrderSummary() {
+            const cartItems = window.productsDB.getCartItems();
+            const subtotal = window.productsDB.getCartTotal();
+            const shipping = window.productsDB.calculateShipping(cartItems);
+            const tax = subtotal * 0.07; // 7% tax
+            const total = subtotal + shipping + tax - appliedDiscount;
+
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('discount').textContent = `-$${appliedDiscount.toFixed(2)}`;
+            document.getElementById('shipping').textContent = `$${shipping.toFixed(2)}`;
+            document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Apply promo code
+        function applyPromoCode() {
+            const code = document.getElementById('promoCodeInput').value.trim();
+            const messageDiv = document.getElementById('promoMessage');
+            
+            if (!code) {
+                showPromoMessage('Please enter a promo code', 'error');
+                return;
+            }
+
+            const cartItems = window.productsDB.getCartItems();
+            const subtotal = window.productsDB.getCartTotal();
+            const discount = window.productsDB.applyDiscount(code, subtotal);
+
+            if (discount > 0) {
+                appliedDiscount = discount;
+                appliedPromoCode = code;
+                showPromoMessage(`Promo code applied! You saved $${discount.toFixed(2)}`, 'success');
+                document.getElementById('promoCodeInput').value = '';
+                updateOrderSummary();
+            } else {
+                showPromoMessage('Invalid promo code', 'error');
+            }
+        }
+
+        // Show promo message
+        function showPromoMessage(message, type) {
+            const messageDiv = document.getElementById('promoMessage');
+            messageDiv.textContent = message;
+            messageDiv.className = `mt-2 alert alert-${type === 'success' ? 'success' : 'danger'}`;
+            messageDiv.style.display = 'block';
+
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Proceed to checkout
+        function proceedToCheckout() {
+            window.location.href = 'checkout.html';
+        }
+    </script>
+    <script src="components/auth-modal.js"></script>
+    <auth-modal></auth-modal>
+</body>
+</html> 
