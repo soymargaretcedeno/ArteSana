@@ -39,6 +39,12 @@ class HeaderUserComponent extends HTMLElement {
                     position: fixed;
                     top: 0;
                     z-index: 9999;
+                    transition: all 0.3s ease;
+                }
+
+                [data-theme="dark"] .header {
+                    background: rgba(34, 34, 34, 0.95);
+                    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
                 }
                 
                 .header-container {
@@ -571,6 +577,25 @@ class HeaderUserComponent extends HTMLElement {
                     border-bottom: 1px solid rgba(255, 215, 0, 0.2);
                 }
 
+                [data-theme="dark"] .mobile-menu-link {
+                    color: var(--text-color);
+                }
+
+                [data-theme="dark"] .mobile-menu-link:hover {
+                    color: var(--accent-color);
+                    background: rgba(255, 215, 0, 0.1);
+                }
+
+                [data-theme="dark"] .mobile-action-btn {
+                    background: rgba(255, 215, 0, 0.1);
+                    color: var(--text-color);
+                }
+
+                [data-theme="dark"] .mobile-action-btn:hover {
+                    background: rgba(255, 215, 0, 0.2);
+                    color: var(--accent-color);
+                }
+
                 .lang-selector {
                     margin-left: 10px;
                     border-radius: 8px;
@@ -682,7 +707,7 @@ class HeaderUserComponent extends HTMLElement {
                     <!-- User Menu -->
                     <div class="user-menu">
                         <!-- Theme Toggle -->
-                        <button class="theme-toggle" onclick="toggleTheme()">
+                        <button class="theme-toggle">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
                             </svg>
@@ -775,7 +800,7 @@ class HeaderUserComponent extends HTMLElement {
                             <span data-i18n="my_profile">Mi Perfil</span>
                         </button>
                         
-                        <button class="mobile-action-btn" onclick="toggleTheme()">
+                        <button class="mobile-action-btn" id="mobileThemeToggle">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
                             </svg>
@@ -799,6 +824,14 @@ class HeaderUserComponent extends HTMLElement {
         const themeToggle = this.shadowRoot.querySelector('.theme-toggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
+                this.toggleTheme();
+            });
+        }
+
+        // Mobile theme toggle functionality
+        const mobileThemeToggle = this.shadowRoot.querySelector('#mobileThemeToggle');
+        if (mobileThemeToggle) {
+            mobileThemeToggle.addEventListener('click', () => {
                 this.toggleTheme();
             });
         }
@@ -900,40 +933,10 @@ class HeaderUserComponent extends HTMLElement {
     }
 
     toggleTheme() {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        // Smooth transition
-        html.style.transition = 'all 0.3s ease';
-        html.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        
-        // Update theme toggle icon with animation
-        const themeToggle = this.shadowRoot.querySelector('.theme-toggle .icon');
-        if (themeToggle) {
-            // Add rotation animation
-            themeToggle.style.transform = 'rotate(180deg)';
-            setTimeout(() => {
-                // Change the SVG path for sun/moon
-                const path = themeToggle.querySelector('path');
-                if (path) {
-                    if (newTheme === 'dark') {
-                        // Sun icon
-                        path.setAttribute('d', 'M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z');
-                    } else {
-                        // Moon icon
-                        path.setAttribute('d', 'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z');
-                    }
-                }
-                themeToggle.style.transform = 'rotate(0deg)';
-            }, 150);
+        // Call the global toggleTheme function
+        if (window.toggleTheme) {
+            window.toggleTheme();
         }
-
-        // Remove transition after animation
-        setTimeout(() => {
-            html.style.transition = '';
-        }, 300);
     }
 
     updateCartCount() {
@@ -1003,12 +1006,7 @@ class HeaderUserComponent extends HTMLElement {
 customElements.define('header-user-component', HeaderUserComponent);
 
 // Global functions for onclick handlers
-window.toggleTheme = function() {
-    const headerComponent = document.querySelector('header-user-component');
-    if (headerComponent) {
-        headerComponent.toggleTheme();
-    }
-};
+// Note: toggleTheme is already defined in theme.js, so we don't redefine it here
 
 window.handleLogout = function() {
     if (window.localDB && window.localDB.logout) {

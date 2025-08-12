@@ -31,7 +31,10 @@ function createTeamCard(member) {
                  else if(!this.dataset.tried4){this.dataset.tried4='1'; this.src=this.dataset.alt4;}
                  else { this.onerror=null; this.src='assets/ArteSana_logo.png'; }">
       <h5 class="team-name">${member.name}</h5>
-      <small class="team-role">${member.role.replace(/\bCódigo\b/, (m)=> window.translations?.[localStorage.getItem('lang')||'es']?.role_code || m)}</small>
+      <small class="team-role">${member.role
+        .replace(/\bCódigo\b/g, (m)=> window.translations?.[localStorage.getItem('lang')||'es']?.role_code || m)
+        .replace(/\bPPT\b/g, (m)=> window.translations?.[localStorage.getItem('lang')||'es']?.role_ppt || m)
+        .replace(/\bScript\b/g, (m)=> window.translations?.[localStorage.getItem('lang')||'es']?.role_script || m)}</small>
     </div>`;
 }
 
@@ -72,11 +75,11 @@ function renderTeamCarousel(rootId = 'team-carousel-root') {
       <div class="carousel-inner">${slideHtml}</div>
       <button class="carousel-control-prev" type="button" data-bs-target="#teamCarouselDyn" data-bs-slide="prev">
         <span class="team-arrow" aria-hidden="true">‹</span>
-        <span class="visually-hidden">Anterior</span>
+        <span class="visually-hidden">${window.translations?.[localStorage.getItem('lang')||'es']?.team_previous || 'Anterior'}</span>
       </button>
       <button class="carousel-control-next" type="button" data-bs-target="#teamCarouselDyn" data-bs-slide="next">
         <span class="team-arrow" aria-hidden="true">›</span>
-        <span class="visually-hidden">Siguiente</span>
+        <span class="visually-hidden">${window.translations?.[localStorage.getItem('lang')||'es']?.team_next || 'Siguiente'}</span>
       </button>
     </div>`;
 

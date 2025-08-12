@@ -506,6 +506,62 @@ class AuthModal extends HTMLElement {
                 [data-theme="dark"] .auth-switch {
                     border-top-color: #444;
                 }
+
+                [data-theme="dark"] .auth-modal-backdrop {
+                    background: rgba(0, 0, 0, 0.8);
+                }
+
+                [data-theme="dark"] .auth-modal-header h3 {
+                    color: #ffffff;
+                }
+
+                [data-theme="dark"] .auth-modal-header p {
+                    color: #ccc;
+                }
+
+                [data-theme="dark"] .auth-submit-btn {
+                    background: linear-gradient(135deg, #FFD700 0%, #FF7F11 100%);
+                    color: #1a0000;
+                }
+
+                [data-theme="dark"] .auth-submit-btn:hover {
+                    background: linear-gradient(135deg, #FF7F11 0%, #E63946 100%);
+                    color: #ffffff;
+                }
+
+                [data-theme="dark"] .auth-link {
+                    color: #FFD700;
+                }
+
+                [data-theme="dark"] .auth-link:hover {
+                    color: #FF7F11;
+                }
+
+                [data-theme="dark"] .auth-switch-btn {
+                    background: #FFD700;
+                    color: #1a0000;
+                }
+
+                [data-theme="dark"] .auth-switch-btn:hover {
+                    background: #FF7F11;
+                    color: #ffffff;
+                }
+
+                [data-theme="dark"] .auth-message {
+                    background: rgba(255, 215, 0, 0.1);
+                    border-color: #FFD700;
+                    color: #ffffff;
+                }
+
+                [data-theme="dark"] .auth-message.error {
+                    background: rgba(230, 57, 70, 0.1);
+                    border-color: #E63946;
+                }
+
+                [data-theme="dark"] .auth-message.success {
+                    background: rgba(67, 185, 41, 0.1);
+                    border-color: #43B929;
+                }
             </style>
 
             <div class="auth-modal-backdrop" id="authModalBackdrop">

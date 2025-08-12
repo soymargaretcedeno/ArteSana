@@ -48,6 +48,11 @@ class CtaSection extends HTMLElement {
           box-shadow: 0 10px 40px rgba(0,0,0,0.15);
           position: relative;
           overflow: hidden;
+          transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .cta-root {
+          box-shadow: 0 10px 40px rgba(255,215,0,0.1);
         }
         .cta-root::before {
           content: '';
@@ -112,6 +117,20 @@ class CtaSection extends HTMLElement {
           transform: translateY(-3px) scale(1.05);
           box-shadow: 0 12px 35px rgba(128,0,0,0.6);
           border-color: rgba(255,255,255,0.5);
+        }
+
+        [data-theme="dark"] .cta-btn {
+          background: linear-gradient(135deg, #FFD700 0%, #FF7F11 100%);
+          color: #1a0000;
+          border-color: rgba(255,215,0,0.5);
+          box-shadow: 0 8px 25px rgba(255,215,0,0.3);
+        }
+
+        [data-theme="dark"] .cta-btn:hover {
+          background: linear-gradient(135deg, #FF7F11 0%, #E63946 100%);
+          color: #ffffff;
+          box-shadow: 0 12px 35px rgba(255,215,0,0.4);
+          border-color: rgba(255,215,0,0.7);
         }
         .cta-btn:hover::before {
           left: 100%;

@@ -119,4 +119,67 @@ body .navbar.navbar .theme-toggle {
 body .navbar.navbar .nav-link:hover,
 body .navbar.navbar .navbar-brand:hover {
   color: #FFD700 !important;
+}
+
+/* Dark Mode Support for Store */
+[data-theme="dark"] .store-banner {
+  background: linear-gradient(120deg, #1a0000 0%, #330000 100%);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+[data-theme="dark"] .store-title {
+  color: var(--pollera-white);
+  text-shadow: 1px 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+[data-theme="dark"] .store-subtitle {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .btn-create-store {
+  background: var(--accent-color);
+  color: var(--dark-bg);
+  border-color: var(--accent-color);
+}
+
+[data-theme="dark"] .btn-create-store:hover {
+  background: var(--mola-yellow);
+  color: var(--dark-bg);
+  border-color: var(--mola-yellow);
+}
+
+[data-theme="dark"] .store-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 16px rgba(255, 215, 0, 0.1);
+}
+
+[data-theme="dark"] .store-card:hover {
+  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);
+}
+
+[data-theme="dark"] .store-card .store-name {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .store-card .store-desc {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .store-card .store-meta {
+  color: var(--accent-color);
+}
+
+[data-theme="dark"] .store-card .product-badge {
+  background: var(--dark-bg);
+  color: var(--accent-color);
+}
+
+[data-theme="dark"] .store-card .product-list li {
+  color: var(--text-color);
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .stores-list-section {
+  background: var(--body-bg);
 } 

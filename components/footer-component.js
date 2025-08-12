@@ -44,6 +44,12 @@ class FooterComponent extends HTMLElement {
                     position: relative;
                     overflow: hidden;
                     width: 100%;
+                    transition: all 0.3s ease;
+                }
+
+                [data-theme="dark"] .footer {
+                    background: linear-gradient(135deg, #1a0000 0%, #330000 100%);
+                    border-top: 1px solid rgba(255, 215, 0, 0.2);
                 }
 
                 .decorative-pattern {

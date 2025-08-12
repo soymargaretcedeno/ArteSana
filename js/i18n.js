@@ -1,6 +1,11 @@
 window.translations = {
   es: {
     "role_code": "Código",
+    "role_ppt": "PPT",
+    "role_script": "Script",
+    "team_previous": "Anterior",
+    "team_next": "Siguiente",
+    "team_photo_alt": "Nuestro equipo",
     "cta_title": "Potencia tu creatividad",
     "cta_subtitle": "Únete a ArteSana y muestra tus artesanías únicas al mundo, o descubre tesoros hechos por artesanos panameños.",
     "cta_button": "Comienza tu viaje",
@@ -78,6 +83,8 @@ window.translations = {
     "countries_reached": "Países alcanzados",
     "testimonials_title": "Testimonios",
     "testimonials_subtitle": "Lo que dicen nuestros clientes",
+    "our_team": "Nuestro equipo",
+    "meet_our_team": "Conoce a quienes crearon esta web",
     "testimonial_1": "Gracias a ArteSana, he podido llevar el negocio familiar al siguiente nivel, llegando a clientes de todo el mundo.",
     "testimonial_1_author": "Angely Vargas",
     "testimonial_1_role": "Artesana Guna",
@@ -301,6 +308,11 @@ window.translations = {
   },
   en: {
     "role_code": "Code",
+    "role_ppt": "PPT",
+    "role_script": "Script",
+    "team_previous": "Previous",
+    "team_next": "Next",
+    "team_photo_alt": "Our team",
     "cta_title": "Empower Your Creativity",
     "cta_subtitle": "Join ArteSana and showcase your unique handcrafts to the world, or discover treasures made by Panamanian artisans.",
     "cta_button": "Start Your Journey",
@@ -378,6 +390,8 @@ window.translations = {
     "countries_reached": "Countries Reached",
     "testimonials_title": "Testimonials",
     "testimonials_subtitle": "What Our Customers Say",
+    "our_team": "Our Team",
+    "meet_our_team": "Meet those who created this website",
     "testimonial_1": "Thanks to ArteSana, I've been able to take my family business to the next level, reaching customers worldwide.",
     "testimonial_1_author": "Angely Vargas",
     "testimonial_1_role": "Guna Artisan",
@@ -620,6 +634,14 @@ window.setLanguage = function(lang) {
       } else {
         el.textContent = window.translations[lang][key];
       }
+    }
+  });
+  
+  // Actualizar atributos alt de imágenes
+  document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+    const key = el.getAttribute('data-i18n-alt');
+    if (window.translations[lang] && window.translations[lang][key]) {
+      el.alt = window.translations[lang][key];
     }
   });
   
