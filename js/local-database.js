@@ -20,6 +20,8 @@ class LocalDatabase {
                 email: 'ana@artesana.com',
                 password: '123456',
                 role: 'artisan',
+                twoFactorEnabled: true,
+                twoFactorCode: '123456',
                 store: 'Ana\'s Handcrafts',
                 avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
                 joinDate: '2024-01-15',
@@ -97,21 +99,41 @@ class LocalDatabase {
         this.currentUser = null;
     }
 
-    // Authenticate user
-    authenticate(email, password) {
+    // Authenticate user (2FA: si twoFactorEnabled, requiere verificación adicional)
+    authenticate(email, password, twoFactorCode) {
         const user = this.users.find(u => 
             u.email.toLowerCase() === email.toLowerCase() && 
             u.password === password
         );
 
-        if (user) {
-            // Don't store password in current user session
-            const { password, ...userWithoutPassword } = user;
-            this.saveCurrentUser(userWithoutPassword);
-            return { success: true, user: userWithoutPassword };
+        if (!user) {
+            return { success: false, message: 'Invalid email or password' };
         }
 
-        return { success: false, message: 'Invalid email or password' };
+        if (user.twoFactorEnabled) {
+            if (!twoFactorCode) {
+                return { success: false, requires2FA: true, userId: user.id };
+            }
+            // API: POST /api/auth/verify-2fa — validar TOTP/código en servidor
+            const expectedCode = user.twoFactorCode || '123456';
+            if (String(twoFactorCode).trim() !== expectedCode) {
+                return { success: false, message: 'Invalid verification code' };
+            }
+        }
+
+        const { password: _pw, twoFactorCode: _code, ...userWithoutPassword } = user;
+        this.saveCurrentUser(userWithoutPassword);
+        return { success: true, user: userWithoutPassword };
+    }
+
+    // API: POST /api/auth/enable-2fa
+    enableTwoFactor(userId, code) {
+        const userIndex = this.users.findIndex(u => u.id === userId);
+        if (userIndex === -1) return { success: false, message: 'User not found' };
+        this.users[userIndex].twoFactorEnabled = true;
+        this.users[userIndex].twoFactorCode = code || '123456';
+        localStorage.setItem('artesana_users', JSON.stringify(this.users));
+        return { success: true };
     }
 
     // Register new user

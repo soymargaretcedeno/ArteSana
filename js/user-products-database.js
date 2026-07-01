@@ -308,7 +308,12 @@ class UserProductsDatabase {
 
     // Get all products (user products + marketplace products)
     getAllProducts() {
-        return [...this.userProducts, ...window.productsDB.getAllProducts()];
+        const all = [...this.userProducts, ...window.productsDB.getAllProducts()];
+        return all.sort((a, b) => {
+            const aFeatured = a.tags && a.tags.includes('featured') ? 1 : 0;
+            const bFeatured = b.tags && b.tags.includes('featured') ? 1 : 0;
+            return bFeatured - aFeatured;
+        });
     }
 
     // Get product by ID (from both sources)

@@ -8,6 +8,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/png" href="assets/ArteSana_logo.png">
+    <meta name="description" content="ArteSana conecta artesanos panameños con amantes del arte. Marketplace de artesanías auténticas con envío internacional.">
+    <meta name="keywords" content="artesanías panameñas, marketplace, artesanos, comercio justo">
+    <meta property="og:title" content="ArteSana - Marketplace de Artesanías Panameñas">
+    <meta property="og:description" content="Descubre creaciones únicas de artesanos panameños certificados.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/ArteSana_logo.png">
     <title>ArteSana - Your Handcrafted Marketplace</title>
     
     <!-- Preload critical resources -->
@@ -56,6 +62,7 @@
     </noscript>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
     <!-- Pantalla de carga -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-spinner"></div>
@@ -72,7 +79,8 @@
     </div> -->
 
     <!-- Hero Section with Carousel -->
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+    <main id="main-content">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" aria-label="Galería principal">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://blog.gotuuri.com/wp-content/uploads/2024/01/Nota-2-1-1.webp');" loading="lazy">
@@ -105,7 +113,7 @@
                 <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200" data-i18n="connecting_artisans">Connecting Panamanian artisans with art lovers worldwide</p>
                 <div class="d-flex justify-content-center gap-3" data-aos="fade-up" data-aos-delay="400">
                     <a href="perfil.html#my-store-section" class="btn btn-primary" data-i18n="create_my_store">Create My Store</a>
-                    <a href="http://127.0.0.1:5503/explorar.html" class="btn btn-primary" data-i18n="explore_handcrafts">Explore Handcrafts</a>
+                    <a href="explorar.html" class="btn btn-primary" data-i18n="explore_handcrafts">Explore Handcrafts</a>
                 </div>
             </div>
         </div>
@@ -148,7 +156,7 @@
     </section>
 
     <!-- About Us Section -->
-    <section class="about-section">
+    <section class="about-section" id="about-section">
         <div class="container">
             <h2 class="about-title text-center mb-5" data-i18n="about_us">About Us</h2>
             <div class="row align-items-center">
@@ -180,7 +188,7 @@
                                 <span data-i18n="global_shipping">Global Shipping</span>
                             </div>
                         </div>
-                        <a href="#" class="btn btn-primary" data-i18n="learn_our_story">Learn Our Story</a>
+                        <a href="#about-section" class="btn btn-primary" data-i18n="learn_our_story">Learn Our Story</a>
                     </div>
                 </div>
             </div>
@@ -319,33 +327,37 @@
                                 <span data-i18n="chat_whatsapp">Chat on WhatsApp</span>
                             </a>
                             <div class="contact-social">
-                                <a href="#" class="contact-social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                                <a href="#" class="contact-social-link" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                                <a href="#" class="contact-social-link" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="contact-social-link" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="contact-social-link" aria-label="Facebook"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="contact-social-link" aria-label="X"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6" data-aos="fade-left">
                     <div class="contact-form contact-form-card h-100">
-                        <form>
+                        <form novalidate aria-label="Formulario de contacto">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Your Name" data-i18n="contact_name_placeholder">
+                                        <label for="contactName" class="visually-hidden">Nombre</label>
+                                        <input type="text" id="contactName" name="name" class="form-control" placeholder="Your Name" data-i18n="contact_name_placeholder" required autocomplete="name">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="email" class="form-control" placeholder="Your Email" data-i18n="contact_email_placeholder">
+                                        <label for="contactEmail" class="visually-hidden">Email</label>
+                                        <input type="email" id="contactEmail" name="email" class="form-control" placeholder="Your Email" data-i18n="contact_email_placeholder" required autocomplete="email">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Subject" data-i18n="contact_subject_placeholder">
+                                <label for="contactSubject" class="visually-hidden">Asunto</label>
+                                <input type="text" id="contactSubject" name="subject" class="form-control" placeholder="Subject" data-i18n="contact_subject_placeholder" required>
                             </div>
                             <div class="form-group">
-                                <textarea class="form-control" rows="5" placeholder="Your Message" data-i18n="contact_message_placeholder"></textarea>
+                                <label for="contactMessage" class="visually-hidden">Mensaje</label>
+                                <textarea id="contactMessage" name="message" class="form-control" rows="5" placeholder="Your Message" data-i18n="contact_message_placeholder" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary w-100" data-i18n="send_message">Send Message</button>
                             <small class="privacy-note">🔒 We respect your privacy. Your data is safe with us.</small>
@@ -355,6 +367,7 @@
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Footer Component -->
     <footer-component></footer-component>
@@ -391,20 +404,19 @@
             once: true
         });
 
-        // Check if it's a new session
+        // Intro animación (solo si el elemento existe en DOM)
         document.addEventListener('DOMContentLoaded', function() {
             const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
             const introElement = document.getElementById('windowsIntro');
             
-            if (!hasSeenIntro) {
-                // Show intro if it's a new session
-                introElement.style.display = 'flex';
-                sessionStorage.setItem('hasSeenIntro', 'true');
-                
-                // Create particles
-                createParticles();
-            } else {
-                introElement.style.display = 'none';
+            if (introElement) {
+                if (!hasSeenIntro) {
+                    introElement.style.display = 'flex';
+                    sessionStorage.setItem('hasSeenIntro', 'true');
+                    createParticles();
+                } else {
+                    introElement.style.display = 'none';
+                }
             }
 
             // Handle contact link click
@@ -413,14 +425,11 @@
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    // Get the base URL
                     const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
                     
-                    // Always navigate to index.html first
-                    if (!window.location.pathname.endsWith('index.html')) {
+                    if (!window.location.pathname.endsWith('index.html') && !window.location.pathname.endsWith('/')) {
                         window.location.href = baseUrl + 'index.html#contact-link';
                     } else {
-                        // If already on index.html, just scroll
                         const contactSection = document.getElementById('contact-link');
                         if (contactSection) {
                             contactSection.scrollIntoView({ behavior: 'smooth' });
@@ -428,37 +437,43 @@
                     }
                 });
             });
+
+            if (sessionStorage.getItem('artesana_redirect_after_login')) {
+                const authModal = document.querySelector('auth-modal');
+                if (authModal && typeof authModal.open === 'function') {
+                    setTimeout(() => authModal.open('login'), 500);
+                }
+            }
         });
 
-        // Create particles
         function createParticles() {
             const container = document.getElementById('particles');
+            if (!container) return;
             const particleCount = 80;
             const radius = 150;
 
-            // Limpiar contenedor
             container.innerHTML = '';
 
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-                
-                // Calcular ángulo para cada partícula
                 const angle = (i / particleCount) * Math.PI * 2;
-                
-                // Añadir un pequeño retraso aleatorio a cada partícula
-                const delay = Math.random() * 0.2;
-                particle.style.animationDelay = `${delay}s`;
-                
+                particle.style.animationDelay = `${Math.random() * 0.2}s`;
                 particle.style.setProperty('--angle', `${angle}rad`);
                 particle.style.setProperty('--radius', `${radius}px`);
-                
                 container.appendChild(particle);
             }
         }
 
-        // Recreate particles on window resize
-        window.addEventListener('resize', createParticles);
+        window.addEventListener('resize', debounce(createParticles, 250));
+
+        function debounce(fn, wait) {
+            let t;
+            return function () {
+                clearTimeout(t);
+                t = setTimeout(fn, wait);
+            };
+        }
 
         // Handle hash navigation on page load
         window.addEventListener('load', function() {
@@ -476,23 +491,33 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const counters = document.querySelectorAll('.counter');
-            counters.forEach(counter => {
+            const animateCounter = (counter) => {
+                const target = +counter.getAttribute('data-target');
+                let count = 0;
+                const increment = Math.ceil(target / 200);
                 const updateCount = () => {
-                    const target = +counter.getAttribute('data-target');
-                    const count = +counter.innerText.replace('+', '');
-                    const speed = 200;
-                    const increment = Math.ceil(target / speed);
                     if (count < target) {
-                        counter.innerText = `${count + increment}+`;
-                        setTimeout(updateCount, 20);
+                        count = Math.min(count + increment, target);
+                        counter.innerText = `${count}+`;
+                        requestAnimationFrame(updateCount);
                     } else {
                         counter.innerText = `${target}+`;
                     }
                 };
                 updateCount();
-            });
+            };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            counters.forEach(counter => observer.observe(counter));
         });
     </script>
+    <script src="js/app-core.js"></script>
     <script>
 // Actualizar placeholders del formulario de contacto al cambiar idioma
 function updateContactPlaceholders() {

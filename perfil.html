@@ -178,21 +178,8 @@
                                             <th data-i18n="profile_order_total">Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>#12345</td>
-                                            <td>Mola Tradicional</td>
-                                            <td>2024-06-01</td>
-                                            <td><span class="badge bg-success" data-i18n="profile_completed">Completed</span></td>
-                                            <td>$85.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td>#12346</td>
-                                            <td>Beaded Necklace</td>
-                                            <td>2024-06-02</td>
-                                            <td><span class="badge bg-warning text-dark" data-i18n="profile_pending">Pending</span></td>
-                                            <td>$95.00</td>
-                                        </tr>
+                                    <tbody id="ordersTableBody">
+                                        <!-- API: GET /api/orders — datos cargados por PlatformServices -->
                                     </tbody>
                                 </table>
                             </div>
@@ -646,6 +633,8 @@ navLinks.forEach(link => {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="components/auth-modal.js"></script>
     <auth-modal></auth-modal>
+    <script src="js/utils/auth-guard.js"></script>
+    <script src="js/app-core.js"></script>
     
     <!-- Avatar Management Script -->
     <script>
@@ -790,6 +779,35 @@ navLinks.forEach(link => {
                 saveAvatarBtn.style.display = 'none';
                 selectedFile = null;
             });
+        });
+    </script>
+    <script src="js/app-core.js"></script>
+    <script>
+        function renderOrderStatuses() {
+            if (!window.PlatformServices) return;
+            const tbody = document.getElementById('ordersTableBody');
+            if (!tbody) return;
+            const esc = window.SecurityUtils ? window.SecurityUtils.escapeHtml : (s) => s;
+            const badgeMap = {
+                delivered: 'bg-success',
+                shipped: 'bg-info text-dark',
+                processing: 'bg-warning text-dark',
+                pending: 'bg-secondary',
+                cancelled: 'bg-danger'
+            };
+            tbody.innerHTML = window.PlatformServices.getOrders().map(o => `
+                <tr>
+                    <td>#${esc(o.id)}</td>
+                    <td>${esc(o.product)}</td>
+                    <td>${esc(o.updatedAt)}</td>
+                    <td><span class="badge ${badgeMap[o.status] || 'bg-secondary'}">${esc(o.statusLabel)}</span></td>
+                    <td>$${Number(o.total).toFixed(2)}</td>
+                </tr>
+            `).join('');
+        }
+        document.addEventListener('app:ready', renderOrderStatuses);
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.PlatformServices) renderOrderStatuses();
         });
     </script>
 </body>
