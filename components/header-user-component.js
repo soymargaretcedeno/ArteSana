@@ -1008,12 +1008,14 @@ customElements.define('header-user-component', HeaderUserComponent);
 // Global functions for onclick handlers
 // Note: toggleTheme is already defined in theme.js, so we don't redefine it here
 
-window.handleLogout = function() {
-    if (window.localDB && window.localDB.logout) {
+window.handleLogout = async function() {
+    if (window.supabaseAuth) {
+        await window.supabaseAuth.logout();
+    } else if (window.localDB && window.localDB.logout) {
         window.localDB.logout();
-        if (window.renderHeader) window.renderHeader();
-        window.location.href = 'index.html';
     }
+    if (window.renderHeader) window.renderHeader();
+    window.location.href = 'index.html';
 };
 
 window.toggleLanguage = function(event) {

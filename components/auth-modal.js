@@ -729,6 +729,14 @@ class AuthModal extends HTMLElement {
             this.handleForgotPassword();
         });
 
+        this._setSubmitLoading = (formId, loading) => {
+            const btn = this.shadowRoot.querySelector(`#${formId} .auth-submit-btn`);
+            if (btn) {
+                btn.disabled = loading;
+                btn.style.opacity = loading ? '0.7' : '';
+            }
+        };
+
         // Keyboard events
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isOpen()) {
@@ -799,7 +807,27 @@ class AuthModal extends HTMLElement {
         this.showForm('forgotPassword');
     }
 
-    handleLogin() {
+    async ensureSupabase() {
+        if (window.supabaseAuth) return true;
+
+        await new Promise((resolve, reject) => {
+            const deadline = Date.now() + 10000;
+            const check = () => {
+                if (window.supabaseAuth) {
+                    resolve();
+                } else if (Date.now() > deadline) {
+                    reject(new Error('Supabase timeout'));
+                } else {
+                    setTimeout(check, 100);
+                }
+            };
+            check();
+        });
+
+        return true;
+    }
+
+    async handleLogin() {
         const email = this.shadowRoot.getElementById('loginEmail').value;
         const password = this.shadowRoot.getElementById('loginPassword').value;
         const lang = localStorage.getItem('lang') || 'es';
@@ -810,14 +838,23 @@ class AuthModal extends HTMLElement {
             return;
         }
 
-        // Use local database for authentication
-        const result = window.localDB.authenticate(email, password);
+        if (!window.supabaseAuth) {
+            try {
+                await this.ensureSupabase();
+            } catch {
+                this.showMessage('Supabase no está cargado. Recarga la página.', 'error');
+                return;
+            }
+        }
+
+        this._setSubmitLoading('login', true);
+        const result = await window.supabaseAuth.login(email, password);
+        this._setSubmitLoading('login', false);
         
         if (result.success) {
             this.showMessage(t('auth_login_success'), 'success');
             this.close();
             if (window.renderHeader) window.renderHeader();
-            // Redirect to profile page after a short delay
             setTimeout(() => {
                 window.location.href = 'perfil.html';
             }, 1000);
@@ -826,7 +863,7 @@ class AuthModal extends HTMLElement {
         }
     }
 
-    handleRegister() {
+    async handleRegister() {
         const name = this.shadowRoot.getElementById('registerName').value;
         const email = this.shadowRoot.getElementById('registerEmail').value;
         const password = this.shadowRoot.getElementById('registerPassword').value;
@@ -848,15 +885,29 @@ class AuthModal extends HTMLElement {
             this.showMessage(t('auth_password_min_length'), 'error');
             return;
         }
-        
-        // Use local database for registration
-        const result = window.localDB.register({ name, email, password });
+
+        if (!window.supabaseAuth) {
+            try {
+                await this.ensureSupabase();
+            } catch {
+                this.showMessage('Supabase no está cargado. Recarga la página.', 'error');
+                return;
+            }
+        }
+
+        this._setSubmitLoading('register', true);
+        const result = await window.supabaseAuth.register(name, email, password);
+        this._setSubmitLoading('register', false);
         
         if (result.success) {
+            if (result.needsConfirmation) {
+                this.showMessage(result.message, 'success');
+                setTimeout(() => this.switchToLogin(), 3000);
+                return;
+            }
             this.showMessage(t('auth_register_success'), 'success');
             this.close();
             if (window.renderHeader) window.renderHeader();
-            // Redirect to profile page after a short delay
             setTimeout(() => {
                 window.location.href = 'perfil.html';
             }, 1000);
@@ -865,7 +916,7 @@ class AuthModal extends HTMLElement {
         }
     }
 
-    handleForgotPassword() {
+    async handleForgotPassword() {
         const email = this.shadowRoot.getElementById('forgotEmail').value;
         const lang = localStorage.getItem('lang') || 'es';
         const t = (key) => window.translations && window.translations[lang] && window.translations[lang][key] ? window.translations[lang][key] : key;
@@ -875,14 +926,24 @@ class AuthModal extends HTMLElement {
             return;
         }
 
-        // Check if user exists
-        const user = window.localDB.users.find(u => u.email.toLowerCase() === email.toLowerCase());
-        
-        if (user) {
+        if (!window.supabaseAuth) {
+            try {
+                await this.ensureSupabase();
+            } catch {
+                this.showMessage('Supabase no está cargado. Recarga la página.', 'error');
+                return;
+            }
+        }
+
+        this._setSubmitLoading('forgotPassword', true);
+        const result = await window.supabaseAuth.resetPassword(email);
+        this._setSubmitLoading('forgotPassword', false);
+
+        if (result.success) {
             this.showMessage(t('auth_reset_link_sent'), 'success');
             this.switchToLogin();
         } else {
-            this.showMessage(t('auth_email_not_found'), 'error');
+            this.showMessage(result.message, 'error');
         }
     }
 
