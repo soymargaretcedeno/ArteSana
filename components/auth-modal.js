@@ -3,6 +3,7 @@ class AuthModal extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.currentForm = 'login';
+        this.pendingLogin = null;
         this.init();
     }
 
@@ -646,7 +647,7 @@ class AuthModal extends HTMLElement {
                             <p>${t('auth_reset_subtitle')}</p>
                         </div>
                         
-                        <div class="auth-message" id="forgotMessage"></div>
+                        <div class="auth-message" id="forgotPasswordMessage"></div>
                         
                         <div class="back-to-login" id="backToLoginBtn">
                             <svg class="icon" viewBox="0 0 24 24">
@@ -658,7 +659,7 @@ class AuthModal extends HTMLElement {
                         <form>
                             <div class="auth-form-group">
                                 <label for="forgotEmail">${t('auth_email')}</label>
-                                <input type="email" id="forgotEmail" placeholder="${t('auth_email_placeholder')}" required>
+                                <input type="email" id="forgotEmail" placeholder="${t('auth_email_placeholder')}" required autocomplete="email">
                             </div>
                             <button type="submit" class="auth-submit-btn">${t('auth_send_reset_link')}</button>
                         </form>
@@ -666,6 +667,26 @@ class AuthModal extends HTMLElement {
                         <div class="auth-switch">
                             <p>${t('auth_remember_password')}</p>
                             <button class="auth-switch-btn" id="switchToLoginFromForgotBtn">${t('auth_login_button')}</button>
+                        </div>
+                    </div>
+
+                    <!-- 2FA Verification (API: POST /api/auth/verify-2fa) -->
+                    <div class="auth-form hidden" id="twoFactorForm">
+                        <div class="auth-modal-header">
+                            <h3>${t('auth_2fa_title') || 'Verificación en dos pasos'}</h3>
+                            <p>${t('auth_2fa_subtitle') || 'Ingresa el código de 6 dígitos de tu app autenticadora'}</p>
+                        </div>
+                        <div class="auth-message" id="twoFactorMessage"></div>
+                        <form>
+                            <div class="auth-form-group">
+                                <label for="twoFactorCode">${t('auth_2fa_code') || 'Código de verificación'}</label>
+                                <input type="text" id="twoFactorCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required autocomplete="one-time-code" aria-describedby="twoFactorHint">
+                            </div>
+                            <small id="twoFactorHint" style="color:#666;display:block;margin-bottom:12px;">Demo: use 123456 for users with 2FA enabled.</small>
+                            <button type="submit" class="auth-submit-btn">${t('auth_verify') || 'Verificar'}</button>
+                        </form>
+                        <div class="auth-switch">
+                            <button class="auth-switch-btn" id="backToLoginFrom2FABtn">${t('auth_back_to_login')}</button>
                         </div>
                     </div>
                 </div>
@@ -712,6 +733,9 @@ class AuthModal extends HTMLElement {
         this.shadowRoot.getElementById('switchToLoginFromForgotBtn').addEventListener('click', () => {
             this.switchToLogin();
         });
+
+        const back2fa = this.shadowRoot.getElementById('backToLoginFrom2FABtn');
+        if (back2fa) back2fa.addEventListener('click', () => this.switchToLogin());
 
         // Form submissions
         this.shadowRoot.querySelector('#loginForm form').addEventListener('submit', (e) => {
@@ -947,9 +971,10 @@ class AuthModal extends HTMLElement {
         }
     }
 
-    showMessage(message, type = 'success') {
-        const currentForm = this.currentForm;
-        const messageElement = this.shadowRoot.getElementById(`${currentForm}Message`);
+    showMessage(message, type = 'success', formOverride) {
+        const currentForm = formOverride || this.currentForm;
+        const messageId = currentForm === 'forgotPassword' ? 'forgotPasswordMessage' : `${currentForm}Message`;
+        const messageElement = this.shadowRoot.getElementById(messageId);
         
         if (messageElement) {
             messageElement.textContent = message;
