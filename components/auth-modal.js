@@ -563,6 +563,48 @@ class AuthModal extends HTMLElement {
                     background: rgba(67, 185, 41, 0.1);
                     border-color: #43B929;
                 }
+
+                /* Role selection */
+                .role-choices {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    margin-top: 8px;
+                }
+
+                .role-choice-btn {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 4px;
+                    width: 100%;
+                    text-align: left;
+                    padding: 18px 20px;
+                    border: 2px solid #e8e8e8;
+                    border-radius: 14px;
+                    background: #fff;
+                    cursor: pointer;
+                    transition: all 0.25s ease;
+                    font-family: inherit;
+                }
+
+                .role-choice-btn:hover {
+                    border-color: #962626;
+                    background: rgba(150, 38, 38, 0.04);
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 18px rgba(150, 38, 38, 0.12);
+                }
+
+                .role-choice-btn strong {
+                    font-size: 1.15rem;
+                    color: #962626;
+                }
+
+                .role-choice-btn span {
+                    font-size: 0.92rem;
+                    color: #666;
+                    line-height: 1.4;
+                }
             </style>
 
             <div class="auth-modal-backdrop" id="authModalBackdrop">
@@ -689,6 +731,25 @@ class AuthModal extends HTMLElement {
                             <button class="auth-switch-btn" id="backToLoginFrom2FABtn">${t('auth_back_to_login')}</button>
                         </div>
                     </div>
+
+                    <!-- Role selection after register -->
+                    <div class="auth-form hidden" id="roleForm">
+                        <div class="auth-modal-header">
+                            <h3>${t('auth_role_title')}</h3>
+                            <p>${t('auth_role_subtitle')}</p>
+                        </div>
+                        <div class="auth-message" id="roleMessage"></div>
+                        <div class="role-choices">
+                            <button type="button" class="role-choice-btn" id="chooseCustomerBtn" data-role="customer">
+                                <strong>${t('auth_role_customer')}</strong>
+                                <span>${t('auth_role_customer_desc')}</span>
+                            </button>
+                            <button type="button" class="role-choice-btn" id="chooseSellerBtn" data-role="artisan">
+                                <strong>${t('auth_role_seller')}</strong>
+                                <span>${t('auth_role_seller_desc')}</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -761,9 +822,18 @@ class AuthModal extends HTMLElement {
             });
         }
 
+        const chooseCustomer = this.shadowRoot.getElementById('chooseCustomerBtn');
+        const chooseSeller = this.shadowRoot.getElementById('chooseSellerBtn');
+        if (chooseCustomer) {
+            chooseCustomer.addEventListener('click', () => this.handleRoleChoice('customer'));
+        }
+        if (chooseSeller) {
+            chooseSeller.addEventListener('click', () => this.handleRoleChoice('artisan'));
+        }
+
         // Keyboard events
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isOpen()) {
+            if (e.key === 'Escape' && this.isOpen() && this.currentForm !== 'role') {
                 this.close();
             }
         });
@@ -885,13 +955,27 @@ class AuthModal extends HTMLElement {
     }
 
     completeLogin(t) {
+        const user = window.localDB.getCurrentUser();
+        if (window.renderHeader) window.renderHeader();
+
+        if (user && user.roleSelected === false) {
+            this.currentForm = 'role';
+            this.showForm('role');
+            this.showMessage(t('auth_role_needed') || t('auth_role_subtitle'), 'success', 'role');
+            return;
+        }
+
         this.showMessage(t('auth_login_success'), 'success');
         this.close();
-        if (window.renderHeader) window.renderHeader();
+
         const redirect = window.AuthGuard && window.AuthGuard.getPostLoginRedirect();
+        const home = (window.RoleRouter && window.RoleRouter.getHomeForUser(user))
+            || (window.AuthGuard && window.AuthGuard.getDefaultHome())
+            || 'explorar.html';
+
         setTimeout(() => {
-            window.location.href = redirect || 'perfil.html';
-        }, 1000);
+            window.location.href = redirect || home;
+        }, 800);
     }
 
     handleRegister() {
@@ -917,20 +1001,55 @@ class AuthModal extends HTMLElement {
             return;
         }
         
-        // Use local database for registration
         const result = window.localDB.register({ name, email, password });
         
         if (result.success) {
-            this.showMessage(t('auth_register_success'), 'success');
-            this.close();
             if (window.renderHeader) window.renderHeader();
-            // Redirect to profile page after a short delay
+            this.showMessage(t('auth_register_success'), 'success');
+
+            // Si venía del CTA “convertirme en vendedor”, ir directo a crear tienda
+            if (window.RoleRouter && window.RoleRouter.consumeBecomeSellerIntent()) {
+                const user = window.localDB.getCurrentUser();
+                window.localDB.setUserRole(user.id, 'artisan');
+                this.close();
+                setTimeout(() => { window.location.href = 'crear-tienda.html'; }, 700);
+                return;
+            }
+
             setTimeout(() => {
-                window.location.href = 'perfil.html';
-            }, 1000);
+                this.currentForm = 'role';
+                this.showForm('role');
+            }, 400);
         } else {
             this.showMessage(result.message, 'error');
         }
+    }
+
+    handleRoleChoice(role) {
+        const lang = localStorage.getItem('lang') || 'es';
+        const t = (key) => window.translations && window.translations[lang] && window.translations[lang][key] ? window.translations[lang][key] : key;
+        const user = window.localDB.getCurrentUser();
+
+        if (!user) {
+            this.switchToLogin();
+            return;
+        }
+
+        const result = window.localDB.setUserRole(user.id, role);
+        if (!result.success) {
+            this.showMessage(result.message || 'Error', 'error', 'role');
+            return;
+        }
+
+        if (window.renderHeader) window.renderHeader();
+        this.showMessage(t('auth_role_saved'), 'success', 'role');
+        this.close();
+
+        const updated = window.localDB.getCurrentUser();
+        const home = (window.RoleRouter && window.RoleRouter.getHomeForUser(updated)) || 'explorar.html';
+        setTimeout(() => {
+            window.location.href = home;
+        }, 700);
     }
 
     handleForgotPassword() {

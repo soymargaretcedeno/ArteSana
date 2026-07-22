@@ -37,6 +37,10 @@
 </head>
 <body>
     <script src="js/local-database.js"></script>
+    <script src="js/stores-database.js"></script>
+    <script src="js/role-router.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
     <script src="js/i18n.js"></script>
     <script src="components/header-component.js"></script>
     <script src="components/header-user-component.js"></script>
@@ -92,25 +96,33 @@
                                 <i class="fas fa-home"></i>
                                 <span data-i18n="profile_dashboard">Dashboard</span>
                             </a>
-                            <a href="#" class="nav-link" data-section="my-products" data-i18n="profile_my_products">
+                            <a href="#" class="nav-link" data-section="my-products" data-role-only="seller" data-i18n="profile_my_products">
                                 <i class="fas fa-box"></i>
-                                <span data-i18n="profile_my_products">My Products</span>
+                                <span data-i18n="profile_my_products">Mis productos</span>
                             </a>
                             <a href="#" class="nav-link" data-section="orders" data-i18n="profile_orders">
                                 <i class="fas fa-shopping-bag"></i>
-                                <span data-i18n="profile_orders">Orders</span>
+                                <span data-i18n="profile_orders">Órdenes</span>
                             </a>
                             <a href="#" class="nav-link" data-section="favorites" data-i18n="profile_favorites">
                                 <i class="fas fa-heart"></i>
-                                <span data-i18n="profile_favorites">Favorites</span>
+                                <span data-i18n="profile_favorites">Favoritos</span>
                             </a>
                             <a href="#" class="nav-link" data-section="analytics" data-i18n="profile_analytics">
                                 <i class="fas fa-chart-line"></i>
-                                <span data-i18n="profile_analytics">Analytics</span>
+                                <span data-i18n="profile_spend_charts">Mis gastos</span>
+                            </a>
+                            <a href="#" class="nav-link" data-section="chat" data-i18n="profile_chat">
+                                <i class="fas fa-comments"></i>
+                                <span data-i18n="profile_chat">Chat</span>
                             </a>
                             <a href="#" class="nav-link" data-section="settings" data-i18n="profile_settings">
                                 <i class="fas fa-cog"></i>
-                                <span data-i18n="profile_settings">Settings</span>
+                                <span data-i18n="profile_settings">Configuración</span>
+                            </a>
+                            <a href="explorar.html" class="nav-link d-none" id="sellerShopLink" data-role-only="seller">
+                                <i class="fas fa-store"></i>
+                                <span data-i18n="profile_shop_as_client">Comprar en tiendas</span>
                             </a>
                         </nav>
                     </div>
@@ -159,10 +171,19 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Products Section (for simulation) -->
-                    <div class="content-card mb-4" id="myProductsSimSection">
-                            <h3 data-i18n="profile_my_products">My Products</h3>
+                    <!-- Products Section (vendedores) -->
+                    <div class="content-card mb-4 dashboard-section d-none" id="my-products-section">
+                        <div id="myStoreInfo" class="mb-3 text-muted"></div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="mb-0" data-i18n="profile_my_products">Mis productos</h3>
+                            <a href="add-product.html" class="btn btn-primary btn-sm" data-role-only="seller">
+                                <i class="fas fa-plus"></i> <span data-i18n="profile_add_product">Agregar producto</span>
+                            </a>
+                        </div>
                         <div class="row g-4" id="myProductsGridSim"></div>
+                    </div>
+                    <div class="content-card mb-4 d-none" id="myProductsSimSection" aria-hidden="true">
+                        <div class="row g-4" id="myProductsGridSimLegacy"></div>
                     </div>
                     <div id="orders-section" class="dashboard-section d-none">
                         <div class="content-card mb-4">
@@ -212,7 +233,8 @@
                     </div>
                     <div id="analytics-section" class="dashboard-section d-none">
                         <div class="content-card mb-4">
-                            <h3 data-i18n="profile_analytics_title">Analytics</h3>
+                            <h3 data-i18n="profile_spend_charts">Cuánto has gastado</h3>
+                            <p class="text-muted" data-i18n="profile_spend_hint">Resumen de tus compras en ArteSana.</p>
                             <div class="row">
                                 <div class="col-md-6">
                                     <canvas id="salesChart" height="180"></canvas>
@@ -223,30 +245,56 @@
                             </div>
                         </div>
                     </div>
+                    <div id="chat-section" class="dashboard-section d-none">
+                        <div class="content-card mb-4">
+                            <h3 data-i18n="profile_chat">Chat</h3>
+                            <p class="text-muted" data-i18n="profile_chat_hint">Habla con vendedores o con soporte técnico.</p>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="list-group" id="profileChatList"></div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2 w-100" id="supportChatBtn">
+                                        <i class="fas fa-headset me-1"></i> Soporte técnico
+                                    </button>
+                                </div>
+                                <div class="col-md-8">
+                                    <div id="profileChatMessages" class="border rounded p-3 mb-2" style="min-height:220px;max-height:320px;overflow-y:auto;background:#fefae0;"></div>
+                                    <div class="input-group">
+                                        <input type="text" id="profileChatInput" class="form-control" placeholder="Escribe un mensaje..." maxlength="500">
+                                        <button class="btn btn-primary" type="button" id="profileChatSend" style="background:#800000;border:none;">Enviar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div id="settings-section" class="dashboard-section d-none">
                         <div class="content-card mb-4">
-                            <h3 data-i18n="profile_settings_title">Settings</h3>
-                            <form>
+                            <h3 data-i18n="profile_settings_title">Configuración</h3>
+                            <form id="profileSettingsForm">
                                 <div class="mb-3">
-                                    <label class="form-label" data-i18n="profile_name_label">Nombre</label>
-                                    <input type="text" class="form-control" value="Ana Solis">
+                                    <label class="form-label" for="settingsName" data-i18n="profile_name_label">Nombre</label>
+                                    <input type="text" class="form-control" id="settingsName">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label" data-i18n="profile_email_label">Email</label>
-                                    <input type="email" class="form-control" value="anasolis@gmail.com">
+                                    <label class="form-label" for="settingsEmail" data-i18n="profile_email_label">Email</label>
+                                    <input type="email" class="form-control" id="settingsEmail">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label" data-i18n="profile_notifications_label">Notificaciones</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" checked id="notif1">
-                                        <label class="form-check-label" for="notif1" data-i18n="profile_email_notifications">Email Notifications</label>
+                                        <label class="form-check-label" for="notif1" data-i18n="profile_email_notifications">Notificaciones por correo</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" checked id="notif2">
-                                        <label class="form-check-label" for="notif2" data-i18n="profile_order_updates">Order Updates</label>
+                                        <label class="form-check-label" for="notif2" data-i18n="profile_order_updates">Actualizaciones de pedidos</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" checked id="notifChat">
+                                        <label class="form-check-label" for="notifChat" data-i18n="profile_chat_notifications">Mensajes de chat</label>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary" data-i18n="profile_save_changes">Guardar Cambios</button>
+                                <button type="submit" class="btn btn-primary" data-i18n="profile_save_changes">Guardar cambios</button>
+                                <button type="button" class="btn btn-outline-danger ms-2" id="profileLogoutBtn" data-i18n="logout">Cerrar sesión</button>
                             </form>
                         </div>
                     </div>
@@ -356,285 +404,40 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="js/local-database.js"></script>
     <script src="js/theme.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            once: true
-        });
-    </script>
-    <script>
-        // Check if user is logged in and populate profile data
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = window.localDB.getCurrentUser();
-            
-            if (!currentUser) {
-                // Redirect to home if not logged in
-                window.location.href = 'index.html';
-                return;
-            }
-
-            // Populate profile data
-            document.getElementById('profileName').textContent = currentUser.name;
-            document.getElementById('profileRole').textContent = currentUser.role;
-            
-            // Handle avatar display
-            const profileAvatar = document.getElementById('profileAvatar');
-            if (currentUser.avatar) {
-                profileAvatar.src = currentUser.avatar;
-            } else {
-                // Show default avatar for users without photo
-                profileAvatar.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
-            }
-
-            // Update stats based on user role
-            if (currentUser.role === 'artisan') {
-                document.getElementById('stat-products').textContent = currentUser.products || 0;
-                document.getElementById('stat-rating').textContent = currentUser.rating || 0;
-                document.getElementById('stat-sales').textContent = '12'; // Placeholder
-            } else {
-                document.getElementById('stat-products').textContent = currentUser.orders || 0;
-                document.getElementById('stat-rating').textContent = currentUser.favorites || 0;
-                document.getElementById('stat-sales').textContent = '5'; // Placeholder
-            }
-        });
-
-        // Simulación de productos y stats
-        let productCount = 0;
-        const statProducts = document.getElementById('stat-products');
-        const statSales = document.getElementById('stat-sales');
-        const statRating = document.getElementById('stat-rating');
-        const myProductsGridSim = document.getElementById('myProductsGridSim');
-
-        // Inicializar en cero
-        statProducts.textContent = '0';
-        statSales.textContent = '0';
-        statRating.textContent = '0';
-
-        // Manejar previsualización de imagen
-        const productImageFile = document.getElementById('productImageFile');
-        const productImagePreview = document.getElementById('productImagePreview');
-        productImageFile.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                    const reader = new FileReader();
-                reader.onload = function(evt) {
-                    productImagePreview.src = evt.target.result;
-                    productImagePreview.style.display = 'inline-block';
-                    };
-                    reader.readAsDataURL(file);
-            } else {
-                productImagePreview.src = '';
-                productImagePreview.style.display = 'none';
-            }
-        });
-
-        // Manejar creación de producto
-        const createProductForm = document.getElementById('createProductForm');
-        createProductForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            productCount++;
-            statProducts.textContent = productCount;
-            // Obtener datos
-            const name = document.getElementById('productName').value;
-            const price = document.getElementById('productPrice').value;
-            const type = document.getElementById('productType').value;
-            const category = document.getElementById('productCategory').value;
-            const stock = document.getElementById('productStock').value;
-            let img = productImagePreview.src || 'https://via.placeholder.com/200x200?text=Product';
-            // Mostrar producto en la sección
-            const card = document.createElement('div');
-            card.className = 'col-md-4';
-            card.innerHTML = `
-                <div class="product-card position-relative">
-                    <button class="btn btn-sm btn-danger position-absolute" style="top:10px;right:10px;border-radius:50%;padding:6px 8px;z-index:2;" title="Eliminar producto"><i class="fas fa-trash"></i></button>
-                    <div class="product-image"><img src="${img}" alt="${name}"></div>
-                    <div class="product-info">
-                        <h5>${name}</h5>
-                        <div class="price">$${price} <span class="badge bg-secondary">${type}</span></div>
-                        <div class="small text-muted">${category} | Stock: ${stock}</div>
-                    </div>
-                </div>
-            `;
-            myProductsGridSim.appendChild(card);
-            // Agrega el evento para eliminar el producto
-            card.querySelector('button').onclick = function() {
-                card.remove();
-                productCount = Math.max(0, productCount - 1);
-                statProducts.textContent = productCount;
-            };
-            // Cerrar modal y limpiar
-            createProductForm.reset();
-            productImagePreview.src = '';
-            productImagePreview.style.display = 'none';
-            const modal = bootstrap.Modal.getInstance(document.getElementById('newProductModal'));
-            modal.hide();
-        });
-    </script>
-    <script type="module">
-        import { addProductToArtisan } from './firebase/store.js';
-        import { auth } from './firebase/firebase-config.js';
-        import { db } from './firebase/firebase-config.js';
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-        const createProductBtn = document.querySelector('.modal-footer .btn.btn-primary');
-        createProductBtn.onclick = async function() {
-            const user = auth.currentUser;
-            if (!user) {
-                alert('Debes iniciar sesión para crear productos.');
-                return;
-            }
-            // Obtener datos del formulario
-            const name = document.querySelector('input[placeholder="Ej: Mola Tradicional Guna"]').value;
-            const price = parseFloat(document.querySelector('input[placeholder="0.00"]').value);
-            const description = document.querySelector('textarea[placeholder="Describe tu producto..."]').value;
-            const category = document.getElementById('productCategory').value;
-            const stock = parseInt(document.querySelector('input[placeholder="Cantidad disponible"]').value);
-            let imgUrl = '';
-            if (productDropzone.files.length > 0) {
-                // Subir la imagen a imgbb
-                const file = productDropzone.files[0];
-                const formData = new FormData();
-                formData.append('image', await toBase64(file));
-                const res = await fetch('https://api.imgbb.com/1/upload?key=71dd2db7d888ab434a8ead94a346fc43', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-                if (data && data.data && data.data.url) {
-                    imgUrl = data.data.url;
-                }
-            }
-            const product = {
-                name,
-                price,
-                description,
-                category,
-                stock,
-                img: imgUrl
-            };
-            try {
-                await addProductToArtisan(user.uid, product);
-                alert('¡Producto creado y publicado exitosamente!');
-                document.querySelector('.product-form').reset();
-                productImagePreview.innerHTML = '';
-                productDropzone.removeAllFiles(true);
-                const modal = bootstrap.Modal.getInstance(document.getElementById('newProductModal'));
-                modal.hide();
-            } catch (e) {
-                alert('Error al crear producto: ' + e.message);
-            }
-        };
-
-        async function toBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        const myProductsGrid = document.getElementById('myProductsGrid');
-
-        // Analytics charts
-        if (document.getElementById('salesChart')) {
-            const salesChart = new Chart(document.getElementById('salesChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Ventas',
-                        data: [12, 19, 3, 5, 2, 3],
-                        borderColor: '#a22a22',
-                        backgroundColor: 'rgba(162,42,34,0.1)',
-                        fill: true
-                    }]
-                },
-                options: { responsive: true }
-            });
-            const ordersChart = new Chart(document.getElementById('ordersChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Órdenes',
-                        data: [5, 7, 4, 8, 3, 6],
-                        backgroundColor: '#a22a22'
-                    }]
-                },
-                options: { responsive: true }
-            });
-        }
-    </script>
-    <script>
-        // Eliminar producto definitivamente
-        function setupDeleteProductButtons() {
-            document.querySelectorAll('.product-card .fa-trash').forEach(btn => {
-                btn.parentElement.onclick = function(e) {
-                    e.preventDefault();
-                    if (confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.')) {
-                        const card = btn.closest('.product-card');
-                        card.remove();
-                        // Aquí puedes agregar una llamada a backend para eliminar el producto de la base de datos si es necesario
-                    }
-                };
-            });
-        }
-        // Ejecutar al cargar la página
-        setupDeleteProductButtons();
-    </script>
-    <!-- Scroll suave a la sección de productos al hacer clic en 'My Products' -->
-    <script>
-        document.querySelectorAll('.profile-nav .nav-link').forEach(link => {
-            if (link.textContent.trim().includes('My Products')) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const productsSection = document.querySelector('.content-card.mb-4 h3');
-                    if (productsSection && productsSection.textContent.includes('Recent Products')) {
-                        productsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        // Resaltar la sección
-                        const card = productsSection.closest('.content-card');
-                        card.classList.add('shadow-lg', 'border', 'border-primary');
-                        setTimeout(() => card.classList.remove('shadow-lg', 'border', 'border-primary'), 1200);
-                    }
-                });
-            }
-        });
-    </script>
-    <script>
-// Navegación dinámica del dashboard
-const navLinks = document.querySelectorAll('.profile-nav .nav-link');
-const sections = document.querySelectorAll('.dashboard-section');
-navLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Quitar activo de todos
-        navLinks.forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
-        // Mostrar solo la sección correspondiente
-        const sectionId = this.getAttribute('data-section') + '-section';
-        sections.forEach(sec => {
-            if (sec.id === sectionId) {
-                sec.classList.remove('d-none');
-                sec.classList.add('animate__animated', 'animate__fadeIn');
-                setTimeout(() => sec.classList.remove('animate__animated', 'animate__fadeIn'), 800);
-            } else {
-                sec.classList.add('d-none');
-            }
-        });
-    });
-});
-</script>
-<!-- Puedes agregar animate.css para animaciones suaves -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="components/auth-modal.js"></script>
     <auth-modal></auth-modal>
     <script src="js/utils/auth-guard.js"></script>
+    <script src="js/services/platform-services.js"></script>
+    <script src="js/profile-dashboard.js"></script>
     <script src="js/app-core.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+        document.addEventListener('DOMContentLoaded', function () {
+            const supportBtn = document.getElementById('supportChatBtn');
+            if (supportBtn) {
+                supportBtn.addEventListener('click', function () {
+                    const user = window.localDB.getCurrentUser();
+                    if (!user || !window.PlatformServices) return;
+                    const chat = window.PlatformServices.startChatWithArtisan(
+                        0,
+                        'Soporte ArteSana',
+                        '',
+                        { buyerId: user.id, buyerName: user.name, storeName: 'Soporte técnico' }
+                    );
+                    window.PlatformServices.sendMessage(chat.id, 'Hola, necesito ayuda con mi cuenta.', 'buyer');
+                    if (window.ProfileDashboard) window.ProfileDashboard.showSection('chat');
+                    setTimeout(() => {
+                        const item = document.querySelector(`.profile-chat-item[data-chat="${chat.id}"]`);
+                        if (item) item.click();
+                    }, 100);
+                });
+            }
+        });
+    </script>
     
     <!-- Avatar Management Script -->
     <script>
@@ -782,33 +585,5 @@ navLinks.forEach(link => {
         });
     </script>
     <script src="js/app-core.js"></script>
-    <script>
-        function renderOrderStatuses() {
-            if (!window.PlatformServices) return;
-            const tbody = document.getElementById('ordersTableBody');
-            if (!tbody) return;
-            const esc = window.SecurityUtils ? window.SecurityUtils.escapeHtml : (s) => s;
-            const badgeMap = {
-                delivered: 'bg-success',
-                shipped: 'bg-info text-dark',
-                processing: 'bg-warning text-dark',
-                pending: 'bg-secondary',
-                cancelled: 'bg-danger'
-            };
-            tbody.innerHTML = window.PlatformServices.getOrders().map(o => `
-                <tr>
-                    <td>#${esc(o.id)}</td>
-                    <td>${esc(o.product)}</td>
-                    <td>${esc(o.updatedAt)}</td>
-                    <td><span class="badge ${badgeMap[o.status] || 'bg-secondary'}">${esc(o.statusLabel)}</span></td>
-                    <td>$${Number(o.total).toFixed(2)}</td>
-                </tr>
-            `).join('');
-        }
-        document.addEventListener('app:ready', renderOrderStatuses);
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.PlatformServices) renderOrderStatuses();
-        });
-    </script>
 </body>
 </html> 

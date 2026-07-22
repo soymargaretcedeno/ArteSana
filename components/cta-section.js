@@ -152,10 +152,28 @@ class CtaSection extends HTMLElement {
         <div class="cta-content">
           <h2 class="cta-title">${title}</h2>
           <p class="cta-subtitle">${subtitle}</p>
-          <button class="cta-btn" onclick="openSignUpModal()">${buttonText}</button>
+          <button class="cta-btn" id="ctaActionBtn">${buttonText}</button>
         </div>
       </section>
     `;
+
+    const btn = this.shadowRoot.getElementById('ctaActionBtn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const action = this.getAttribute('button-action') || '';
+        const link = this.getAttribute('button-link') || '';
+        if (action === 'become-seller' || link === 'crear-tienda.html' || link.includes('become-seller')) {
+          if (window.RoleRouter) window.RoleRouter.goBecomeSeller();
+          else window.openSignUpModal();
+          return;
+        }
+        if (link && link !== '#' && !link.includes('my-store-section')) {
+          window.location.href = link;
+          return;
+        }
+        window.openSignUpModal();
+      });
+    }
   }
 }
 customElements.define('cta-section', CtaSection);
@@ -166,4 +184,9 @@ window.openSignUpModal = function() {
     if (authModal && typeof authModal.open === 'function') {
         authModal.open('register');
     }
+};
+
+window.goBecomeSeller = function() {
+    if (window.RoleRouter) window.RoleRouter.goBecomeSeller();
+    else window.openSignUpModal();
 }; 

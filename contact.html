@@ -156,6 +156,8 @@
 </head>
 <body>
     <script src="js/local-database.js"></script>
+    <script src="js/stores-database.js"></script>
+    <script src="js/role-router.js"></script>
     <script src="js/i18n.js"></script>
     <script src="components/header-component.js"></script>
     <script src="components/header-user-component.js"></script>
@@ -209,10 +211,14 @@
 
   <!-- CTA Section -->
   <cta-section 
-    title="Ready to Connect with Panamanian Art?" 
-    subtitle="Discover unique handcrafts or create your own artisan store for free. Join our community and share your art with the world!" 
-    button-text="Create Your Free Store" 
-    button-link="perfil.html#my-store-section"
+    title-i18n="cta_become_seller_title"
+    subtitle-i18n="cta_become_seller_subtitle"
+    button-text-i18n="cta_become_seller_button"
+    title="¿Quieres vender tus artesanías?" 
+    subtitle="Convierte tu cuenta en vendedor y crea tu tienda en pocos pasos." 
+    button-text="Crear tienda / Convertirme en vendedor" 
+    button-link="crear-tienda.html"
+    button-action="become-seller"
     style="--primary-color:#E9EDC9; --mola-yellow:#A22A2A; --cream-white:#800000; --mola-red:#E5989B; --mola-orange:#FF9F1C;">
   </cta-section>
   <!-- Footer Component -->

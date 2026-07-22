@@ -98,22 +98,36 @@
             };
             chat.messages.push(msg);
             chat.lastMessage = msg.text;
+            if (sender === 'buyer') chat.unread = (chat.unread || 0) + 1;
+            else chat.unread = 0;
             save(STORAGE_KEYS.chats, chats);
             return msg;
         },
 
         // --- Chat comprador-artesano ---
         // API: POST /api/chats (iniciar conversación con artesano)
-        startChatWithArtisan(artisanId, artisanName, artisanAvatar) {
+        startChatWithArtisan(artisanId, artisanName, artisanAvatar, options = {}) {
             const chats = PlatformServices.getMessageThreads();
-            const existing = chats.find(c => c.artisanId === artisanId);
+            const buyer = global.localDB && global.localDB.getCurrentUser();
+            const buyerId = options.buyerId || (buyer && buyer.id) || null;
+            const storeId = options.storeId || null;
+
+            const existing = chats.find(c =>
+                c.artisanId === artisanId &&
+                (buyerId == null || c.buyerId == null || c.buyerId === buyerId) &&
+                (!storeId || !c.storeId || c.storeId === storeId)
+            );
             if (existing) return existing;
 
             const chat = {
-                id: 'chat-' + artisanId,
+                id: 'chat-' + artisanId + '-' + (buyerId || 'guest') + '-' + Date.now(),
                 artisanId,
                 artisanName,
-                artisanAvatar,
+                artisanAvatar: artisanAvatar || '',
+                storeId,
+                storeName: options.storeName || '',
+                buyerId,
+                buyerName: (buyer && buyer.name) || options.buyerName || 'Visitante',
                 lastMessage: '',
                 unread: 0,
                 messages: []
@@ -121,6 +135,18 @@
             chats.unshift(chat);
             save(STORAGE_KEYS.chats, chats);
             return chat;
+        },
+
+        /** Hilos donde el usuario es el vendedor */
+        getSellerThreads(artisanId) {
+            return PlatformServices.getMessageThreads().filter(c => c.artisanId === artisanId);
+        },
+
+        /** Hilos del comprador actual */
+        getBuyerThreads(buyerId) {
+            return PlatformServices.getMessageThreads().filter(c =>
+                c.buyerId === buyerId || (!c.buyerId && c.artisanId !== buyerId)
+            );
         },
 
         // --- Estados de pedidos ---
@@ -166,13 +192,13 @@
                 shipping: 'We ship worldwide with protected packaging. Delivery times vary by region (5-15 business days).',
                 returns: 'You can request a return within 14 days if the product arrives damaged.',
                 payment: 'We accept credit cards, PayPal and bank transfer at checkout.',
-                artisan: 'Artisans can create their store from Profile > My Store section.',
+                artisan: 'To sell, choose Seller when you register, or use “Become a seller” at the end of Explore.',
                 default: 'I can help with shipping, returns, payments or creating your store. What do you need?'
             } : {
                 shipping: 'Enviamos a todo el mundo con empaque protegido. Entrega en 5-15 días hábiles según región.',
                 returns: 'Puedes solicitar devolución en 14 días si el producto llega dañado.',
                 payment: 'Aceptamos tarjetas, PayPal y transferencia en el checkout.',
-                artisan: 'Los artesanos pueden crear su tienda desde Perfil > Mi Tienda.',
+                artisan: 'Para vender, elige Vendedor al registrarte, o usa “Convertirme en vendedor” al final de Explorar.',
                 default: 'Puedo ayudarte con envíos, devoluciones, pagos o crear tu tienda. ¿Qué necesitas?'
             };
 

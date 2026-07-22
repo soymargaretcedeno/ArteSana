@@ -237,13 +237,19 @@ class PlatformWidgets extends HTMLElement {
     renderMessages() {
         const list = this.shadowRoot.getElementById('messagesList');
         const threads = window.PlatformServices.getMessageThreads();
-        const esc = window.SecurityUtils.escapeHtml;
+        const esc = window.SecurityUtils ? window.SecurityUtils.escapeHtml : (s) => String(s ?? '');
         list.innerHTML = threads.length ? threads.map(t => `
-            <div class="thread-item" data-chat="${t.id}">
-                <strong>${esc(t.artisanName)}</strong>
+            <div class="thread-item" data-chat="${t.id}" style="cursor:pointer;padding:8px 0;border-bottom:1px solid #eee;">
+                <strong>${esc(t.artisanName || t.buyerName || 'Chat')}</strong>
                 <div style="font-size:0.85rem;color:#666;">${esc(t.lastMessage || 'Sin mensajes')}</div>
             </div>
-        `).join('') : `<p>${this.t('no_messages', 'No hay conversaciones.')} <!-- API: GET /api/messages --></p>`;
+        `).join('') : `<p>${this.t('no_messages', 'No hay conversaciones.')}</p>`;
+
+        list.querySelectorAll('.thread-item').forEach(item => {
+            item.addEventListener('click', () => {
+                window.location.href = 'perfil.html#chat';
+            });
+        });
     }
 
     renderNotifications() {

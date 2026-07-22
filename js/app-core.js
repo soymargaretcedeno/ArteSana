@@ -9,6 +9,8 @@
         'js/utils/seo-meta.js',
         'js/utils/lazy-images.js',
         'js/utils/form-validation.js',
+        'js/stores-database.js',
+        'js/role-router.js',
         'js/services/platform-services.js'
     ];
 

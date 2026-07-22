@@ -26,7 +26,8 @@ class LocalDatabase {
                 avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
                 joinDate: '2024-01-15',
                 products: 12,
-                rating: 4.8
+                rating: 4.8,
+                roleSelected: true
             },
             {
                 id: 2,
@@ -37,7 +38,8 @@ class LocalDatabase {
                 avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
                 joinDate: '2024-02-20',
                 orders: 5,
-                favorites: 8
+                favorites: 8,
+                roleSelected: true
             },
             {
                 id: 3,
@@ -49,7 +51,8 @@ class LocalDatabase {
                 avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
                 joinDate: '2024-01-10',
                 products: 8,
-                rating: 4.9
+                rating: 4.9,
+                roleSelected: true
             },
             {
                 id: 4,
@@ -60,7 +63,8 @@ class LocalDatabase {
                 avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
                 joinDate: '2024-03-05',
                 orders: 3,
-                favorites: 12
+                favorites: 12,
+                roleSelected: true
             },
             {
                 id: 5,
@@ -72,7 +76,8 @@ class LocalDatabase {
                 avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
                 joinDate: '2024-01-25',
                 products: 15,
-                rating: 4.7
+                rating: 4.7,
+                roleSelected: true
             }
         ];
 
@@ -147,17 +152,23 @@ class LocalDatabase {
             return { success: false, message: 'Email already registered' };
         }
 
-        // Create new user
+        // Create new user (rol se elige en pantalla siguiente)
         const newUser = {
             id: this.users.length + 1,
             name: userData.name,
             email: userData.email,
             password: userData.password,
-            role: 'customer', // Default role
-            avatar: null, // No avatar by default for new users
+            role: 'customer',
+            roleSelected: false,
+            avatar: null,
             joinDate: new Date().toISOString().split('T')[0],
             orders: 0,
-            favorites: 0
+            favorites: 0,
+            notifications: {
+                email: true,
+                orders: true,
+                chat: true
+            }
         };
 
         // Add to users array
@@ -168,7 +179,29 @@ class LocalDatabase {
         const { password, ...userWithoutPassword } = newUser;
         this.saveCurrentUser(userWithoutPassword);
 
-        return { success: true, user: userWithoutPassword };
+        return { success: true, user: userWithoutPassword, needsRoleSelection: true };
+    }
+
+    /**
+     * Elige rol tras el registro: 'customer' (Cliente) o 'artisan' (Vendedor).
+     */
+    setUserRole(userId, role) {
+        const normalized = role === 'artisan' || role === 'vendedor' || role === 'seller'
+            ? 'artisan'
+            : 'customer';
+
+        return this.updateProfile(userId, {
+            role: normalized,
+            roleSelected: true
+        });
+    }
+
+    /** Cliente → Vendedor (CTA Explore o flujo crear tienda) */
+    becomeSeller(userId) {
+        return this.updateProfile(userId, {
+            role: 'artisan',
+            roleSelected: true
+        });
     }
 
     // Get current user

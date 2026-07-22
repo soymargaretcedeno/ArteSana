@@ -12,14 +12,16 @@
 </head>
 <body style="min-height:100vh;display:flex;flex-direction:column;">
     <script src="js/local-database.js"></script>
+    <script src="js/stores-database.js"></script>
+    <script src="js/role-router.js"></script>
+    <script src="js/user-products-database.js"></script>
     <script src="js/i18n.js"></script>
     <script src="components/header-component.js"></script>
     <script src="components/header-user-component.js"></script>
     <script>window.renderHeader();</script>
     <section class="stores-hero" style="background: linear-gradient(120deg, rgba(162,42,34,0.45) 0%, rgba(252,247,222,0.45) 100%), url('https://mir-s3-cdn-cf.behance.net/project_modules/1400/94fafc153875059.63375a2c3d38a.jpg'); background-size:cover; background-position:center; min-height:420px; padding: 80px 0 60px 0; text-align:center;">
         <h1 style="color:#fff;font-size:3.2rem;font-family:'Playfair Display',serif;font-weight:700;letter-spacing:1px;" data-i18n="store_hero_title">Discover Artisan Stores</h1>
-        <p style="color:#fbeee0;font-size:1.5rem;line-height:1.5;max-width:700px;margin:22px auto 0 auto;" data-i18n="store_hero_subtitle">Browse unique shops from talented Panamanian artisans. Find your next favorite handcraft or get inspired to open your own store!</p>
-        <button id="createStoreBtn" class="btn btn-lg mt-4" style="background:#800000;color:#fff;border-radius:30px;font-size:1.3rem;font-weight:700;padding:16px 48px;border:none;box-shadow:0 2px 12px rgba(128,0,0,0.10);transition:background 0.2s;" data-i18n="store_create_btn">Create my store</button>
+        <p style="color:#fbeee0;font-size:1.5rem;line-height:1.5;max-width:700px;margin:22px auto 0 auto;" data-i18n="store_hero_subtitle_browse">Explora tiendas de artesanos panameños y descubre piezas únicas.</p>
     </section>
     <section class="stores-list-section">
         <div class="container">
@@ -31,52 +33,8 @@
     <footer-component></footer-component>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="components/footer-component.js"></script>
-    <!-- Modal para crear tienda -->
-    <div class="modal fade" id="createStoreModal" tabindex="-1">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content" style="border-radius:22px;overflow:hidden;">
-          <div class="modal-body" style="background:#fff;padding:2.5rem 2rem 2rem 2rem;position:relative;">
-            <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close" style="position:absolute;top:22px;right:22px;background:#fbeee0;border-radius:50%;padding:10px;box-shadow:0 2px 8px rgba(128,0,0,0.10);opacity:1;display:flex;align-items:center;justify-content:center;">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15.5 19L9.5 12L15.5 5" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <h2 data-i18n="create_store_title" style="color:#a22a22;font-family:'Playfair Display',serif;font-weight:700;text-align:center;margin-bottom:1.2rem;">Create your Store</h2>
-            <form id="createStoreForm" autocomplete="off">
-              <div class="mb-3">
-                <label class="form-label" data-i18n="create_store_name_label" style="color:#a22a22;font-weight:600;">Store Name</label>
-                <input type="text" class="form-control" name="name" required maxlength="32" style="border-radius:12px;border:1.5px solid #a22a22;">
-              </div>
-              <div class="mb-3">
-                <label class="form-label" data-i18n="create_store_location_label" style="color:#a22a22;font-weight:600;">Location</label>
-                <input type="text" class="form-control" name="location" required maxlength="32" style="border-radius:12px;border:1.5px solid #a22a22;">
-              </div>
-              <div class="mb-3">
-                <label class="form-label" data-i18n="create_store_photo_label" style="color:#a22a22;font-weight:600;">Photo (URL)</label>
-                <input type="url" class="form-control" name="photo" placeholder="https://..." style="border-radius:12px;border:1.5px solid #a22a22;">
-              </div>
-              <div class="mb-3">
-                <label class="form-label" data-i18n="create_store_desc_label" style="color:#a22a22;font-weight:600;">Short Description</label>
-                <textarea class="form-control" name="desc" rows="2" maxlength="80" style="border-radius:12px;border:1.5px solid #a22a22;"></textarea>
-              </div>
-              <div class="d-flex justify-content-center mt-4">
-                <button type="submit" class="btn" data-i18n="create_store_btn" style="background:#800000;color:#fff;font-weight:700;font-size:1.2rem;padding:12px 38px;border-radius:30px;box-shadow:0 2px 12px rgba(128,0,0,0.10);">Create Store</button>
-              </div>
-            </form>
-            <div id="createStoreSuccess" class="alert alert-success mt-4 d-none" data-i18n="create_store_success" style="text-align:center;">Store created successfully!</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script type="module" src="firebase/store.js"></script>
     <script>
-    // Check for user's own store in localStorage
-    let userStore = null;
-    try {
-      userStore = JSON.parse(localStorage.getItem('myStore'));
-    } catch (e) {}
-    const storeIcon = 'https://cdn-icons-png.flaticon.com/512/2989/2989835.png'; // ícono de tienda moderno y minimalista
-    // Simulated store data with cultural representation
+    // Tiendas demo (catálogo estático) + tiendas de usuarios
     const stores = [
         {
             avatar: '',
@@ -188,24 +146,36 @@
         }
     ];
     const storesGrid = document.getElementById('storesGrid');
-    // If user has their own store, show it first
-    if (userStore && userStore.name && userStore.location) {
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    const userStores = (window.storesDB && window.storesDB.getAllStores()) || [];
+    userStores.forEach((store) => {
         const card = document.createElement('div');
         card.className = 'col-md-6 col-lg-4';
+        const initials = store.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
         card.innerHTML = `
-            <div class="store-card shadow-sm" style="background: linear-gradient(120deg, #fff 80%, #fbeee0 100%); border-radius: 18px; padding: 2rem 1.5rem 1.5rem 1.5rem; min-height: 180px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; position: relative; overflow: hidden; cursor:pointer;" onclick="window.location.href='tienda.html?id=user'">
-                ${userStore.photo ? `<img src="${userStore.photo}" alt="${userStore.name}" class="store-avatar" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #a22a22;box-shadow:0 2px 8px rgba(80,0,0,0.10);margin-bottom:1rem;">` : ''}
-                <h3 class="store-name" style="font-size:1.5rem;color:#a22a22;font-weight:700;margin-bottom:0.3rem;">${userStore.name}</h3>
-                <p class="store-desc" style="color:#6b6657;font-size:1.08rem;margin-bottom:0.7rem;">${userStore.location}</p>
+            <div class="store-card shadow-sm" style="background: linear-gradient(120deg, #fff 80%, #fbeee0 100%); border-radius: 18px; padding: 1.5rem; min-height: 200px; cursor:pointer;" onclick="window.location.href='tienda.html?id=${encodeURIComponent(store.id)}'">
+                <div class="artisan-header" style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+                  ${store.photo
+                    ? `<img src="${esc(store.photo)}" alt="${esc(store.name)}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid #a22a22;">`
+                    : `<div style="width:56px;height:56px;border-radius:50%;border:3px dashed #a22a22;display:flex;align-items:center;justify-content:center;background:#fff;color:#a22a22;font-weight:800;">${esc(initials)}</div>`}
+                  <div style="flex:1;">
+                    <h3 style="font-size:1.25rem;color:#a22a22;font-weight:700;margin:0 0 4px 0;">${esc(store.name)}</h3>
+                    <p style="color:#6b6657;font-size:1rem;margin:0;">${esc(store.location)}</p>
+                    ${store.desc ? `<p style="color:#575443;font-size:0.95rem;margin:6px 0 0 0;">${esc(store.desc)}</p>` : ''}
+                  </div>
+                </div>
+                <span class="badge" style="background:#800000;color:#fff;">Nueva</span>
             </div>
         `;
         storesGrid.appendChild(card);
-    }
+    });
+
     stores.forEach((store, idx) => {
         const card = document.createElement('div');
         card.className = 'col-md-6 col-lg-4';
         card.innerHTML = `
-            <div class="store-card shadow-sm" style="background: linear-gradient(120deg, #fff 80%, #fbeee0 100%); border-radius: 18px; padding: 1.5rem; min-height: 260px; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; position: relative; overflow: hidden;">
+            <div class="store-card shadow-sm" style="background: linear-gradient(120deg, #fff 80%, #fbeee0 100%); border-radius: 18px; padding: 1.5rem; min-height: 260px; cursor:pointer;" onclick="window.location.href='tienda.html?demo=${idx}'">
                 <div class="artisan-header" style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
                   ${store.avatar ? `<img src="${store.avatar}" alt="${store.name}" class="artisan-avatar" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid #a22a22;">` : `<div class='avatar-fallback' style="width:56px;height:56px;border-radius:50%;border:3px dashed #a22a22;display:flex;align-items:center;justify-content:center;background:#fff;color:#a22a22;font-weight:800;">${store.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>`}
                   <div class="artisan-details" style="flex:1;">
@@ -225,59 +195,6 @@
         `;
         storesGrid.appendChild(card);
     });
-    // Modal para productos del artesano
-    const modalHtml = `
-    <div class="modal fade" id="artisanProductsModal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" data-i18n="store_modal_title">Artisan's Products</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" id="artisanProductsBody"></div>
-        </div>
-      </div>
-    </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    const artisanProductsModal = new bootstrap.Modal(document.getElementById('artisanProductsModal'));
-    const artisanProductsBody = document.getElementById('artisanProductsBody');
-    document.querySelectorAll('.btn.btn-primary[data-idx]').forEach(btn => {
-        btn.onclick = function() {
-            const idx = this.getAttribute('data-idx');
-            if(idx === 'user' && userStore) {
-                artisanProductsBody.innerHTML = `<div class='d-flex align-items-center mb-4'>${userStore.photo ? `<img src='${userStore.photo}' style='width:60px;height:60px;border-radius:50%;object-fit:cover;margin-right:18px;'>` : ''}<div><h4 style='margin:0;font-weight:700;'>${userStore.name}</h4><div style='color:#a22a22;font-size:1.1rem;'>${userStore.location}</div></div></div><div class='alert alert-info' data-i18n="store_no_products">You have not uploaded products yet. (Simulation)</div>`;
-                artisanProductsModal.show();
-                return;
-            }
-            const store = stores[idx];
-            artisanProductsBody.innerHTML = `<div class='d-flex align-items-center mb-4'><img src='${store.avatar}' style='width:60px;height:60px;border-radius:50%;object-fit:cover;margin-right:18px;'><div><h4 style='margin:0;font-weight:700;'>${store.name}</h4><div style='color:#a22a22;font-size:1.1rem;'>${store.desc}</div></div></div><div class='row g-4'>${store.products.map(p => `<div class='col-md-6'><div class='product-card' style='background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(80,0,0,0.10);padding:1rem;'><img src='${p.img}' alt='${p.name}' style='width:100%;height:180px;object-fit:cover;border-radius:8px;'><div style='padding:10px 0 0 0;'><h5 style='margin:0 0 6px 0;'>${p.name}</h5></div></div></div>`).join('')}</div>`;
-            artisanProductsModal.show();
-        }
-    });
-    // Botón para crear tienda (simulación)
-    document.getElementById('createStoreBtn').onclick = function() {
-        const modal = new bootstrap.Modal(document.getElementById('createStoreModal'));
-        document.getElementById('createStoreForm').reset();
-        document.getElementById('createStoreSuccess').classList.add('d-none');
-        modal.show();
-    };
-    // Lógica para guardar la tienda
-    document.getElementById('createStoreForm').onsubmit = function(e) {
-      e.preventDefault();
-      const form = e.target;
-      const name = form.name.value.trim();
-      const location = form.location.value.trim();
-      const photo = form.photo.value.trim();
-      const desc = form.desc.value.trim();
-      if (!name || !location) return;
-      const store = { name, location, photo, desc };
-      localStorage.setItem('myStore', JSON.stringify(store));
-      document.getElementById('createStoreSuccess').classList.remove('d-none');
-      setTimeout(() => {
-        bootstrap.Modal.getInstance(document.getElementById('createStoreModal')).hide();
-        window.location.reload();
-      }, 1200);
-    };
     </script>
     <script src="js/theme.js"></script>
     <script src="components/auth-modal.js"></script>

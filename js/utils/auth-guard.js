@@ -9,7 +9,8 @@
         'perfil.html',
         'checkout.html',
         'add-product.html',
-        'order-confirmation.html'
+        'order-confirmation.html',
+        'crear-tienda.html'
     ];
 
     const AUTH_OPTIONAL_ROUTES = ['cart.html'];
@@ -43,6 +44,15 @@
             return false;
         }
 
+        // Vendedor sin tienda: forzar flujo de creación (excepto ya en crear-tienda)
+        if (isAuthenticated() && page === 'perfil.html' && global.RoleRouter && global.localDB) {
+            const user = global.localDB.getCurrentUser();
+            if (global.RoleRouter.isSeller(user) && !global.RoleRouter.hasStore(user)) {
+                window.location.replace('crear-tienda.html');
+                return false;
+            }
+        }
+
         if (AUTH_OPTIONAL_ROUTES.includes(page) && !isAuthenticated()) {
             document.dispatchEvent(new CustomEvent('auth:guest-mode', { detail: { page } }));
         }
@@ -56,11 +66,21 @@
         return url;
     }
 
+    function getDefaultHome() {
+        if (!isAuthenticated() || !global.localDB) return 'explorar.html';
+        const user = global.localDB.getCurrentUser();
+        if (global.RoleRouter) {
+            return global.RoleRouter.getHomeForUser(user) || 'explorar.html';
+        }
+        return 'perfil.html';
+    }
+
     global.AuthGuard = {
         guardPrivateRoutes,
         isAuthenticated,
         redirectToLogin,
         getPostLoginRedirect,
+        getDefaultHome,
         PRIVATE_ROUTES
     };
 

@@ -439,8 +439,11 @@ class ProductsDatabase {
 
     // Create order
     createOrder(cartItems, shippingInfo, paymentInfo) {
+        const currentUser = window.localDB && window.localDB.getCurrentUser();
         const order = {
             id: Date.now(),
+            userId: currentUser ? currentUser.id : null,
+            buyerName: currentUser ? currentUser.name : (shippingInfo && shippingInfo.name) || '',
             items: cartItems,
             subtotal: this.getCartTotal(),
             shipping: this.calculateShipping(cartItems, shippingInfo.country),
@@ -455,10 +458,10 @@ class ProductsDatabase {
 
         order.total = order.subtotal + order.shipping + order.tax;
 
-        // Save order to localStorage
-        const orders = JSON.parse(localStorage.getItem('artesana_orders') || '[]');
+        // Pedidos de compra (clave separada de muestras de plataforma)
+        const orders = JSON.parse(localStorage.getItem('artesana_checkout_orders') || '[]');
         orders.push(order);
-        localStorage.setItem('artesana_orders', JSON.stringify(orders));
+        localStorage.setItem('artesana_checkout_orders', JSON.stringify(orders));
 
         // Clear cart after successful order
         this.clearCart();
@@ -486,10 +489,34 @@ class ProductsDatabase {
         return deliveryDate.toISOString();
     }
 
-    // Get user orders
-    getUserOrders() {
-        const orders = JSON.parse(localStorage.getItem('artesana_orders') || '[]');
+    // Get checkout orders (all or filtered by buyer)
+    getUserOrders(userId) {
+        let orders = JSON.parse(localStorage.getItem('artesana_checkout_orders') || '[]');
+        // Compat: órdenes antiguas en artesana_orders con estructura de checkout
+        try {
+            const legacy = JSON.parse(localStorage.getItem('artesana_orders') || '[]');
+            const checkoutLike = legacy.filter(o => o && Array.isArray(o.items) && o.createdAt);
+            if (checkoutLike.length && !orders.length) {
+                orders = checkoutLike;
+            }
+        } catch { /* ignore */ }
+
+        if (userId != null) {
+            orders = orders.filter(o => o.userId === userId);
+        }
         return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
+    /** Órdenes de venta: productos del vendedor en pedidos de compra */
+    getSellerOrders(sellerId) {
+        const all = this.getUserOrders();
+        return all.filter(order =>
+            (order.items || []).some(item => {
+                const artisanId = item.artisan && item.artisan.id;
+                const ownerId = item.userId;
+                return artisanId === sellerId || ownerId === sellerId;
+            })
+        );
     }
 
     // Reset database to sample data
