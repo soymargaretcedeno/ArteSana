@@ -233,4 +233,26 @@ class LocalDatabase {
 window.localDB = new LocalDatabase();
 
 // Export for use in other modules
-window.LocalDatabase = LocalDatabase; 
+window.LocalDatabase = LocalDatabase;
+
+(function loadSupabaseAuth() {
+    if (window.supabaseAuth || document.querySelector('script[src="js/supabase-auth.js"]')) return;
+
+    function loadAuthScript() {
+        const authScript = document.createElement('script');
+        authScript.src = 'js/supabase-auth.js';
+        authScript.onerror = () => console.error('[ArteSana] No se pudo cargar js/supabase-auth.js');
+        document.head.appendChild(authScript);
+    }
+
+    if (window.supabase) {
+        loadAuthScript();
+        return;
+    }
+
+    const supabaseScript = document.createElement('script');
+    supabaseScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    supabaseScript.onload = loadAuthScript;
+    supabaseScript.onerror = () => console.error('[ArteSana] No se pudo cargar la librería de Supabase');
+    document.head.appendChild(supabaseScript);
+})(); 
