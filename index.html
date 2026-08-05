@@ -61,7 +61,7 @@
         <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     </noscript>
 </head>
-<body>
+<body data-enhanced-messages="true">
     <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
     <!-- Pantalla de carga -->
     <div class="loading-screen" id="loadingScreen">
@@ -517,6 +517,7 @@
             counters.forEach(counter => observer.observe(counter));
         });
     </script>
+    <script src="components/messages/messages-init.js"></script>
     <script src="js/app-core.js"></script>
     <script>
 // Actualizar placeholders del formulario de contacto al cambiar idioma

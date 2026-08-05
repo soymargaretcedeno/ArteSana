@@ -285,7 +285,7 @@
         }
     </style>
 </head>
-<body data-app-core="manual">
+<body data-app-core="manual" data-enhanced-messages="true">
     <script src="js/local-database.js"></script>
     <script src="js/products-database.js"></script>
     <script src="js/user-products-database.js"></script>
@@ -757,6 +757,7 @@
             }, 3000);
         }
     </script>
+    <script src="components/messages/messages-init.js"></script>
     <script src="js/app-core.js"></script>
     <script>document.addEventListener('DOMContentLoaded', () => { if (window.AppCore) AppCore.init({ auth: false }); });</script>
     <script src="js/theme.js"></script>

@@ -7,12 +7,25 @@ class PlatformWidgets extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.activePanel = null;
+        this._onMessagesOpened = () => this.hideAllButtons();
+        this._onMessagesClosed = () => this.showAllButtons();
     }
 
     connectedCallback() {
         this.render();
         this.bindEvents();
         this.updateBadge();
+        document.addEventListener('messages:opened', this._onMessagesOpened);
+        document.addEventListener('messages:closed', this._onMessagesClosed);
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener('messages:opened', this._onMessagesOpened);
+        document.removeEventListener('messages:closed', this._onMessagesClosed);
+    }
+
+    isEnhancedMessages() {
+        return document.body.dataset.enhancedMessages === 'true';
     }
 
     t(key, fallback) {
@@ -49,7 +62,7 @@ class PlatformWidgets extends HTMLElement {
                     align-items: center;
                     justify-content: center;
                     font-size: 1.1rem;
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.25s ease, visibility 0.25s ease;
                     position: relative;
                 }
                 .widget-btn:hover, .widget-btn:focus-visible {
@@ -57,6 +70,12 @@ class PlatformWidgets extends HTMLElement {
                     box-shadow: 0 6px 20px rgba(128,0,0,0.45);
                     outline: 2px solid #FFD700;
                     outline-offset: 2px;
+                }
+                .widget-btn.hidden-btn {
+                    opacity: 0;
+                    pointer-events: none;
+                    transform: scale(0.6);
+                    visibility: hidden;
                 }
                 .widget-badge {
                     position: absolute;
@@ -193,6 +212,10 @@ class PlatformWidgets extends HTMLElement {
         const root = this.shadowRoot;
         root.getElementById('btnHelp').addEventListener('click', () => this.togglePanel('panelHelp'));
         root.getElementById('btnMessages').addEventListener('click', () => {
+            if (this.isEnhancedMessages()) {
+                this.openMessagesOverlay();
+                return;
+            }
             this.renderMessages();
             this.togglePanel('panelMessages');
         });
@@ -266,6 +289,35 @@ class PlatformWidgets extends HTMLElement {
         });
     }
 
+    openMessagesOverlay() {
+        this.closeAllPanels();
+        this.hideAllButtons();
+        const overlay = document.querySelector('messages-overlay');
+        if (overlay) {
+            overlay.open();
+        } else {
+            document.addEventListener('messages:ready', () => {
+                document.querySelector('messages-overlay')?.open();
+            }, { once: true });
+        }
+    }
+
+    hideAllButtons() {
+        this.shadowRoot.querySelectorAll('.widget-btn').forEach(btn => btn.classList.add('hidden-btn'));
+    }
+
+    showAllButtons() {
+        this.shadowRoot.querySelectorAll('.widget-btn').forEach(btn => btn.classList.remove('hidden-btn'));
+    }
+
+    updateButtonVisibility(activeBtnId) {
+        const btnIds = ['btnHelp', 'btnMessages', 'btnNotifications'];
+        btnIds.forEach(id => {
+            const btn = this.shadowRoot.getElementById(id);
+            if (btn) btn.classList.toggle('hidden-btn', id !== activeBtnId);
+        });
+    }
+
     togglePanel(id) {
         const panel = this.shadowRoot.getElementById(id);
         const isOpen = panel.classList.contains('open');
@@ -273,12 +325,23 @@ class PlatformWidgets extends HTMLElement {
         if (!isOpen) {
             panel.classList.add('open');
             this.activePanel = id;
+            const btnMap = {
+                panelHelp: 'btnHelp',
+                panelMessages: 'btnMessages',
+                panelNotifications: 'btnNotifications'
+            };
+            this.updateButtonVisibility(btnMap[id]);
+        } else {
+            this.showAllButtons();
         }
     }
 
     closeAllPanels() {
         this.shadowRoot.querySelectorAll('.widget-panel').forEach(p => p.classList.remove('open'));
         this.activePanel = null;
+        if (!this.isEnhancedMessages() || !document.querySelector('messages-overlay.open')) {
+            this.showAllButtons();
+        }
     }
 
     updateBadge() {
