@@ -104,7 +104,7 @@ class AuthModal extends HTMLElement {
                 .auth-modal-header {
                     text-align: center;
                     padding: 25px 40px 20px 40px;
-                    background: linear-gradient(135deg, #962626 0%, #800000 100%);
+                    background: linear-gradient(135deg, #8F1111 0%, #8F1111 100%);
                     color: white;
                     position: relative;
                     overflow: hidden;
@@ -184,7 +184,7 @@ class AuthModal extends HTMLElement {
 
                 .auth-form-group input:focus {
                     outline: none;
-                    border-color: #962626;
+                    border-color: #8F1111;
                     box-shadow: 0 0 0 3px rgba(150, 38, 38, 0.1);
                 }
 
@@ -194,7 +194,7 @@ class AuthModal extends HTMLElement {
 
                 /* Submit Button */
                 .auth-submit-btn {
-                    background: linear-gradient(135deg, #962626 0%, #800000 100%);
+                    background: linear-gradient(135deg, #8F1111 0%, #8F1111 100%);
                     color: white;
                     border: none;
                     padding: 16px 24px;
@@ -240,7 +240,7 @@ class AuthModal extends HTMLElement {
                 }
 
                 .auth-link {
-                    color: #962626;
+                    color: #8F1111;
                     text-decoration: none;
                     font-weight: 600;
                     font-size: 0.95rem;
@@ -252,7 +252,7 @@ class AuthModal extends HTMLElement {
 
                 .auth-link:hover {
                     background: rgba(150, 38, 38, 0.1);
-                    color: #800000;
+                    color: #8F1111;
                 }
 
                 /* Switch Section */
@@ -271,8 +271,8 @@ class AuthModal extends HTMLElement {
 
                 .auth-switch-btn {
                     background: transparent;
-                    color: #962626;
-                    border: 2px solid #962626;
+                    color: #8F1111;
+                    border: 2px solid #8F1111;
                     padding: 12px 24px;
                     border-radius: 12px;
                     font-weight: 600;
@@ -282,7 +282,7 @@ class AuthModal extends HTMLElement {
                 }
 
                 .auth-switch-btn:hover {
-                    background: #962626;
+                    background: #8F1111;
                     color: white;
                     transform: translateY(-2px);
                     box-shadow: 0 6px 20px rgba(150, 38, 38, 0.3);
@@ -293,7 +293,7 @@ class AuthModal extends HTMLElement {
                     display: flex;
                     align-items: center;
                     gap: 8px;
-                    color: #962626;
+                    color: #8F1111;
                     cursor: pointer;
                     font-weight: 600;
                     font-size: 0.95rem;
@@ -310,7 +310,7 @@ class AuthModal extends HTMLElement {
                 .back-to-login .icon {
                     width: 18px;
                     height: 18px;
-                    fill: #962626;
+                    fill: #8F1111;
                 }
 
                 /* Message System */
@@ -521,42 +521,42 @@ class AuthModal extends HTMLElement {
                 }
 
                 [data-theme="dark"] .auth-submit-btn {
-                    background: linear-gradient(135deg, #FFD700 0%, #FF7F11 100%);
+                    background: linear-gradient(135deg, #D4A017 0%, #B85C38 100%);
                     color: #1a0000;
                 }
 
                 [data-theme="dark"] .auth-submit-btn:hover {
-                    background: linear-gradient(135deg, #FF7F11 0%, #E63946 100%);
+                    background: linear-gradient(135deg, #B85C38 0%, #8F1111 100%);
                     color: #ffffff;
                 }
 
                 [data-theme="dark"] .auth-link {
-                    color: #FFD700;
+                    color: #D4A017;
                 }
 
                 [data-theme="dark"] .auth-link:hover {
-                    color: #FF7F11;
+                    color: #B85C38;
                 }
 
                 [data-theme="dark"] .auth-switch-btn {
-                    background: #FFD700;
+                    background: #D4A017;
                     color: #1a0000;
                 }
 
                 [data-theme="dark"] .auth-switch-btn:hover {
-                    background: #FF7F11;
+                    background: #B85C38;
                     color: #ffffff;
                 }
 
                 [data-theme="dark"] .auth-message {
                     background: rgba(255, 215, 0, 0.1);
-                    border-color: #FFD700;
+                    border-color: #D4A017;
                     color: #ffffff;
                 }
 
                 [data-theme="dark"] .auth-message.error {
                     background: rgba(230, 57, 70, 0.1);
-                    border-color: #E63946;
+                    border-color: #8F1111;
                 }
 
                 [data-theme="dark"] .auth-message.success {
@@ -753,8 +753,16 @@ class AuthModal extends HTMLElement {
             this.handleForgotPassword();
         });
 
+        const twoFactorForm = this.shadowRoot.querySelector('#twoFactorForm form');
+        if (twoFactorForm) {
+            twoFactorForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handle2FAVerify();
+            });
+        }
+
         this._setSubmitLoading = (formId, loading) => {
-            const btn = this.shadowRoot.querySelector(`#${formId} .auth-submit-btn`);
+            const btn = this.shadowRoot.querySelector(`#${formId}Form .auth-submit-btn`);
             if (btn) {
                 btn.disabled = loading;
                 btn.style.opacity = loading ? '0.7' : '';
@@ -770,6 +778,13 @@ class AuthModal extends HTMLElement {
     }
 
     open(formType = 'login') {
+        const isLoggedIn = (window.AuthGuard && window.AuthGuard.isAuthenticated())
+            || (window.localDB && window.localDB.isLoggedIn && window.localDB.isLoggedIn());
+        if (isLoggedIn) {
+            sessionStorage.removeItem('artesana_redirect_after_login');
+            return;
+        }
+
         this.currentForm = formType;
         this.showForm(formType);
         
@@ -817,8 +832,81 @@ class AuthModal extends HTMLElement {
     }
 
     switchToLogin() {
+        this._pendingLogin = null;
         this.currentForm = 'login';
         this.showForm('login');
+    }
+
+    _t(key) {
+        const lang = localStorage.getItem('lang') || 'es';
+        return (window.translations && window.translations[lang] && window.translations[lang][key]) || key;
+    }
+
+    _completeAuthSuccess(type) {
+        const t = (key) => this._t(key);
+        this.showMessage(type === 'register' ? t('auth_register_success') : t('auth_login_success'), 'success');
+        this.close();
+        if (window.renderHeader) window.renderHeader();
+        setTimeout(() => {
+            if (type === 'register') {
+                window.location.href = 'seleccionar-rol.html';
+                return;
+            }
+            const redirectUrl = window.AuthGuard?.getPostLoginRedirect?.();
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+                return;
+            }
+            window.location.href = window.RoleService
+                ? window.RoleService.getPostAuthRedirect()
+                : 'perfil.html';
+        }, 1000);
+    }
+
+    async _runLogin(email, password, twoFactorCode) {
+        if (window.supabaseAuth) {
+            return window.supabaseAuth.login(email, password, twoFactorCode);
+        }
+        if (window.localDB) {
+            const local = window.localDB.authenticate(email, password, twoFactorCode);
+            if (local.success) return { success: true, user: local.user };
+            if (local.requires2FA) return { success: false, requires2FA: true, userId: local.userId };
+            return {
+                success: false,
+                message: this._t('auth_invalid_credentials') !== 'auth_invalid_credentials'
+                    ? this._t('auth_invalid_credentials')
+                    : (localStorage.getItem('lang') === 'es' ? 'Correo o contraseña incorrectos' : 'Invalid email or password')
+            };
+        }
+        return {
+            success: false,
+            message: localStorage.getItem('lang') === 'es'
+                ? 'No se pudo cargar el sistema de acceso. Recarga la página.'
+                : 'Could not load sign-in. Please reload the page.'
+        };
+    }
+
+    async _runRegister(name, email, password) {
+        if (window.supabaseAuth) {
+            return window.supabaseAuth.register(name, email, password);
+        }
+        if (window.localDB) {
+            const local = window.localDB.register({ name, email, password });
+            return local.success
+                ? { success: true, user: local.user }
+                : {
+                    success: false,
+                    message: localStorage.getItem('lang') === 'es'
+                        ? 'Este correo ya está registrado'
+                        : 'This email is already registered'
+                };
+        }
+        return {
+            success: false,
+            message: localStorage.getItem('lang') === 'es'
+                ? 'No se pudo cargar el registro. Recarga la página.'
+                : 'Could not load registration. Please reload the page.'
+        };
     }
 
     switchToRegister() {
@@ -852,44 +940,73 @@ class AuthModal extends HTMLElement {
     }
 
     async handleLogin() {
-        const email = this.shadowRoot.getElementById('loginEmail').value;
+        const email = this.shadowRoot.getElementById('loginEmail').value.trim();
         const password = this.shadowRoot.getElementById('loginPassword').value;
-        const lang = localStorage.getItem('lang') || 'es';
-        const t = (key) => window.translations && window.translations[lang] && window.translations[lang][key] ? window.translations[lang][key] : key;
+        const t = (key) => this._t(key);
         
         if (!email || !password) {
             this.showMessage(t('auth_please_complete_fields'), 'error');
             return;
         }
 
-        if (!window.supabaseAuth) {
+        if (!window.supabaseAuth && !window.localDB) {
             try {
                 await this.ensureSupabase();
             } catch {
-                this.showMessage('Supabase no está cargado. Recarga la página.', 'error');
-                return;
+                /* auth local como respaldo si Supabase no carga */
             }
         }
 
         this._setSubmitLoading('login', true);
-        const result = await window.supabaseAuth.login(email, password);
+        const result = await this._runLogin(email, password);
         this._setSubmitLoading('login', false);
-        
+
+        if (result.requires2FA) {
+            this._pendingLogin = { email, password };
+            this.currentForm = 'twoFactor';
+            this.showForm('twoFactor');
+            this.showMessage(
+                t('auth_2fa_subtitle') !== 'auth_2fa_subtitle'
+                    ? t('auth_2fa_subtitle')
+                    : 'Ingresa el código de 6 dígitos (demo: 123456)',
+                'success',
+                'twoFactor'
+            );
+            return;
+        }
+
         if (result.success) {
-            this.showMessage(t('auth_login_success'), 'success');
-            this.close();
-            if (window.renderHeader) window.renderHeader();
-            setTimeout(() => {
-                window.location.href = 'perfil.html';
-            }, 1000);
+            this._completeAuthSuccess('login');
         } else {
             this.showMessage(result.message, 'error');
         }
     }
 
+    async handle2FAVerify() {
+        const code = this.shadowRoot.getElementById('twoFactorCode')?.value.trim();
+        const pending = this._pendingLogin;
+
+        if (!pending || !code) {
+            this.showMessage(this._t('auth_please_complete_fields'), 'error', 'twoFactor');
+            return;
+        }
+
+        this._setSubmitLoading('twoFactor', true);
+        const result = await this._runLogin(pending.email, pending.password, code);
+        this._setSubmitLoading('twoFactor', false);
+
+        if (result.success) {
+            this._pendingLogin = null;
+            this._completeAuthSuccess('login');
+            return;
+        }
+
+        this.showMessage(result.message, 'error', 'twoFactor');
+    }
+
     async handleRegister() {
-        const name = this.shadowRoot.getElementById('registerName').value;
-        const email = this.shadowRoot.getElementById('registerEmail').value;
+        const name = this.shadowRoot.getElementById('registerName').value.trim();
+        const email = this.shadowRoot.getElementById('registerEmail').value.trim();
         const password = this.shadowRoot.getElementById('registerPassword').value;
         const confirmPassword = this.shadowRoot.getElementById('registerConfirmPassword').value;
         const lang = localStorage.getItem('lang') || 'es';
@@ -910,31 +1027,20 @@ class AuthModal extends HTMLElement {
             return;
         }
 
-        if (!window.supabaseAuth) {
+        if (!window.supabaseAuth && !window.localDB) {
             try {
                 await this.ensureSupabase();
             } catch {
-                this.showMessage('Supabase no está cargado. Recarga la página.', 'error');
-                return;
+                /* auth local como respaldo si Supabase no carga */
             }
         }
 
         this._setSubmitLoading('register', true);
-        const result = await window.supabaseAuth.register(name, email, password);
+        const result = await this._runRegister(name, email.trim(), password);
         this._setSubmitLoading('register', false);
         
         if (result.success) {
-            if (result.needsConfirmation) {
-                this.showMessage(result.message, 'success');
-                setTimeout(() => this.switchToLogin(), 3000);
-                return;
-            }
-            this.showMessage(t('auth_register_success'), 'success');
-            this.close();
-            if (window.renderHeader) window.renderHeader();
-            setTimeout(() => {
-                window.location.href = 'perfil.html';
-            }, 1000);
+            this._completeAuthSuccess('register');
         } else {
             this.showMessage(result.message, 'error');
         }

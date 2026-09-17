@@ -1,7 +1,7 @@
 /* store.css - Estilos originales y llamativos para la sección de tiendas */
 
 .store-banner {
-  background: linear-gradient(120deg, #a22a22 0%, #fcf7de 100%);
+  background: linear-gradient(120deg, #8F1111 0%, #FFF8E7 100%);
   color: #fff;
   box-shadow: 0 4px 24px rgba(162,42,34,0.08);
   border-radius: 0 0 32px 32px;
@@ -20,16 +20,16 @@
 }
 .btn-create-store {
   background: #fff;
-  color: #a22a22;
+  color: #8F1111;
   border-radius: 30px;
   font-size: 1.2rem;
   font-weight: 600;
   padding: 12px 36px;
-  border: 2px solid #a22a22;
+  border: 2px solid #8F1111;
   transition: background 0.2s, color 0.2s;
 }
 .btn-create-store:hover {
-  background: #a22a22;
+  background: #8F1111;
   color: #fff;
 }
 .stores-list-section {
@@ -55,13 +55,13 @@
   height: 70px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #a22a22;
+  border: 3px solid #8F1111;
   margin-bottom: 1rem;
 }
 .store-card .store-name {
   font-family: 'Playfair Display', serif;
   font-size: 1.4rem;
-  color: #a22a22;
+  color: #8F1111;
   font-weight: 700;
   margin-bottom: 0.3rem;
 }
@@ -72,7 +72,7 @@
 }
 .store-card .store-meta {
   font-size: 0.98rem;
-  color: #a22a22;
+  color: #8F1111;
   margin-bottom: 0.7rem;
 }
 .store-card .store-products {
@@ -81,7 +81,7 @@
 .store-card .product-badge {
   display: inline-block;
   background: #fcf7de;
-  color: #a22a22;
+  color: #8F1111;
   border-radius: 12px;
   padding: 2px 12px;
   font-size: 0.95rem;
@@ -104,7 +104,7 @@
 }
 /* Fix fuerte: Forzar color y visibilidad del header/navbar en store */
 body .navbar.navbar {
-  background: #800000 !important;
+  background: #8F1111 !important;
   color: #fff !important;
   z-index: 10000 !important;
 }
@@ -118,7 +118,7 @@ body .navbar.navbar .theme-toggle {
 }
 body .navbar.navbar .nav-link:hover,
 body .navbar.navbar .navbar-brand:hover {
-  color: #FFD700 !important;
+  color: #D4A017 !important;
 }
 
 /* Dark Mode Support for Store */

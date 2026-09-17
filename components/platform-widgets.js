@@ -54,7 +54,7 @@ class PlatformWidgets extends HTMLElement {
                     height: 48px;
                     border-radius: 50%;
                     border: none;
-                    background: linear-gradient(135deg, #962626 0%, #800000 100%);
+                    background: linear-gradient(135deg, #8F1111 0%, #8F1111 100%);
                     color: #fff;
                     cursor: pointer;
                     box-shadow: 0 4px 15px rgba(128,0,0,0.35);
@@ -68,7 +68,7 @@ class PlatformWidgets extends HTMLElement {
                 .widget-btn:hover, .widget-btn:focus-visible {
                     transform: scale(1.08);
                     box-shadow: 0 6px 20px rgba(128,0,0,0.45);
-                    outline: 2px solid #FFD700;
+                    outline: 2px solid #D4A017;
                     outline-offset: 2px;
                 }
                 .widget-btn.hidden-btn {
@@ -81,7 +81,7 @@ class PlatformWidgets extends HTMLElement {
                     position: absolute;
                     top: -4px;
                     right: -4px;
-                    background: #FFD700;
+                    background: #D4A017;
                     color: #000;
                     font-size: 0.65rem;
                     font-weight: 700;
@@ -91,7 +91,7 @@ class PlatformWidgets extends HTMLElement {
                     display: ${unread ? 'flex' : 'none'};
                     align-items: center;
                     justify-content: center;
-                    border: 2px solid #800000;
+                    border: 2px solid #8F1111;
                 }
                 .widget-panel {
                     display: none;
@@ -109,7 +109,7 @@ class PlatformWidgets extends HTMLElement {
                 }
                 .widget-panel.open { display: flex; }
                 .panel-header {
-                    background: linear-gradient(135deg, #962626 0%, #800000 100%);
+                    background: linear-gradient(135deg, #8F1111 0%, #8F1111 100%);
                     color: #fff;
                     padding: 14px 16px;
                     font-weight: 600;
@@ -133,9 +133,44 @@ class PlatformWidgets extends HTMLElement {
                     color: #333;
                 }
                 .chat-messages { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; }
+                #panelHelp {
+                    width: 420px;
+                    max-height: 520px;
+                }
+                #panelHelp .panel-body {
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 440px;
+                    padding: 16px;
+                }
+                #panelHelp .chat-messages {
+                    flex: 1;
+                    min-height: 340px;
+                    max-height: none;
+                    margin-bottom: 14px;
+                }
+                #panelHelp .chat-msg { font-size: 0.95rem; line-height: 1.45; }
+                #panelHelp .chat-input-row input {
+                    padding: 10px 12px;
+                    font-size: 0.95rem;
+                }
+                #panelHelp .chat-input-row button {
+                    padding: 10px 14px;
+                }
+                #panelNotifications {
+                    width: 420px;
+                    max-height: 480px;
+                }
+                #panelNotifications .panel-body {
+                    padding: 14px 16px;
+                }
+                #panelNotifications .notif-item {
+                    padding: 12px 14px;
+                    line-height: 1.45;
+                }
                 .chat-msg { padding: 8px 12px; border-radius: 12px; max-width: 85%; }
                 .chat-msg.bot, .chat-msg.artisan { background: #f5f5f5; align-self: flex-start; }
-                .chat-msg.user, .chat-msg.buyer { background: #800000; color: #fff; align-self: flex-end; }
+                .chat-msg.user, .chat-msg.buyer { background: #8F1111; color: #fff; align-self: flex-end; }
                 .chat-input-row { display: flex; gap: 8px; }
                 .chat-input-row input {
                     flex: 1;
@@ -145,7 +180,7 @@ class PlatformWidgets extends HTMLElement {
                     font-family: inherit;
                 }
                 .chat-input-row button {
-                    background: #800000;
+                    background: #8F1111;
                     color: #fff;
                     border: none;
                     border-radius: 8px;
@@ -162,6 +197,8 @@ class PlatformWidgets extends HTMLElement {
                 @media (max-width: 576px) {
                     .platform-widgets { bottom: 16px; right: 16px; }
                     .widget-panel { right: 16px; bottom: 80px; width: calc(100vw - 32px); }
+                    #panelHelp .panel-body { min-height: 380px; }
+                    #panelHelp .chat-messages { min-height: 280px; }
                 }
             </style>
             <div class="platform-widgets" role="complementary" aria-label="Ayuda y mensajes">
@@ -212,12 +249,7 @@ class PlatformWidgets extends HTMLElement {
         const root = this.shadowRoot;
         root.getElementById('btnHelp').addEventListener('click', () => this.togglePanel('panelHelp'));
         root.getElementById('btnMessages').addEventListener('click', () => {
-            if (this.isEnhancedMessages()) {
-                this.openMessagesOverlay();
-                return;
-            }
-            this.renderMessages();
-            this.togglePanel('panelMessages');
+            this.openMessagesOverlay();
         });
         root.getElementById('btnNotifications').addEventListener('click', () => {
             this.renderNotifications();
@@ -310,14 +342,6 @@ class PlatformWidgets extends HTMLElement {
         this.shadowRoot.querySelectorAll('.widget-btn').forEach(btn => btn.classList.remove('hidden-btn'));
     }
 
-    updateButtonVisibility(activeBtnId) {
-        const btnIds = ['btnHelp', 'btnMessages', 'btnNotifications'];
-        btnIds.forEach(id => {
-            const btn = this.shadowRoot.getElementById(id);
-            if (btn) btn.classList.toggle('hidden-btn', id !== activeBtnId);
-        });
-    }
-
     togglePanel(id) {
         const panel = this.shadowRoot.getElementById(id);
         const isOpen = panel.classList.contains('open');
@@ -325,12 +349,7 @@ class PlatformWidgets extends HTMLElement {
         if (!isOpen) {
             panel.classList.add('open');
             this.activePanel = id;
-            const btnMap = {
-                panelHelp: 'btnHelp',
-                panelMessages: 'btnMessages',
-                panelNotifications: 'btnNotifications'
-            };
-            this.updateButtonVisibility(btnMap[id]);
+            this.hideAllButtons();
         } else {
             this.showAllButtons();
         }

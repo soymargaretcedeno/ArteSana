@@ -14,6 +14,10 @@
                 ? `<img class="messages-avatar" src="${U.esc(thread.artisanAvatar)}" alt="" style="width:40px;height:40px;">`
                 : `<div class="messages-avatar-placeholder" style="width:40px;height:40px;font-size:0.9rem;" aria-hidden="true">${U.esc(U.getInitials(thread.artisanName))}</div>`;
 
+            const status = thread.type === 'directors'
+                ? U.t('msg_directors_status', 'Asistente AI · Un directivo revisará pronto')
+                : U.t('msg_online', 'En línea');
+
             return `
                 <header class="messages-chat-header">
                     <button class="messages-back-btn" id="msgBackBtn"
@@ -23,7 +27,7 @@
                     ${avatar}
                     <div class="messages-chat-header-info">
                         <p class="messages-chat-header-name">${U.esc(thread.artisanName)}</p>
-                        <p class="messages-chat-header-status">${U.esc(U.t('msg_online', 'En línea'))}</p>
+                        <p class="messages-chat-header-status">${U.esc(status)}</p>
                     </div>
                     <div class="messages-chat-actions">
                         <button class="messages-icon-btn" aria-label="${U.esc(U.t('msg_call', 'Llamada'))}" title="${U.esc(U.t('msg_call', 'Llamada'))}">

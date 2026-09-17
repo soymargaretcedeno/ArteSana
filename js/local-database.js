@@ -153,8 +153,9 @@ class LocalDatabase {
             name: userData.name,
             email: userData.email,
             password: userData.password,
-            role: 'customer', // Default role
-            avatar: null, // No avatar by default for new users
+            role: 'customer',
+            roleSelected: false,
+            avatar: null,
             joinDate: new Date().toISOString().split('T')[0],
             orders: 0,
             favorites: 0
@@ -189,8 +190,17 @@ class LocalDatabase {
 
     // Update user profile
     updateProfile(userId, updates) {
-        const userIndex = this.users.findIndex(u => u.id === userId);
+        const normalizedId = String(userId);
+        const userIndex = this.users.findIndex(u => String(u.id) === normalizedId);
+
         if (userIndex === -1) {
+            if (this.currentUser && String(this.currentUser.id) === normalizedId) {
+                const mergedUser = { ...this.currentUser, ...updates };
+                const { password, ...userWithoutPassword } = mergedUser;
+                this.saveCurrentUser(userWithoutPassword);
+                this.currentUser = userWithoutPassword;
+                return { success: true, user: mergedUser };
+            }
             return { success: false, message: 'User not found' };
         }
 
@@ -199,9 +209,10 @@ class LocalDatabase {
         localStorage.setItem('artesana_users', JSON.stringify(this.users));
 
         // Update current user if it's the same user
-        if (this.currentUser && this.currentUser.id === userId) {
+        if (this.currentUser && String(this.currentUser.id) === normalizedId) {
             const { password, ...userWithoutPassword } = this.users[userIndex];
             this.saveCurrentUser(userWithoutPassword);
+            this.currentUser = userWithoutPassword;
         }
 
         return { success: true, user: this.users[userIndex] };
@@ -239,20 +250,19 @@ window.LocalDatabase = LocalDatabase;
     if (window.supabaseAuth || document.querySelector('script[src="js/supabase-auth.js"]')) return;
 
     function loadAuthScript() {
+        if (document.querySelector('script[src="js/supabase-auth.js"]')) return;
         const authScript = document.createElement('script');
         authScript.src = 'js/supabase-auth.js';
         authScript.onerror = () => console.error('[ArteSana] No se pudo cargar js/supabase-auth.js');
         document.head.appendChild(authScript);
     }
 
-    if (window.supabase) {
-        loadAuthScript();
-        return;
-    }
+    loadAuthScript();
+
+    if (window.supabase || document.querySelector('script[src*="@supabase/supabase-js"]')) return;
 
     const supabaseScript = document.createElement('script');
     supabaseScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-    supabaseScript.onload = loadAuthScript;
-    supabaseScript.onerror = () => console.error('[ArteSana] No se pudo cargar la librería de Supabase');
+    supabaseScript.onerror = () => console.warn('[ArteSana] Supabase CDN no disponible; auth local activo.');
     document.head.appendChild(supabaseScript);
 })(); 

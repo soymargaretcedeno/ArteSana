@@ -1,3 +1,30 @@
+/**
+ * Detección de sección activa del navbar — ver también js/nav-active.js
+ */
+(function (global) {
+    'use strict';
+    if (global.NavActive) return;
+    const SECTION_PAGES = {
+        dashboard: ['index.html'],
+        explore: ['explorar.html', 'product.html', 'compare.html', 'ceramics.html', 'textiles.html', 'jewelry.html', 'sculpture.html', 'add-product.html'],
+        store: ['store.html', 'tienda.html'],
+        contact: ['contact.html']
+    };
+    function getCurrentPage() {
+        const path = global.location.pathname || '';
+        let page = path.substring(path.lastIndexOf('/') + 1);
+        return (page || 'index.html').split('?')[0].split('#')[0];
+    }
+    function getActiveNavSection(page) {
+        const current = page || getCurrentPage();
+        for (const [section, pages] of Object.entries(SECTION_PAGES)) {
+            if (pages.includes(current)) return section;
+        }
+        return null;
+    }
+    global.NavActive = { SECTION_PAGES, getCurrentPage, getActiveNavSection };
+})(window);
+
 class HeaderComponent extends HTMLElement {
     constructor() {
         super();
@@ -160,6 +187,14 @@ class HeaderComponent extends HTMLElement {
                 }
 
                 .nav-link:hover::after {
+                    width: 100%;
+                }
+
+                .nav-link.active {
+                    color: #FFD700;
+                }
+
+                .nav-link.active::after {
                     width: 100%;
                 }
 
@@ -439,7 +474,14 @@ class HeaderComponent extends HTMLElement {
                     transform: scaleY(1);
                 }
 
-                /* Mobile Menu Actions */
+                .mobile-menu-link.active {
+                    color: #FFD700;
+                    background: rgba(255, 255, 255, 0.05);
+                }
+
+                .mobile-menu-link.active::before {
+                    transform: scaleY(1);
+                }
                 .mobile-menu-actions {
                     padding: 20px 30px;
                     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -687,16 +729,16 @@ class HeaderComponent extends HTMLElement {
                         <nav style="width: 100%;">
                             <ul class="nav-menu">
                                 <li class="nav-item">
-                                    <a href="index.html" class="nav-link" data-i18n="dashboard">Inicio</a>
+                                    <a href="index.html" class="nav-link" data-nav-section="dashboard" data-i18n="dashboard">Inicio</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="explorar.html" class="nav-link" data-i18n="explore">Explorar</a>
+                                    <a href="explorar.html" class="nav-link" data-nav-section="explore" data-i18n="explore">Explorar</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="store.html" class="nav-link" data-i18n="store">Tienda</a>
+                                    <a href="store.html" class="nav-link" data-nav-section="store" data-i18n="store">Tienda</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="contact.html" class="nav-link" data-i18n="contact">Contacto</a>
+                                    <a href="contact.html" class="nav-link" data-nav-section="contact" data-i18n="contact">Contacto</a>
                                 </li>
                             </ul>
                         </nav>
@@ -759,16 +801,16 @@ class HeaderComponent extends HTMLElement {
                 <div class="mobile-menu" id="mobileMenu">
                     <ul class="mobile-menu-list">
                         <li class="mobile-menu-item">
-                            <a href="index.html" class="mobile-menu-link" data-i18n="dashboard">Inicio</a>
+                            <a href="index.html" class="mobile-menu-link" data-nav-section="dashboard" data-i18n="dashboard">Inicio</a>
                         </li>
                         <li class="mobile-menu-item">
-                            <a href="explorar.html" class="mobile-menu-link" data-i18n="explore">Explorar</a>
+                            <a href="explorar.html" class="mobile-menu-link" data-nav-section="explore" data-i18n="explore">Explorar</a>
                         </li>
                         <li class="mobile-menu-item">
-                            <a href="store.html" class="mobile-menu-link" data-i18n="store">Tienda</a>
+                            <a href="store.html" class="mobile-menu-link" data-nav-section="store" data-i18n="store">Tienda</a>
                         </li>
                         <li class="mobile-menu-item">
-                            <a href="contact.html" class="mobile-menu-link" data-i18n="contact">Contacto</a>
+                            <a href="contact.html" class="mobile-menu-link" data-nav-section="contact" data-i18n="contact">Contacto</a>
                         </li>
                     </ul>
                     
@@ -841,7 +883,7 @@ class HeaderComponent extends HTMLElement {
         if (langSelector) {
             langSelector.value = localStorage.getItem('lang') || 'es';
             langSelector.addEventListener('change', (e) => {
-                window.setLanguage(e.target.value);
+                window.setLanguage(e.target.value, { notify: true });
                 // Actualizar los textos dentro del shadow DOM
                 this.updateI18nTexts();
             });
@@ -852,7 +894,7 @@ class HeaderComponent extends HTMLElement {
         if (mobileLangSelector) {
             mobileLangSelector.value = localStorage.getItem('lang') || 'es';
             mobileLangSelector.addEventListener('change', (e) => {
-                window.setLanguage(e.target.value);
+                window.setLanguage(e.target.value, { notify: true });
                 // Actualizar los textos dentro del shadow DOM
                 this.updateI18nTexts();
             });
@@ -955,19 +997,15 @@ class HeaderComponent extends HTMLElement {
 
 
     setActiveLink() {
-        const currentPath = window.location.pathname;
-        const navLinks = this.shadowRoot.querySelectorAll('.nav-link');
-        const mobileLinks = this.shadowRoot.querySelectorAll('.mobile-menu-link');
-        
-        // Remove active class from all links
-        [...navLinks, ...mobileLinks].forEach(link => {
-            link.classList.remove('active');
-        });
+        const activeSection = window.NavActive?.getActiveNavSection();
+        const navLinks = this.shadowRoot.querySelectorAll('.nav-link, .mobile-menu-link');
 
-        // Add active class to current page link
-        [...navLinks, ...mobileLinks].forEach(link => {
-            if (link.getAttribute('href') === currentPath.split('/').pop() || 
-                (currentPath.endsWith('/') && link.getAttribute('href') === 'index.html')) {
+        navLinks.forEach(link => link.classList.remove('active'));
+
+        if (!activeSection) return;
+
+        navLinks.forEach(link => {
+            if (link.dataset.navSection === activeSection) {
                 link.classList.add('active');
             }
         });
@@ -1020,7 +1058,7 @@ window.toggleLanguage = function(event) {
     
     // Aplicar el cambio de idioma
     if (window.setLanguage) {
-        window.setLanguage(newLang);
+        window.setLanguage(newLang, { notify: true });
     }
 };
 

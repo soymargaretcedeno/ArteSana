@@ -38,38 +38,6 @@
             transform: scale(1.05);
         }
 
-        .quick-add-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .product-card-explore:hover .quick-add-overlay {
-            opacity: 1;
-        }
-
-        .quick-add-btn {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            border: none;
-            border-radius: 25px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .quick-add-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-        }
-
         .action-btn {
             transition: all 0.3s ease;
         }
@@ -78,13 +46,19 @@
             transform: scale(1.1);
         }
 
-        .add-to-cart-btn {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            border: none;
+        .action-btn.add-to-cart-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: #fff;
         }
 
-        .add-to-cart-btn:hover {
-            background: linear-gradient(135deg, #0056b3, #004085);
+        .action-btn.add-to-cart-btn:hover {
+            background: linear-gradient(135deg, #218838, #1aa179);
+            color: #fff;
+        }
+
+        .add-to-cart-btn.added {
+            background: #2F7D4A;
+            color: #fff;
         }
 
         /* Floating notification styles */
@@ -279,6 +253,7 @@
     <script src="js/products-database.js"></script>
     <script src="js/user-products-database.js"></script>
     <script src="js/ecommerce-confirmation.js"></script>
+    <script src="js/product-card-cart.js"></script>
     <script src="js/i18n.js"></script>
     <script src="components/header-component.js"></script>
     <script src="components/header-user-component.js"></script>
@@ -341,13 +316,8 @@
                                 <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite(1)">
                                     <i class="fas fa-heart" id="favorite-1" style="color: #fff"></i>
                                 </button>
-                                <button class="action-btn add-to-cart-btn" onclick="event.stopPropagation(); addToCart(1)" title="Add to Cart">
+                                <button class="action-btn add-to-cart-btn" type="button" onclick="addToCartFromCard(3, event)" title="Add to Cart">
                                     <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </div>
-                            <div class="quick-add-overlay">
-                                <button class="btn btn-primary quick-add-btn" onclick="event.stopPropagation(); addToCart(1)">
-                                    <i class="fas fa-shopping-cart"></i> Add to Cart
                                 </button>
                             </div>
                         </div>
@@ -380,13 +350,8 @@
                                 <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite(2)">
                                     <i class="fas fa-heart" id="favorite-2" style="color: #fff"></i>
                                 </button>
-                                <button class="action-btn add-to-cart-btn" onclick="event.stopPropagation(); addToCart(2)" title="Add to Cart">
+                                <button class="action-btn add-to-cart-btn" type="button" onclick="addToCartFromCard(3, event)" title="Add to Cart">
                                     <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </div>
-                            <div class="quick-add-overlay">
-                                <button class="btn btn-primary quick-add-btn" onclick="event.stopPropagation(); addToCart(2)">
-                                    <i class="fas fa-shopping-cart"></i> Add to Cart
                                 </button>
                             </div>
                         </div>
@@ -419,13 +384,8 @@
                                 <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite(3)">
                                     <i class="fas fa-heart" id="favorite-3" style="color: #fff"></i>
                                 </button>
-                                <button class="action-btn add-to-cart-btn" onclick="event.stopPropagation(); addToCart(3)" title="Add to Cart">
+                                <button class="action-btn add-to-cart-btn" type="button" onclick="addToCartFromCard(3, event)" title="Add to Cart">
                                     <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </div>
-                            <div class="quick-add-overlay">
-                                <button class="btn btn-primary quick-add-btn" onclick="event.stopPropagation(); addToCart(3)">
-                                    <i class="fas fa-shopping-cart"></i> Add to Cart
                                 </button>
                             </div>
                         </div>
@@ -465,7 +425,7 @@
         // Handle product card click
         function handleProductClick(productId, event) {
             // Check if the click was on an action button or quick add button
-            if (event.target.closest('.action-btn') || event.target.closest('.quick-add-btn')) {
+            if (event.target.closest('.action-btn')) {
                 return; // Let the button handle the action
             }
             
@@ -500,24 +460,16 @@
 
             const success = window.productsDB.addToCart(productId, 1);
             if (success) {
-                // Show success animation
-                const cartBtn = event.target.closest('.add-to-cart-btn') || event.target.closest('.quick-add-btn');
+                const cartBtn = event.target.closest('.add-to-cart-btn');
                 if (cartBtn) {
                     cartBtn.innerHTML = '<i class="fas fa-check"></i>';
-                    cartBtn.style.backgroundColor = '#28a745';
-                    cartBtn.style.borderColor = '#28a745';
+                    cartBtn.classList.add('added');
                 }
                 
-                // Show confirmation
-                window.ecommerceConfirmation.showCartConfirmation(productId, 1);
-                
-                // Update cart count in header
                 window.productsDB.updateCartCount();
-                
-                // Show floating notification
-                showFloatingNotification(`"${productName}" added to cart!`);
-                
-                // Show cart options modal
+                if (window.ecommerceConfirmation) {
+                    window.ecommerceConfirmation.updateCartBadge();
+                }
                 showCartOptionsModal(productName);
             } else {
                 window.ecommerceConfirmation.showEnhancedToast('Error al agregar producto al carrito', 'error');

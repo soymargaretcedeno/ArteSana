@@ -38,7 +38,7 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .footer {
-                    background: linear-gradient(135deg, #962626 0%, #800000 100%);
+                    background: linear-gradient(135deg, #8F1111 0%, #8F1111 100%);
                     color: #FFFFFF;
                     padding: 60px 0 20px;
                     position: relative;
@@ -59,7 +59,7 @@ class FooterComponent extends HTMLElement {
                     right: 0;
                     height: 4px;
                     background: linear-gradient(90deg, 
-                        #FFD700 0%, #FF7F11 25%, #E63946 50%, #FFD700 75%, #FF7F11 100%);
+                        #D4A017 0%, #FF7F11 25%, #E63946 50%, #D4A017 75%, #FF7F11 100%);
                     animation: gradient 3s ease infinite;
                 }
 
@@ -76,7 +76,7 @@ class FooterComponent extends HTMLElement {
                     right: 0;
                     height: 3px;
                     background: linear-gradient(90deg, 
-                        #FFD700 0%, #FF7F11 25%, #E63946 50%, #FFD700 75%, #FF7F11 100%);
+                        #D4A017 0%, #FF7F11 25%, #E63946 50%, #D4A017 75%, #FF7F11 100%);
                 }
 
                 /* First Row - 4 Columns */
@@ -107,7 +107,7 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .footer-section h5 {
-                    color: #FFD700;
+                    color: #D4A017;
                     font-size: 1.2rem;
                     font-weight: 600;
                     margin-bottom: 20px;
@@ -121,7 +121,7 @@ class FooterComponent extends HTMLElement {
                     left: 0;
                     width: 30px;
                     height: 2px;
-                    background: #FFD700;
+                    background: #D4A017;
                     border-radius: 1px;
                 }
 
@@ -138,7 +138,7 @@ class FooterComponent extends HTMLElement {
 
                 .footer-brand h3:hover {
                     transform: scale(1.05);
-                    color: #FFD700;
+                    color: #D4A017;
                 }
 
                 .footer-brand .logo-img {
@@ -153,7 +153,7 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .footer-brand h3:hover .logo-img {
-                    border-color: #FFD700;
+                    border-color: #D4A017;
                     box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
                 }
 
@@ -166,7 +166,7 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .footer-feature .icon {
-                    color: #FFD700;
+                    color: #D4A017;
                     width: 16px;
                     height: 16px;
                     fill: currentColor;
@@ -209,8 +209,8 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .social-link:hover {
-                    background: #FFD700;
-                    color: #800000;
+                    background: #D4A017;
+                    color: #8F1111;
                     transform: translateY(-3px);
                     box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
                 }
@@ -242,7 +242,7 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .footer-links a .icon {
-                    color: #FFD700;
+                    color: #D4A017;
                     width: 14px;
                     height: 14px;
                     fill: currentColor;
@@ -250,7 +250,7 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .footer-links a:hover {
-                    color: #FFD700;
+                    color: #D4A017;
                     transform: translateX(5px);
                 }
 
@@ -291,9 +291,9 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .newsletter-form .btn {
-                    background: #FFD700 !important;
+                    background: #D4A017 !important;
                     border: none !important;
-                    color: #800000 !important;
+                    color: #8F1111 !important;
                     padding: 12px 15px !important;
                     border-radius: 0 25px 25px 0 !important;
                     font-weight: 600 !important;
@@ -355,7 +355,7 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .policy-link:hover {
-                    color: #FFD700;
+                    color: #D4A017;
                 }
 
                 .payment-methods {
@@ -396,8 +396,8 @@ class FooterComponent extends HTMLElement {
                 }
 
                 .payment-method:hover {
-                    background: #FFD700;
-                    color: #800000;
+                    background: #D4A017;
+                    color: #8F1111;
                     transform: translateY(-2px);
                 }
 

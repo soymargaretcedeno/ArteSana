@@ -1,5 +1,5 @@
 /**
- * Inicialización del módulo de mensajería para index y explorar.
+ * Inicialización global del módulo de mensajería (overlay completo).
  */
 (function (global) {
     'use strict';
@@ -14,7 +14,8 @@
         'components/messages/message-input.js',
         'components/messages/chat-header.js',
         'components/messages/chat-window.js',
-        'components/messages/messages-overlay.js'
+        'components/messages/messages-overlay.js',
+        'components/messages/messages-bridge.js'
     ];
 
     function loadScript(src) {
@@ -40,7 +41,12 @@
         document.head.appendChild(l);
     }
 
+    let _initialized = false;
+
     async function initEnhancedMessages() {
+        if (_initialized) return;
+        _initialized = true;
+
         loadCss('components/messages/messages.css');
 
         for (const src of MESSAGE_SCRIPTS) {
@@ -67,7 +73,8 @@
     global.MessagesInit = { init: initEnhancedMessages };
 
     document.addEventListener('DOMContentLoaded', () => {
-        if (document.body.dataset.enhancedMessages === 'true') {
+        if (document.body.dataset.enhancedMessages === 'true' ||
+            document.querySelector('script[src*="messages-init.js"]')) {
             initEnhancedMessages();
         }
     });

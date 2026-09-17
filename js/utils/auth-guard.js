@@ -24,6 +24,11 @@
     }
 
     function redirectToLogin(returnUrl) {
+        if (isAuthenticated()) {
+            sessionStorage.removeItem('artesana_redirect_after_login');
+            return;
+        }
+
         const url = returnUrl || window.location.href;
         sessionStorage.setItem('artesana_redirect_after_login', url);
         const authModal = document.querySelector('auth-modal');
@@ -56,13 +61,39 @@
         return url;
     }
 
+    function handlePendingLoginRedirect() {
+        const pending = sessionStorage.getItem('artesana_redirect_after_login');
+        if (!pending) return;
+
+        if (isAuthenticated()) {
+            const url = getPostLoginRedirect();
+            if (!url) return;
+            try {
+                const target = new URL(url, window.location.origin);
+                const current = new URL(window.location.href);
+                if (target.pathname !== current.pathname || target.search !== current.search) {
+                    window.location.href = url;
+                }
+            } catch (e) {
+                /* key already cleared */
+            }
+            return;
+        }
+
+        /* index.html maneja la apertura del modal en su propio DOMContentLoaded */
+    }
+
     global.AuthGuard = {
         guardPrivateRoutes,
         isAuthenticated,
         redirectToLogin,
         getPostLoginRedirect,
+        handlePendingLoginRedirect,
         PRIVATE_ROUTES
     };
 
-    document.addEventListener('DOMContentLoaded', guardPrivateRoutes);
+    document.addEventListener('DOMContentLoaded', () => {
+        guardPrivateRoutes();
+        handlePendingLoginRedirect();
+    });
 })(window);

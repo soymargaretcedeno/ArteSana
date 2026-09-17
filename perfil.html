@@ -17,9 +17,10 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="components/store/store-dashboard.css">
     <style>
         .btn-primary {
-            background: #800000;
+            background: #8F1111;
             border: none;
             color: white;
             padding: 12px 24px;
@@ -35,7 +36,7 @@
         }
     </style>
 </head>
-<body>
+<body data-profile-roles="true">
     <script src="js/local-database.js"></script>
     <script src="js/i18n.js"></script>
     <script src="components/header-component.js"></script>
@@ -45,12 +46,6 @@
     <!-- Profile Header -->
     <section class="profile-header" style="background-image: linear-gradient(120deg, rgba(162,42,34,0.45) 0%, rgba(252,247,222,0.45) 100%), url('https://mir-s3-cdn-cf.behance.net/project_modules/1400/94fafc153875059.63375a2c3d38a.jpg'); background-size:cover; background-position:center;">
         <div class="container position-relative">
-            <div class="d-flex justify-content-end align-items-start" style="position:absolute;top:2rem;right:2rem;z-index:2;">
-                <button class="btn btn-lg d-flex align-items-center gap-2 shadow" data-bs-toggle="modal" data-bs-target="#newProductModal" style="background:#800000;color:#fff;border-radius:50px;font-weight:600;border:none;" data-i18n="profile_add_product">
-                    <i class="fas fa-plus"></i>
-                    <span class="d-none d-md-inline" data-i18n="profile_add_product">Add Product</span>
-                </button>
-            </div>
             <div class="profile-cover">
                 <div class="profile-avatar">
                     <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" alt="Profile Picture" class="profile-img" id="profileAvatar">
@@ -90,9 +85,13 @@
                         <nav class="profile-nav">
                             <a href="#" class="nav-link active" data-section="dashboard" data-i18n="profile_dashboard">
                                 <i class="fas fa-home"></i>
-                                <span data-i18n="profile_dashboard">Dashboard</span>
+                                <span data-i18n="profile_dashboard">Home</span>
                             </a>
-                            <a href="#" class="nav-link" data-section="my-products" data-i18n="profile_my_products">
+                            <a href="#" class="nav-link d-none" data-section="my-store" data-show-role="artisan" data-i18n="profile_my_store">
+                                <i class="fas fa-store"></i>
+                                <span data-i18n="profile_my_store">Mi tienda</span>
+                            </a>
+                            <a href="#" class="nav-link d-none" data-section="my-products" data-show-role="artisan" data-requires-store="true" data-i18n="profile_my_products">
                                 <i class="fas fa-box"></i>
                                 <span data-i18n="profile_my_products">My Products</span>
                             </a>
@@ -119,8 +118,8 @@
                 <div class="col-lg-9">
                     <div id="dashboard-section" class="dashboard-section">
                         <div class="content-card mb-4">
-                            <h3 data-i18n="profile_overview">Overview</h3>
-                            <div class="row text-center mb-4">
+                            <h3 id="dashboardTitle" data-i18n="profile_overview">Overview</h3>
+                            <div id="dashboardSellerCards" class="row text-center mb-4 d-none">
                                 <div class="col-md-4">
                                     <div class="sales-card p-4 shadow-sm rounded">
                                         <div class="sales-icon mb-2"><i class="fas fa-shopping-cart fa-2x"></i></div>
@@ -149,20 +148,79 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-4">
+                            <div id="dashboardClientCards" class="row text-center mb-4">
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-shopping-bag fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="profile_orders">Órdenes</h4>
+                                            <p class="h5 mb-0" id="dashClientOrders">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-heart fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="profile_favorites">Favoritos</h4>
+                                            <p class="h5 mb-0" id="dashClientFavorites">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-wallet fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="role_spending">Gastos</h4>
+                                            <p class="h5 mb-0" id="dashClientSpending">$0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4" id="dashboardActivity">
                                 <h5 data-i18n="profile_recent_activity">Recent Activity</h5>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">Vendiste <b>"Mola Tradicional"</b> por $85.00</li>
-                                    <li class="list-group-item">Recibiste una calificación de 5 estrellas</li>
-                                    <li class="list-group-item">Nuevo producto añadido: <b>"Beaded Necklace"</b></li>
+                                <ul class="list-group list-group-flush" id="dashboardActivityList">
+                                    <li class="list-group-item" data-show-role="artisan">Vendiste <b>"Mola Tradicional"</b> por $85.00</li>
+                                    <li class="list-group-item" data-show-role="customer">Exploraste productos en <b>Explorar</b></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+                    <div id="my-store-section" class="dashboard-section d-none">
+                        <div id="storeSetupWrap" class="content-card mb-4">
+                            <h3 data-i18n="profile_my_store">Mi tienda</h3>
+                            <div id="createStoreFormWrap">
+                                <p class="text-muted mb-4" data-i18n="role_create_store_desc">Completa la información de tu tienda para comenzar a vender.</p>
+                                <form id="createStoreFormProfile" autocomplete="off">
+                                    <div class="mb-3">
+                                        <label class="form-label" data-i18n="create_store_name_label">Nombre de la tienda</label>
+                                        <input type="text" class="form-control" name="name" required maxlength="32">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" data-i18n="create_store_location_label">Ubicación</label>
+                                        <input type="text" class="form-control" name="location" required maxlength="32">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" data-i18n="create_store_photo_label">Foto (URL)</label>
+                                        <input type="url" class="form-control" name="photo" placeholder="https://...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" data-i18n="create_store_desc_label">Descripción breve</label>
+                                        <textarea class="form-control" name="desc" rows="2" maxlength="80"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" data-i18n="profile_create_store">Crear tienda</button>
+                                </form>
+                                <div id="storeCreateSuccess" class="alert alert-success mt-3 d-none" data-i18n="create_store_success">¡Tienda creada exitosamente!</div>
+                            </div>
+                        </div>
+                        <div id="storePanelContainer" class="content-card mb-4 d-none"></div>
+                    </div>
                     <!-- Products Section (for simulation) -->
+                    <div id="my-products-section" class="dashboard-section d-none">
                     <div class="content-card mb-4" id="myProductsSimSection">
                             <h3 data-i18n="profile_my_products">My Products</h3>
                         <div class="row g-4" id="myProductsGridSim"></div>
+                    </div>
                     </div>
                     <div id="orders-section" class="dashboard-section d-none">
                         <div class="content-card mb-4">
@@ -226,14 +284,14 @@
                     <div id="settings-section" class="dashboard-section d-none">
                         <div class="content-card mb-4">
                             <h3 data-i18n="profile_settings_title">Settings</h3>
-                            <form>
+                            <form id="settingsForm">
                                 <div class="mb-3">
                                     <label class="form-label" data-i18n="profile_name_label">Nombre</label>
-                                    <input type="text" class="form-control" value="Ana Solis">
+                                    <input type="text" class="form-control" id="settingsNameInput" value="Ana Solis">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label" data-i18n="profile_email_label">Email</label>
-                                    <input type="email" class="form-control" value="anasolis@gmail.com">
+                                    <input type="email" class="form-control" id="settingsEmailInput" value="anasolis@gmail.com">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label" data-i18n="profile_notifications_label">Notificaciones</label>
@@ -303,62 +361,17 @@
         </div>
     </div>
 
-    <!-- New Product Modal -->
-    <div class="modal fade" id="newProductModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" data-i18n="profile_new_product">Nuevo Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="createProductForm">
-                        <div class="mb-3 d-flex align-items-center gap-2">
-                            <label for="productImageFile" class="form-label mb-0" data-i18n="profile_image_label">Imagen</label>
-                            <input type="file" class="form-control" id="productImageFile" accept="image/*" style="max-width:220px;">
-                            <button type="button" class="btn btn-light border" title="Tomar foto"><i class="fas fa-camera"></i></button>
-                            <img id="productImagePreview" src="" alt="Preview" style="display:none;width:48px;height:48px;object-fit:cover;border-radius:8px;margin-left:10px;">
-                            </div>
-                        <div class="mb-3">
-                            <label for="productName" class="form-label" data-i18n="profile_product_name_label">Nombre del Producto</label>
-                            <input type="text" class="form-control" id="productName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productPrice" class="form-label" data-i18n="profile_price_label">Precio</label>
-                            <input type="number" class="form-control" id="productPrice" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" data-i18n="profile_sell_or_rent">¿Vende o Alquila?</label>
-                            <select class="form-select" id="productType" required>
-                                <option value="Venta" data-i18n="profile_sell_option">Venta</option>
-                                <option value="Alquiler" data-i18n="profile_rent_option">Alquiler</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" data-i18n="profile_craft_type">Tipo de Artesanía</label>
-                            <select class="form-select" id="productCategory" required>
-                                        <option value="Ceramics">Ceramics</option>
-                                        <option value="Textiles">Textiles</option>
-                                        <option value="Jewelry">Jewelry</option>
-                                        <option value="Sculpture">Sculpture</option>
-                                    </select>
-                                </div>
-                        <div class="mb-3">
-                            <label for="productStock" class="form-label" data-i18n="profile_quantity_label">Cantidad Disponible</label>
-                            <input type="number" class="form-control" id="productStock" min="1" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary" data-i18n="profile_create_product_btn">Crear Producto</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="js/local-database.js"></script>
+    <script src="js/user-products-database.js"></script>
+    <script src="js/services/platform-services.js"></script>
+    <script src="components/roles/role-service.js"></script>
+    <script src="components/store/store-service.js"></script>
+    <script src="components/store/store-panel.js"></script>
+    <script src="components/roles/profile-role-adapter.js"></script>
     <script src="js/theme.js"></script>
     <script>
         AOS.init({
@@ -377,169 +390,119 @@
                 return;
             }
 
-            // Populate profile data
+            // Populate profile data — RoleService adapter refina según rol
             document.getElementById('profileName').textContent = currentUser.name;
-            document.getElementById('profileRole').textContent = currentUser.role;
-            
-            // Handle avatar display
+
             const profileAvatar = document.getElementById('profileAvatar');
             if (currentUser.avatar) {
                 profileAvatar.src = currentUser.avatar;
             } else {
-                // Show default avatar for users without photo
                 profileAvatar.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
             }
-
-            // Update stats based on user role
-            if (currentUser.role === 'artisan') {
-                document.getElementById('stat-products').textContent = currentUser.products || 0;
-                document.getElementById('stat-rating').textContent = currentUser.rating || 0;
-                document.getElementById('stat-sales').textContent = '12'; // Placeholder
+            
+            if (window.ProfileRoleAdapter) {
+                window.ProfileRoleAdapter.apply();
             } else {
-                document.getElementById('stat-products').textContent = currentUser.orders || 0;
-                document.getElementById('stat-rating').textContent = currentUser.favorites || 0;
-                document.getElementById('stat-sales').textContent = '5'; // Placeholder
+                document.getElementById('profileRole').textContent = currentUser.role;
+            }
+
+            populateSettingsForm(currentUser);
+
+            const settingsForm = document.getElementById('settingsForm');
+            if (settingsForm) {
+                settingsForm.addEventListener('submit', handleSettingsFormSubmit);
             }
         });
 
-        // Simulación de productos y stats
-        let productCount = 0;
-        const statProducts = document.getElementById('stat-products');
-        const statSales = document.getElementById('stat-sales');
-        const statRating = document.getElementById('stat-rating');
-        const myProductsGridSim = document.getElementById('myProductsGridSim');
+        function populateSettingsForm(user) {
+            const nameInput = document.getElementById('settingsNameInput');
+            const emailInput = document.getElementById('settingsEmailInput');
+            const notifEmail = document.getElementById('notif1');
+            const notifOrders = document.getElementById('notif2');
 
-        // Inicializar en cero
-        statProducts.textContent = '0';
-        statSales.textContent = '0';
-        statRating.textContent = '0';
-
-        // Manejar previsualización de imagen
-        const productImageFile = document.getElementById('productImageFile');
-        const productImagePreview = document.getElementById('productImagePreview');
-        productImageFile.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                    const reader = new FileReader();
-                reader.onload = function(evt) {
-                    productImagePreview.src = evt.target.result;
-                    productImagePreview.style.display = 'inline-block';
-                    };
-                    reader.readAsDataURL(file);
-            } else {
-                productImagePreview.src = '';
-                productImagePreview.style.display = 'none';
-            }
-        });
-
-        // Manejar creación de producto
-        const createProductForm = document.getElementById('createProductForm');
-        createProductForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            productCount++;
-            statProducts.textContent = productCount;
-            // Obtener datos
-            const name = document.getElementById('productName').value;
-            const price = document.getElementById('productPrice').value;
-            const type = document.getElementById('productType').value;
-            const category = document.getElementById('productCategory').value;
-            const stock = document.getElementById('productStock').value;
-            let img = productImagePreview.src || 'https://via.placeholder.com/200x200?text=Product';
-            // Mostrar producto en la sección
-            const card = document.createElement('div');
-            card.className = 'col-md-4';
-            card.innerHTML = `
-                <div class="product-card position-relative">
-                    <button class="btn btn-sm btn-danger position-absolute" style="top:10px;right:10px;border-radius:50%;padding:6px 8px;z-index:2;" title="Eliminar producto"><i class="fas fa-trash"></i></button>
-                    <div class="product-image"><img src="${img}" alt="${name}"></div>
-                    <div class="product-info">
-                        <h5>${name}</h5>
-                        <div class="price">$${price} <span class="badge bg-secondary">${type}</span></div>
-                        <div class="small text-muted">${category} | Stock: ${stock}</div>
-                    </div>
-                </div>
-            `;
-            myProductsGridSim.appendChild(card);
-            // Agrega el evento para eliminar el producto
-            card.querySelector('button').onclick = function() {
-                card.remove();
-                productCount = Math.max(0, productCount - 1);
-                statProducts.textContent = productCount;
-            };
-            // Cerrar modal y limpiar
-            createProductForm.reset();
-            productImagePreview.src = '';
-            productImagePreview.style.display = 'none';
-            const modal = bootstrap.Modal.getInstance(document.getElementById('newProductModal'));
-            modal.hide();
-        });
-    </script>
-    <script type="module">
-        import { addProductToArtisan } from './firebase/store.js';
-        import { auth } from './firebase/firebase-config.js';
-        import { db } from './firebase/firebase-config.js';
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-        const createProductBtn = document.querySelector('.modal-footer .btn.btn-primary');
-        createProductBtn.onclick = async function() {
-            const user = auth.currentUser;
-            if (!user) {
-                alert('Debes iniciar sesión para crear productos.');
-                return;
-            }
-            // Obtener datos del formulario
-            const name = document.querySelector('input[placeholder="Ej: Mola Tradicional Guna"]').value;
-            const price = parseFloat(document.querySelector('input[placeholder="0.00"]').value);
-            const description = document.querySelector('textarea[placeholder="Describe tu producto..."]').value;
-            const category = document.getElementById('productCategory').value;
-            const stock = parseInt(document.querySelector('input[placeholder="Cantidad disponible"]').value);
-            let imgUrl = '';
-            if (productDropzone.files.length > 0) {
-                // Subir la imagen a imgbb
-                const file = productDropzone.files[0];
-                const formData = new FormData();
-                formData.append('image', await toBase64(file));
-                const res = await fetch('https://api.imgbb.com/1/upload?key=71dd2db7d888ab434a8ead94a346fc43', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-                if (data && data.data && data.data.url) {
-                    imgUrl = data.data.url;
-                }
-            }
-            const product = {
-                name,
-                price,
-                description,
-                category,
-                stock,
-                img: imgUrl
-            };
-            try {
-                await addProductToArtisan(user.uid, product);
-                alert('¡Producto creado y publicado exitosamente!');
-                document.querySelector('.product-form').reset();
-                productImagePreview.innerHTML = '';
-                productDropzone.removeAllFiles(true);
-                const modal = bootstrap.Modal.getInstance(document.getElementById('newProductModal'));
-                modal.hide();
-            } catch (e) {
-                alert('Error al crear producto: ' + e.message);
-            }
-        };
-
-        async function toBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
-            });
+            if (nameInput) nameInput.value = user.name || '';
+            if (emailInput) emailInput.value = user.email || '';
+            if (notifEmail) notifEmail.checked = user.emailNotifications !== false;
+            if (notifOrders) notifOrders.checked = user.orderUpdates !== false;
         }
 
-        const myProductsGrid = document.getElementById('myProductsGrid');
+        async function handleSettingsFormSubmit(event) {
+            event.preventDefault();
 
+            const currentUser = window.localDB.getCurrentUser();
+            if (!currentUser) return;
+
+            const nameInput = document.getElementById('settingsNameInput');
+            const emailInput = document.getElementById('settingsEmailInput');
+            const notifEmail = document.getElementById('notif1');
+            const notifOrders = document.getElementById('notif2');
+
+            const newName = (nameInput?.value || '').trim();
+            const newEmail = (emailInput?.value || '').trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!newName) {
+                alert('Por favor ingresa tu nombre.');
+                nameInput?.focus();
+                return;
+            }
+
+            if (!newEmail || !emailPattern.test(newEmail)) {
+                alert('Por favor ingresa un correo electrónico válido.');
+                emailInput?.focus();
+                return;
+            }
+
+            const emailChanged = newEmail.toLowerCase() !== (currentUser.email || '').toLowerCase();
+
+            if (emailChanged) {
+                const emailTaken = window.localDB.getAllUsers().some(function (user) {
+                    return String(user.id) !== String(currentUser.id) &&
+                        user.email.toLowerCase() === newEmail.toLowerCase();
+                });
+
+                if (emailTaken) {
+                    alert('Ese correo electrónico ya está registrado por otro usuario.');
+                    emailInput?.focus();
+                    return;
+                }
+            }
+
+            const result = window.localDB.updateProfile(currentUser.id, {
+                name: newName,
+                email: newEmail,
+                emailNotifications: notifEmail ? notifEmail.checked : true,
+                orderUpdates: notifOrders ? notifOrders.checked : true
+            });
+
+            if (!result.success) {
+                alert('Error al guardar los cambios. Inténtalo de nuevo.');
+                return;
+            }
+
+            document.getElementById('profileName').textContent = newName;
+            populateSettingsForm(result.user);
+
+            if (window.renderHeader) {
+                window.renderHeader();
+            }
+
+            if (window.supabaseAuth?.updateUserProfile) {
+                await window.supabaseAuth.updateUserProfile(currentUser.id, {
+                    name: newName,
+                    email: newEmail
+                });
+            }
+
+            alert('Cambios guardados correctamente.');
+        }
+
+        // Stats iniciales (ProfileRoleAdapter los actualiza según rol)
+        document.getElementById('stat-products').textContent = '0';
+        document.getElementById('stat-sales').textContent = '0';
+        document.getElementById('stat-rating').textContent = '0';
+    </script>
+    <script>
         // Analytics charts
         if (document.getElementById('salesChart')) {
             const salesChart = new Chart(document.getElementById('salesChart').getContext('2d'), {
@@ -622,6 +585,9 @@ navLinks.forEach(link => {
                 sec.classList.remove('d-none');
                 sec.classList.add('animate__animated', 'animate__fadeIn');
                 setTimeout(() => sec.classList.remove('animate__animated', 'animate__fadeIn'), 800);
+                if (sectionId === 'my-store-section' && window.StorePanel) {
+                    window.StorePanel.showView('dashboard');
+                }
             } else {
                 sec.classList.add('d-none');
             }

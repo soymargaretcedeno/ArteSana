@@ -11,8 +11,8 @@
             return `
                 <div class="messages-empty" role="status">
                     <div class="messages-empty-icon">${U.icons.chat}</div>
-                    <h3>${U.esc(U.t('msg_select_chat', 'Selecciona una conversación'))}</h3>
-                    <p>${U.esc(U.t('msg_select_chat_desc', 'Elige un chat de la lista para ver el historial de mensajes.'))}</p>
+                    <h3>${U.esc(U.t('msg_select_chat', 'Chat con directivos'))}</h3>
+                    <p>${U.esc(U.t('msg_select_chat_desc', 'Selecciona el canal directivo para escribir al equipo de ArteSana. Un asistente AI responderá mientras un directivo revisa tu mensaje.'))}</p>
                 </div>`;
         }
     };

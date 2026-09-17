@@ -49,38 +49,6 @@
             transform: scale(1.05);
         }
 
-        .quick-add-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .product-card-explore:hover .quick-add-overlay {
-            opacity: 1;
-        }
-
-        .quick-add-btn {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            border: none;
-            border-radius: 25px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .quick-add-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-        }
-
         .action-btn {
             transition: all 0.3s ease;
         }
@@ -89,13 +57,43 @@
             transform: scale(1.1);
         }
 
-        .add-to-cart-btn {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            border: none;
+        .action-btn.add-to-cart-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: #fff;
         }
 
-        .add-to-cart-btn:hover {
-            background: linear-gradient(135deg, #0056b3, #004085);
+        .action-btn.add-to-cart-btn:hover {
+            background: linear-gradient(135deg, #218838, #1aa179);
+            color: #fff;
+        }
+
+        .add-to-cart-btn.added {
+            background: #2F7D4A;
+            color: #fff;
+        }
+
+        .view-product-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--artesana-wine, #8F1111);
+            text-decoration: none;
+            margin-top: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .view-product-link:hover {
+            color: var(--artesana-gold, #D4A017);
+        }
+
+        .product-info h3 {
+            cursor: pointer;
+        }
+
+        .product-info h3:hover {
+            color: var(--artesana-wine, #8F1111);
         }
 
         /* Floating notification styles */
@@ -163,28 +161,27 @@
         .price {
             font-size: 1.2rem;
             font-weight: 700;
-            color: #28a745;
+            color: #8F1111;
         }
 
         .rating {
             display: flex;
             align-items: center;
             gap: 0.25rem;
-            color: #ffc107;
+            color: #D4A017;
         }
 
         /* Cart options modal styles */
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.5);
+        .cart-options-modal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-content {
@@ -207,7 +204,7 @@
 
         .modal-header h4 {
             margin: 0;
-            color: #28a745;
+            color: #2F7D4A;
             font-weight: 600;
         }
 
@@ -233,7 +230,7 @@
 
         .modal-body p {
             margin-bottom: 1.5rem;
-            color: #666;
+            color: #2B2118;
             font-size: 1.1rem;
         }
 
@@ -248,6 +245,31 @@
             font-weight: 500;
             border-radius: 8px;
             transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .cart-options .btn-primary {
+            background: #8F1111;
+            border-color: #8F1111;
+            color: #fff;
+        }
+
+        .cart-options .btn-primary:hover {
+            background: #D4A017;
+            border-color: #D4A017;
+            color: #2B2118;
+        }
+
+        .cart-options .btn-outline-primary {
+            color: #8F1111;
+            border-color: #8F1111;
+            background: #FFF8E7;
+        }
+
+        .cart-options .btn-outline-primary:hover {
+            background: #D4A017;
+            border-color: #D4A017;
+            color: #2B2118;
         }
 
         .cart-options .btn:hover {
@@ -290,6 +312,7 @@
     <script src="js/products-database.js"></script>
     <script src="js/user-products-database.js"></script>
     <script src="js/ecommerce-confirmation.js"></script>
+    <script src="js/product-card-cart.js"></script>
     <script src="js/i18n.js"></script>
     <script src="components/header-component.js"></script>
     <script src="components/header-user-component.js"></script>
@@ -301,7 +324,7 @@
     <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://buscandoviajes.com/files/1/page-contents/p2023038-2_2302262539.jpg');">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://img.freepik.com/foto-gratis/carretes-textiles-vibrantes-muestran-rica-variacion-cultural-generada-ia_188544-36427.jpg');">
                 </div>
             </div>
             <div class="carousel-item">
@@ -309,19 +332,19 @@
                 </div>
             </div>
             <div class="carousel-item">
-                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.DhUimks8kfhPeiLVeceKUgHaD0?w=299&h=179&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3');">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://tse3.mm.bing.net/th/id/OIP.Sy6bJU6ZxomQ9dmAUFM13AHaE8?r=0&w=720&h=480&rs=1&pid=ImgDetMain&o=7&rm=3');">
                 </div>
             </div>
             <div class="carousel-item">
-                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.D53hsJ6YabourEN6PINJhAHaEr?pid=ImgDet&w=178&h=112&c=7&dpr=1,5');">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://i.pinimg.com/736x/01/c5/31/01c531204de05372d50535163dd0b549.jpg');">
                 </div>
             </div>
             <div class="carousel-item">
-                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://finantechcolombia.com.co/wp-content/uploads/2016/03/valoracion-de-empresas-de-artesanias-en-barranquilla-colombia-940x460.jpg');">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://i.ytimg.com/vi/7zwI9KU4AQ4/maxresdefault.jpg');">
                 </div>
             </div>
             <div class="carousel-item">
-                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://th.bing.com/th/id/OIP.vQEBmLL01B3PGNljeklfPAHaEL?rs=1&pid=ImgDetMain');">
+                <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://tse4.mm.bing.net/th/id/OIP.z-hvL91fW0Iq1m6lNbhAgAHaE8?r=0&w=1536&h=1024&rs=1&pid=ImgDetMain&o=7&rm=3');">
                 </div>
             </div>
             <div class="carousel-item">
@@ -399,37 +422,37 @@
             <h2 class="text-center mb-5" data-i18n="explore_featured_categories">Featured Categories</h2>
             <div class="row">
                 <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="category-card" style="background-image: url('https://humanidades.com/wp-content/uploads/2016/09/porcelana-e1560626226618.jpg')">
+                    <div class="category-card cat-ceramics" style="background-image: url('https://humanidades.com/wp-content/uploads/2016/09/porcelana-e1560626226618.jpg')">
                         <div class="category-content">
-                            <h3 style="color:#000;" data-i18n="explore_ceramics">Ceramics</h3>
-                            <p style="color:#000;" data-i18n="explore_ceramics_desc">Traditional pottery and decorative pieces</p>
+                            <h3 data-i18n="explore_ceramics">Ceramics</h3>
+                            <p data-i18n="explore_ceramics_desc">Traditional pottery and decorative pieces</p>
                             <a href="ceramics.html" class="btn btn-outline-light" data-i18n="explore_explore_btn">Explore</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="category-card" style="background-image: url('https://thumbs.dreamstime.com/b/artes-de-panam%C3%A1-18961136.jpg')">
+                    <div class="category-card cat-textiles" style="background-image: url('https://thumbs.dreamstime.com/b/artes-de-panam%C3%A1-18961136.jpg')">
                         <div class="category-content">
-                            <h3 style="color:#000;" data-i18n="explore_textiles">Textiles</h3>
-                            <p style="color:#000;" data-i18n="explore_textiles_desc">Handwoven fabrics and traditional designs</p>
+                            <h3 data-i18n="explore_textiles">Textiles</h3>
+                            <p data-i18n="explore_textiles_desc">Handwoven fabrics and traditional designs</p>
                             <a href="textiles.html" class="btn btn-outline-light" data-i18n="explore_explore_btn">Explore</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="category-card" style="background-image: url('https://th.bing.com/th/id/OIP.vQEBmLL01B3PGNljeklfPAHaEL?rs=1&pid=ImgDetMain')">
+                    <div class="category-card cat-jewelry" style="background-image: url('https://th.bing.com/th/id/OIP.vQEBmLL01B3PGNljeklfPAHaEL?rs=1&pid=ImgDetMain')">
                         <div class="category-content">
-                            <h3 style="color:#000;" data-i18n="explore_jewelry">Jewelry</h3>
-                            <p style="color:#000;" data-i18n="explore_jewelry_desc">Handcrafted jewelry with cultural significance</p>
+                            <h3 data-i18n="explore_jewelry">Jewelry</h3>
+                            <p data-i18n="explore_jewelry_desc">Handcrafted jewelry with cultural significance</p>
                             <a href="jewelry.html" class="btn btn-outline-light" data-i18n="explore_explore_btn">Explore</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="category-card" style="background-image: url('https://media.istockphoto.com/id/675469478/photo/nicaragua-handmade-ceramic-pots-on-sell-like-souvenir.jpg?s=612x612&w=0&k=20&c=TdJGd0ZgaSP6oMk8hsIxbYg8fcx-mlvDA9Py2EeoIWY=')">
+                    <div class="category-card cat-sculpture" style="background-image: url('https://media.istockphoto.com/id/675469478/photo/nicaragua-handmade-ceramic-pots-on-sell-like-souvenir.jpg?s=612x612&w=0&k=20&c=TdJGd0ZgaSP6oMk8hsIxbYg8fcx-mlvDA9Py2EeoIWY=')">
                         <div class="category-content">
-                            <h3 style="color:#000;" data-i18n="explore_sculptures">Sculptures</h3>
-                            <p style="color:#000;" data-i18n="explore_sculptures_desc">Traditional carved masks and figures</p>
+                            <h3 data-i18n="explore_sculptures">Sculptures</h3>
+                            <p data-i18n="explore_sculptures_desc">Traditional carved masks and figures</p>
                             <a href="sculpture.html" class="btn btn-outline-light" data-i18n="explore_explore_btn">Explore</a>
                         </div>
                     </div>
@@ -463,14 +486,10 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <cta-section 
-      title="Empower Your Creativity"
-      subtitle="Join ArteSana and showcase your unique handcrafts to the world, or discover treasures made by Panamanian artisans."
-      button-text="Start Your Journey"
-      button-link="perfil.html#my-store-section"
-      style="--primary-color:#E9EDC9; --mola-yellow:#A22A2A; --cream-white:#800000; --mola-red:#E5989B; --mola-orange:#FF9F1C;">
-    </cta-section>
+    <!-- CTA solo para clientes: comenzar a vender -->
+    <script src="components/roles/role-service.js"></script>
+    <script src="components/roles/client-sell-cta.js"></script>
+    <client-sell-cta></client-sell-cta>
     <!-- Footer Component -->
     <footer-component></footer-component>
 
@@ -492,14 +511,30 @@
         });
 
         // Load products
+        function productIdJs(id) {
+            return `'${String(id).replace(/'/g, "\\'")}'`;
+        }
+
+        function isOwnProduct(product) {
+            const user = window.localDB?.getCurrentUser();
+            if (!user || !product) return false;
+            return String(product.userId) === String(user.id) || String(product.sellerId) === String(user.id);
+        }
+
         function loadProducts() {
-            const allProducts = window.userProductsDB.getAllProducts();
+            const allProducts = window.userProductsDB.getPublicProducts();
             const container = document.getElementById('productsGrid');
             const esc = window.SecurityUtils ? window.SecurityUtils.escapeHtml : (s) => String(s ?? '');
             
-            container.innerHTML = allProducts.map((product, index) => `
+            container.innerHTML = allProducts.map((product, index) => {
+                const ownProduct = isOwnProduct(product);
+                const cartBtn = ownProduct ? '' : `
+                                <button class="action-btn add-to-cart-btn" type="button" onclick="addToCartFromCard(${productIdJs(product.id)}, event)" title="Add to Cart" aria-label="Añadir al carrito">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>`;
+                return `
                 <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="${index * 100}">
-                    <div class="product-card-explore" onclick="handleProductClick(${product.id}, event)" role="button" tabindex="0" aria-label="${esc(product.name)}" onkeydown="if(event.key==='Enter')handleProductClick(${product.id}, event)">
+                    <div class="product-card-explore" onclick="handleProductClick(${productIdJs(product.id)}, event)" role="button" tabindex="0" aria-label="${esc(product.name)}" onkeydown="if(event.key==='Enter')handleProductClick(${productIdJs(product.id)}, event)">
                         <div class="product-image">
                             <img src="${esc(product.mainImage)}" alt="${esc(product.name)}" loading="lazy" decoding="async">
                             <div class="product-tags">
@@ -509,90 +544,54 @@
                                 ${product.tags.includes('new') ? '<span class="tag category">New</span>' : ''}
                             </div>
                             <div class="product-actions">
-                                <button class="action-btn" type="button" aria-label="Favorito" onclick="event.stopPropagation(); toggleFavorite(${product.id})">
-                                    <i class="fas fa-heart" id="favorite-${product.id}" style="color: ${window.userProductsDB.isInFavorites(product.id) ? '#e74c3c' : '#fff'}"></i>
+                                <button class="action-btn" type="button" aria-label="Favorito" onclick="event.stopPropagation(); toggleFavorite(${productIdJs(product.id)})">
+                                    <i class="fas fa-heart" id="favorite-${esc(product.id)}" style="color: ${window.userProductsDB.isInFavorites(product.id) ? '#e74c3c' : '#fff'}"></i>
                                 </button>
-                                <button class="action-btn" type="button" aria-label="Comparar" onclick="event.stopPropagation(); toggleComparison(${product.id})">
-                                    <i class="fas fa-balance-scale" id="compare-${product.id}" style="color: ${window.userProductsDB.isInComparison(product.id) ? '#a22a22' : '#fff'}"></i>
+                                <button class="action-btn" type="button" aria-label="Comparar" onclick="event.stopPropagation(); toggleComparison(${productIdJs(product.id)})">
+                                    <i class="fas fa-balance-scale" id="compare-${esc(product.id)}" style="color: ${window.userProductsDB.isInComparison(product.id) ? '#a22a22' : '#fff'}"></i>
                                 </button>
-                                <button class="action-btn add-to-cart-btn" type="button" onclick="event.stopPropagation(); addToCart(${product.id}, event)" title="Add to Cart" aria-label="Añadir al carrito">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
-                            </div>
-                            <div class="quick-add-overlay">
-                                <button class="btn btn-primary quick-add-btn" type="button" onclick="event.stopPropagation(); addToCart(${product.id}, event)">
-                                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                                </button>
+                                ${cartBtn}
                             </div>
                         </div>
                         <div class="product-info">
-                            <h3>${esc(product.name)}</h3>
+                            <h3 onclick="event.stopPropagation(); goToProductDetail(${productIdJs(product.id)})">${esc(product.name)}</h3>
                             <div class="artisan-info">
                                 <img src="${esc(product.artisan.avatar)}" alt="${esc(product.artisan.name)}" loading="lazy" width="24" height="24">
                                 <span>By ${esc(product.artisan.name)}</span>
                             </div>
                             <p class="description">${esc(product.description.substring(0, 100))}${product.description.length > 100 ? '...' : ''}</p>
                             <div class="product-meta">
-                                <span class="price">$${product.price.toFixed(2)}</span>
+                                <span class="price">B/. ${product.price.toFixed(2)}</span>
                                 <div class="rating">
                                     <i class="fas fa-star" aria-hidden="true"></i>
                                     <span>${product.rating}</span>
                                 </div>
                             </div>
+                            <a href="product.html?id=${encodeURIComponent(String(product.id))}" class="view-product-link" onclick="event.stopPropagation()">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                <span data-i18n="product_view_product">Ver producto</span>
+                            </a>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
-        // Handle product card click
+        function goToProductDetail(productId) {
+            window.location.href = 'product.html?id=' + encodeURIComponent(String(productId));
+        }
+
+        // Handle product card click — abre detalle del producto
         function handleProductClick(productId, event) {
-            // Check if the click was on an action button or quick add button
-            if (event.target.closest('.action-btn') || event.target.closest('.quick-add-btn')) {
-                return; // Let the button handle the action
-            }
-            
-            // Show a confirmation dialog for adding to cart
-            const product = window.userProductsDB.getProductById(productId);
-            if (product) {
-                const confirmed = confirm(`¿Deseas agregar "${product.name}" al carrito de compras?`);
-                if (confirmed) {
-                    addToCart(productId);
-                }
-            }
-        }
-
-        // Add to cart with enhanced feedback
-        function addToCart(productId, evt) {
-            const product = window.userProductsDB.getProductById(productId);
-            if (!product) {
-                showToast('Producto no encontrado', 'error');
+            if (event.target.closest('.action-btn')) {
                 return;
             }
+            goToProductDetail(productId);
+        }
 
-            const success = window.productsDB.addToCart(productId, 1);
-            if (success) {
-                const cartBtn = evt && evt.target ? (evt.target.closest('.add-to-cart-btn') || evt.target.closest('.quick-add-btn')) : null;
-                if (cartBtn) {
-                    cartBtn.innerHTML = '<i class="fas fa-check"></i>';
-                    cartBtn.style.backgroundColor = '#28a745';
-                    cartBtn.style.borderColor = '#28a745';
-                }
-                
-                // Show confirmation
-                window.ecommerceConfirmation.showCartConfirmation(productId, 1);
-                
-                // Update cart count in header
-                window.productsDB.updateCartCount();
-                
-                // Show floating notification
-                showFloatingNotification(`"${product.name}" added to cart!`);
-                
-                // Show cart options modal
-                showCartOptionsModal(product.name);
-            } else {
-                window.ecommerceConfirmation.showEnhancedToast('Error al agregar producto al carrito', 'error');
-            }
+        // Add to cart — botón amarillo + modal verde
+        function addToCart(productId, evt) {
+            addToCartFromCard(productId, evt);
         }
 
         // Toggle favorite
@@ -627,103 +626,70 @@
             }
         }
 
-        // Show floating notification
-        function showFloatingNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'floating-notification';
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #28a745, #20c997);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 50px;
-                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-                z-index: 1000;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-                font-weight: 500;
-                max-width: 300px;
-            `;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-
-        // Show cart options modal
+        // Modal de confirmación al agregar al carrito
         function showCartOptionsModal(productName) {
+            closeCartModal();
+
+            const escHtml = window.SecurityUtils?.escapeHtml
+                ? (value) => window.SecurityUtils.escapeHtml(value)
+                : (value) => {
+                    const node = document.createElement('div');
+                    node.textContent = String(value ?? '');
+                    return node.innerHTML;
+                };
+
             const modal = document.createElement('div');
             modal.className = 'cart-options-modal';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('aria-labelledby', 'cartAddedTitle');
             modal.innerHTML = `
-                <div class="modal-overlay">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4>Product Added!</h4>
-                            <button class="close-btn" onclick="closeCartModal()">
-                                <i class="fas fa-times"></i>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 id="cartAddedTitle">Product Added!</h4>
+                        <button type="button" class="close-btn" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>"${escHtml(productName)}" has been added to cart!</p>
+                        <div class="cart-options">
+                            <button type="button" class="btn btn-primary cart-modal-view">
+                                <i class="fas fa-shopping-cart"></i> View Cart
                             </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>"${productName}" has been added to cart!</p>
-                            <div class="cart-options">
-                                <button class="btn btn-primary" onclick="goToCart()">
-                                    <i class="fas fa-shopping-cart"></i> View Cart
-                                </button>
-                                <button class="btn btn-outline-primary" onclick="continueShopping()">
-                                    <i class="fas fa-shopping-bag"></i> Continue Shopping
-                                </button>
-                            </div>
+                            <button type="button" class="btn btn-outline-primary cart-modal-continue">
+                                <i class="fas fa-shopping-bag"></i> Continue Shopping
+                            </button>
                         </div>
                     </div>
                 </div>
             `;
-            
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 9999;
-                animation: fadeIn 0.3s ease;
-            `;
-            
+
             document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+
+            modal.querySelector('.close-btn').addEventListener('click', closeCartModal);
+            modal.querySelector('.cart-modal-view').addEventListener('click', goToCart);
+            modal.querySelector('.cart-modal-continue').addEventListener('click', continueShopping);
         }
 
-        // Close cart modal
         function closeCartModal() {
             const modal = document.querySelector('.cart-options-modal');
-            if (modal) {
-                modal.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => modal.remove(), 300);
-            }
+            if (!modal) return;
+
+            modal.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => {
+                modal.remove();
+                if (!document.querySelector('.cart-options-modal')) {
+                    document.body.style.overflow = '';
+                }
+            }, 300);
         }
 
-        // Go to cart
         function goToCart() {
             window.location.href = 'cart.html';
         }
 
-        // Continue shopping
         function continueShopping() {
             closeCartModal();
         }

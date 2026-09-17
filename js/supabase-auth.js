@@ -11,6 +11,54 @@ function getSupabaseClient() {
     return window._supabaseClient;
 }
 
+function isSupabaseReachable() {
+    return typeof supabase !== 'undefined' && window.location.protocol !== 'file:';
+}
+
+function loginLocal(email, password, twoFactorCode) {
+    if (!window.localDB) {
+        return { success: false, message: translateAuthError({ message: 'Failed to fetch' }) };
+    }
+
+    const result = window.localDB.authenticate(email, password, twoFactorCode);
+    if (result.success) {
+        return { success: true, user: result.user };
+    }
+
+    if (result.requires2FA) {
+        return { success: false, requires2FA: true, userId: result.userId };
+    }
+
+    return { success: false, message: translateAuthError({ message: 'Invalid login credentials' }) };
+}
+
+function registerLocal(name, email, password) {
+    if (!window.localDB) {
+        return { success: false, message: translateAuthError({ message: 'Failed to fetch' }) };
+    }
+
+    const result = window.localDB.register({ name, email, password });
+    if (result.success) {
+        return { success: true, user: result.user };
+    }
+
+    const lang = localStorage.getItem('lang') || 'es';
+    const message = result.message === 'Email already registered'
+        ? (lang === 'en' ? 'This email is already registered' : 'Este correo ya está registrado')
+        : result.message;
+
+    return { success: false, message };
+}
+
+function isNetworkAuthError(err) {
+    const msg = String(err?.message || err || '').toLowerCase();
+    return msg.includes('failed to fetch')
+        || msg.includes('network')
+        || msg.includes('live server')
+        || msg.includes('supabase no carg')
+        || msg.includes('fetch');
+}
+
 function translateAuthError(error) {
     const lang = localStorage.getItem('lang') || 'es';
     const messages = {
@@ -43,6 +91,7 @@ function buildLocalUser(authUser, profile) {
         name: profile?.full_name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Usuario',
         email: authUser.email,
         role: profile?.role || 'customer',
+        roleSelected: profile?.role_selected === true,
         avatar: profile?.avatar || null,
         joinDate: (authUser.created_at || new Date().toISOString()).split('T')[0],
         orders: profile?.orders || 0,
@@ -53,7 +102,7 @@ function buildLocalUser(authUser, profile) {
 async function fetchProfile(userId) {
     const { data, error } = await getSupabaseClient()
         .from('profiles')
-        .select('full_name, role, avatar, orders, favorites')
+        .select('full_name, role, role_selected, avatar, orders, favorites')
         .eq('id', userId)
         .maybeSingle();
 
@@ -61,12 +110,13 @@ async function fetchProfile(userId) {
     return data;
 }
 
-async function saveProfile(userId, name, email) {
+async function saveProfile(userId, name, email, role) {
     const { error } = await getSupabaseClient().from('profiles').upsert({
         id: userId,
         full_name: name,
         email,
-        role: 'customer',
+        role: role || 'customer',
+        role_selected: false,
         updated_at: new Date().toISOString()
     });
 
@@ -77,6 +127,38 @@ async function saveProfile(userId, name, email) {
     return null;
 }
 
+async function updateUserProfile(userId, { name, email }) {
+    try {
+        const profile = await fetchProfile(userId);
+        const { error } = await getSupabaseClient().from('profiles').upsert({
+            id: userId,
+            full_name: name,
+            email,
+            role: profile?.role || 'customer',
+            role_selected: profile?.role_selected === true,
+            updated_at: new Date().toISOString()
+        });
+
+        if (error) {
+            console.warn('[Supabase] Error actualizando perfil:', error.message);
+            return { success: false, message: error.message };
+        }
+
+        const { error: metaError } = await getSupabaseClient().auth.updateUser({
+            data: { full_name: name }
+        });
+
+        if (metaError) {
+            console.warn('[Supabase] Error actualizando metadata:', metaError.message);
+        }
+
+        return { success: true };
+    } catch (err) {
+        console.warn('[Supabase] updateUserProfile:', err.message);
+        return { success: false, message: err.message };
+    }
+}
+
 async function syncSessionUser(session) {
     if (!session?.user || !window.localDB) return;
     const profile = await fetchProfile(session.user.id);
@@ -84,6 +166,10 @@ async function syncSessionUser(session) {
 }
 
 async function register(name, email, password) {
+    if (!isSupabaseReachable()) {
+        return registerLocal(name, email, password);
+    }
+
     try {
         const client = getSupabaseClient();
         const { data, error } = await client.auth.signUp({
@@ -96,15 +182,20 @@ async function register(name, email, password) {
         });
 
         if (error) {
-            console.error('[Supabase register]', error);
-            return { success: false, message: translateAuthError(error) };
+            console.warn('[Supabase register]', error.message);
+            const localResult = registerLocal(name, email, password);
+            if (localResult.success) return localResult;
+            return {
+                success: false,
+                message: localResult.message || translateAuthError(error)
+            };
         }
 
         if (!data.user) {
+            const localResult = registerLocal(name, email, password);
+            if (localResult.success) return localResult;
             return { success: false, message: 'No se pudo crear el usuario. Intenta de nuevo.' };
         }
-
-        console.log('[Supabase] Usuario creado en auth:', data.user.id, data.user.email);
 
         if (data.session) {
             await saveProfile(data.user.id, name, email);
@@ -112,38 +203,61 @@ async function register(name, email, password) {
             return { success: true, user: window.localDB.getCurrentUser() };
         }
 
+        const localResult = registerLocal(name, email, password);
+        if (localResult.success) {
+            return { success: true, user: localResult.user };
+        }
+
         return {
-            success: true,
-            needsConfirmation: true,
-            message: localStorage.getItem('lang') === 'en'
-                ? 'Account created in Supabase! Check your email to confirm before signing in.'
-                : '¡Cuenta creada en Supabase! Revisa tu correo para confirmar antes de iniciar sesión.'
+            success: false,
+            message: localResult.message || (localStorage.getItem('lang') === 'en'
+                ? 'This email is already registered'
+                : 'Este correo ya está registrado')
         };
     } catch (err) {
-        console.error('[Supabase register]', err);
-        return { success: false, message: err.message || 'Error de conexión con Supabase' };
+        console.warn('[Supabase register] fallback local:', err.message);
+        const localResult = registerLocal(name, email, password);
+        if (localResult.success) return localResult;
+        return {
+            success: false,
+            message: localResult.message || translateAuthError({ message: err.message })
+        };
     }
 }
 
-async function login(email, password) {
+async function login(email, password, twoFactorCode) {
+    if (!isSupabaseReachable()) {
+        return loginLocal(email, password, twoFactorCode);
+    }
+
     try {
         const { data, error } = await getSupabaseClient().auth.signInWithPassword({ email, password });
 
         if (error) {
-            console.error('[Supabase login]', error);
+            console.warn('[Supabase login]', error.message);
+            const localResult = loginLocal(email, password, twoFactorCode);
+            if (localResult.success || localResult.requires2FA) return localResult;
             return { success: false, message: translateAuthError(error) };
         }
 
         await syncSessionUser(data.session);
         return { success: true, user: window.localDB.getCurrentUser() };
     } catch (err) {
-        console.error('[Supabase login]', err);
-        return { success: false, message: err.message || 'Error de conexión con Supabase' };
+        console.warn('[Supabase login] fallback local:', err.message);
+        const localResult = loginLocal(email, password, twoFactorCode);
+        if (localResult.success || localResult.requires2FA) return localResult;
+        return { success: false, message: translateAuthError({ message: err.message }) };
     }
 }
 
 async function logout() {
-    await getSupabaseClient().auth.signOut();
+    try {
+        if (isSupabaseReachable()) {
+            await getSupabaseClient().auth.signOut();
+        }
+    } catch (err) {
+        console.warn('[Supabase logout]', err.message);
+    }
     if (window.localDB) {
         window.localDB.clearCurrentUser();
     }
@@ -163,6 +277,8 @@ async function resetPassword(email) {
 }
 
 async function initSession() {
+    if (!isSupabaseReachable()) return;
+
     try {
         const { data: { session } } = await getSupabaseClient().auth.getSession();
         if (session) {
@@ -188,9 +304,12 @@ window.supabaseAuth = {
     get client() { return getSupabaseClient(); },
     register,
     login,
+    loginLocal,
+    registerLocal,
     logout,
     resetPassword,
-    initSession
+    initSession,
+    updateUserProfile
 };
 
 function startInit() {

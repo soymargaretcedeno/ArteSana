@@ -129,6 +129,14 @@ class HeaderUserComponent extends HTMLElement {
                     width: 100%;
                 }
 
+                .nav-link.active {
+                    color: #FFD700;
+                }
+
+                .nav-link.active::after {
+                    width: 100%;
+                }
+
                 /* User Menu */
                 .user-menu {
                     display: flex;
@@ -417,6 +425,15 @@ class HeaderUserComponent extends HTMLElement {
                     transform: scaleY(1);
                 }
 
+                .mobile-menu-link.active {
+                    color: #FFD700;
+                    background: rgba(255, 255, 255, 0.05);
+                }
+
+                .mobile-menu-link.active::before {
+                    transform: scaleY(1);
+                }
+
                 /* Mobile Menu Actions */
                 .mobile-menu-actions {
                     padding: 20px 30px;
@@ -698,10 +715,10 @@ class HeaderUserComponent extends HTMLElement {
 
                     <!-- Navigation Menu -->
                     <nav class="nav-menu">
-                        <a href="index.html" class="nav-link" data-i18n="dashboard">Inicio</a>
-                        <a href="explorar.html" class="nav-link" data-i18n="explore">Explorar</a>
-                        <a href="store.html" class="nav-link" data-i18n="store">Tienda</a>
-                        <a href="contact.html" class="nav-link" data-i18n="contact">Contacto</a>
+                        <a href="index.html" class="nav-link" data-nav-section="dashboard" data-i18n="dashboard">Inicio</a>
+                        <a href="explorar.html" class="nav-link" data-nav-section="explore" data-i18n="explore">Explorar</a>
+                        <a href="store.html" class="nav-link" data-nav-section="store" data-i18n="store">Tienda</a>
+                        <a href="contact.html" class="nav-link" data-nav-section="contact" data-i18n="contact">Contacto</a>
                     </nav>
 
                     <!-- User Menu -->
@@ -775,16 +792,16 @@ class HeaderUserComponent extends HTMLElement {
                     <!-- Navigation Links -->
                     <ul class="mobile-menu-list">
                         <li class="mobile-menu-item">
-                            <a href="index.html" class="mobile-menu-link" data-i18n="dashboard">Inicio</a>
+                            <a href="index.html" class="mobile-menu-link" data-nav-section="dashboard" data-i18n="dashboard">Inicio</a>
                         </li>
                         <li class="mobile-menu-item">
-                            <a href="explorar.html" class="mobile-menu-link" data-i18n="explore">Explorar</a>
+                            <a href="explorar.html" class="mobile-menu-link" data-nav-section="explore" data-i18n="explore">Explorar</a>
                         </li>
                         <li class="mobile-menu-item">
-                            <a href="store.html" class="mobile-menu-link" data-i18n="store">Tienda</a>
+                            <a href="store.html" class="mobile-menu-link" data-nav-section="store" data-i18n="store">Tienda</a>
                         </li>
                         <li class="mobile-menu-item">
-                            <a href="contact.html" class="mobile-menu-link" data-i18n="contact">Contacto</a>
+                            <a href="contact.html" class="mobile-menu-link" data-nav-section="contact" data-i18n="contact">Contacto</a>
                         </li>
                         <li class="mobile-menu-item">
                             <a href="perfil.html" class="mobile-menu-link">Mi Perfil</a>
@@ -859,7 +876,7 @@ class HeaderUserComponent extends HTMLElement {
         if (langSelector) {
             langSelector.value = localStorage.getItem('lang') || 'es';
             langSelector.addEventListener('change', (e) => {
-                window.setLanguage(e.target.value);
+                window.setLanguage(e.target.value, { notify: true });
                 // Actualizar los textos dentro del shadow DOM
                 this.updateI18nTexts();
             });
@@ -870,7 +887,7 @@ class HeaderUserComponent extends HTMLElement {
         if (mobileLangSelector) {
             mobileLangSelector.value = localStorage.getItem('lang') || 'es';
             mobileLangSelector.addEventListener('change', (e) => {
-                window.setLanguage(e.target.value);
+                window.setLanguage(e.target.value, { notify: true });
                 // Actualizar los textos dentro del shadow DOM
                 this.updateI18nTexts();
             });
@@ -973,19 +990,15 @@ class HeaderUserComponent extends HTMLElement {
 
 
     setActiveLink() {
-        const currentPath = window.location.pathname;
-        const navLinks = this.shadowRoot.querySelectorAll('.nav-link');
-        const mobileLinks = this.shadowRoot.querySelectorAll('.mobile-menu-link');
-        
-        // Remove active class from all links
-        [...navLinks, ...mobileLinks].forEach(link => {
-            link.classList.remove('active');
-        });
+        const activeSection = window.NavActive?.getActiveNavSection();
+        const navLinks = this.shadowRoot.querySelectorAll('.nav-link, .mobile-menu-link');
 
-        // Add active class to current page link
-        [...navLinks, ...mobileLinks].forEach(link => {
-            if (link.getAttribute('href') === currentPath.split('/').pop() || 
-                (currentPath.endsWith('/') && link.getAttribute('href') === 'index.html')) {
+        navLinks.forEach(link => link.classList.remove('active'));
+
+        if (!activeSection) return;
+
+        navLinks.forEach(link => {
+            if (link.dataset.navSection === activeSection) {
                 link.classList.add('active');
             }
         });
@@ -1027,6 +1040,6 @@ window.toggleLanguage = function(event) {
     
     // Aplicar el cambio de idioma
     if (window.setLanguage) {
-        window.setLanguage(newLang);
+        window.setLanguage(newLang, { notify: true });
     }
 }; 

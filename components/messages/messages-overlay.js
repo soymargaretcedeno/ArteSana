@@ -11,15 +11,25 @@ class MessagesOverlay extends HTMLElement {
         this._escHandler = (e) => {
             if (e.key === 'Escape' && this.classList.contains('open')) this.close();
         };
+        this._onMessagesUpdated = (e) => {
+            if (!this.classList.contains('open')) return;
+            const chatId = e.detail?.chatId;
+            if (chatId && chatId === this.activeChatId) {
+                this._refreshActiveChat();
+            }
+            this._refreshList();
+        };
     }
 
     connectedCallback() {
         document.addEventListener('keydown', this._escHandler);
+        document.addEventListener('messages:updated', this._onMessagesUpdated);
     }
 
     disconnectedCallback() {
         window.removeEventListener('resize', this._resizeHandler);
         document.removeEventListener('keydown', this._escHandler);
+        document.removeEventListener('messages:updated', this._onMessagesUpdated);
     }
 
     t(key, fallback) {
@@ -64,7 +74,7 @@ class MessagesOverlay extends HTMLElement {
         overlay.querySelector('#msgBackdrop')?.addEventListener('click', () => this.close());
         overlay.querySelector('#msgCloseSidebar')?.addEventListener('click', () => this.close());
 
-        ConvList.bindSearch(overlay, this.activeChatId, (chatId) => this.selectChat(chatId));
+        ConvList.bindSearch(overlay, () => this.activeChatId, (chatId) => this.selectChat(chatId));
         ConvList.bindItems(overlay, (chatId) => this.selectChat(chatId));
 
         const thread = this.activeChatId ? this.getThread(this.activeChatId) : null;
@@ -92,6 +102,17 @@ class MessagesOverlay extends HTMLElement {
         window.MessagesConversationList.bindItems(overlay, (chatId) => this.selectChat(chatId));
     }
 
+    _refreshActiveChat() {
+        const overlay = this.querySelector('.messages-overlay');
+        const thread = this.activeChatId ? this.getThread(this.activeChatId) : null;
+        if (!overlay || !thread) return;
+        const area = overlay.querySelector('#msgMessagesArea');
+        if (area) {
+            area.innerHTML = window.MessagesBubble.renderAll(thread.messages);
+            window.MessagesChatWindow.scrollToBottom(overlay);
+        }
+    }
+
     selectChat(chatId) {
         this.activeChatId = chatId;
         window.MessagesUtils.markThreadRead(chatId);
@@ -108,10 +129,11 @@ class MessagesOverlay extends HTMLElement {
     }
 
     goToList() {
-        this.mobileView = 'list';
-        if (MessagesOverlay.isMobile()) {
-            history.pushState({ messagesView: 'list' }, '', '#messages');
+        if (MessagesOverlay.isMobile() && this.mobileView === 'chat') {
+            history.back();
+            return;
         }
+        this.mobileView = 'list';
         this.render();
     }
 
@@ -120,13 +142,24 @@ class MessagesOverlay extends HTMLElement {
             this.activeChatId = chatId;
             if (MessagesOverlay.isMobile()) this.mobileView = 'chat';
         } else {
-            this.mobileView = 'list';
+            const threads = window.PlatformServices.getMessageThreads();
+            const directors = threads.find(t => t.type === 'directors') || threads[0];
+            if (directors) {
+                this.activeChatId = directors.id;
+                if (MessagesOverlay.isMobile()) this.mobileView = 'chat';
+            } else {
+                this.mobileView = 'list';
+            }
         }
 
         this.classList.add('open');
         this.render();
         document.body.style.overflow = 'hidden';
         window.addEventListener('resize', this._resizeHandler);
+
+        if (MessagesOverlay.isMobile() && !location.hash.startsWith('#messages')) {
+            history.pushState({ messagesView: 'list' }, '', '#messages');
+        }
 
         requestAnimationFrame(() => {
             this.querySelector('#msgSearchInput')?.focus();
@@ -155,10 +188,24 @@ class MessagesOverlay extends HTMLElement {
 
     handlePopState(state) {
         if (!this.classList.contains('open')) return;
-        if (state && state.messagesView === 'chat' && state.chatId) {
+
+        if (!state || !state.messagesView) {
+            this.classList.remove('open');
+            const overlay = this.querySelector('.messages-overlay');
+            overlay?.classList.remove('open');
+            document.body.style.overflow = '';
+            window.removeEventListener('resize', this._resizeHandler);
+            this.activeChatId = null;
+            this.mobileView = 'list';
+            document.dispatchEvent(new CustomEvent('messages:closed'));
+            return;
+        }
+
+        if (state.messagesView === 'chat' && state.chatId) {
             this.activeChatId = state.chatId;
             this.mobileView = 'chat';
         } else {
+            this.activeChatId = state.chatId || null;
             this.mobileView = 'list';
         }
         this.render();

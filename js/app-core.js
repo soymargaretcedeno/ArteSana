@@ -14,7 +14,8 @@
 
     const OPTIONAL_SCRIPTS = {
         auth: 'js/utils/auth-guard.js',
-        widgets: 'components/platform-widgets.js'
+        widgets: 'components/platform-widgets.js',
+        messages: 'components/messages/messages-init.js'
     };
 
     function loadScript(src) {
@@ -45,12 +46,22 @@
         }
 
         if (opts.auth) {
-            try { await loadScript(OPTIONAL_SCRIPTS.auth); } catch (e) { /* optional */ }
+            try {
+                await loadScript(OPTIONAL_SCRIPTS.auth);
+                if (global.AuthGuard?.handlePendingLoginRedirect) {
+                    global.AuthGuard.handlePendingLoginRedirect();
+                }
+            } catch (e) { /* optional */ }
         }
 
         if (opts.widgets) {
             try {
                 await loadScript(OPTIONAL_SCRIPTS.widgets);
+                await loadScript(OPTIONAL_SCRIPTS.messages);
+                if (global.MessagesInit) {
+                    await global.MessagesInit.init();
+                }
+                document.body.dataset.enhancedMessages = 'true';
                 if (!document.querySelector('platform-widgets')) {
                     document.body.appendChild(document.createElement('platform-widgets'));
                 }

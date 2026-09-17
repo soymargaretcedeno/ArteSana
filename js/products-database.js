@@ -269,9 +269,15 @@ class ProductsDatabase {
         return this.products;
     }
 
-    // Get product by ID
+    // Get product by ID (marketplace + publicaciones de vendedores)
     getProductById(id) {
-        return this.products.find(product => product.id === parseInt(id));
+        if (window.userProductsDB) {
+            const userProduct = window.userProductsDB.getUserProductById(id);
+            if (userProduct) return userProduct;
+        }
+        const numId = parseInt(id, 10);
+        if (Number.isNaN(numId)) return undefined;
+        return this.products.find(product => product.id === numId);
     }
 
     // Get products by category

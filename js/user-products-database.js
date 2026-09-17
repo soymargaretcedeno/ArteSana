@@ -178,15 +178,23 @@ class UserProductsDatabase {
 
     // Add new user product
     addUserProduct(productData) {
+        const currentUser = window.localDB?.getCurrentUser();
+        const ownerId = productData.sellerId ?? productData.userId ?? currentUser?.id;
+
         const newProduct = {
-            id: `user_${Date.now()}`,
             ...productData,
-            createdAt: new Date().toISOString(),
+            id: productData.id || `user_${Date.now()}`,
+            sellerId: ownerId,
+            userId: ownerId,
+            createdAt: productData.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
             isUserProduct: true,
-            userId: window.localDB?.getCurrentUser()?.id || 1,
-            rating: 0,
-            reviews: 0,
-            featured: false
+            publicationStatus: productData.publicationStatus || 'active',
+            tags: Array.isArray(productData.tags) ? productData.tags : [],
+            rating: productData.rating ?? 0,
+            reviews: productData.reviews ?? 0,
+            featured: productData.featured ?? false,
+            stock: productData.stock ?? 1
         };
 
         this.userProducts.push(newProduct);
@@ -195,26 +203,62 @@ class UserProductsDatabase {
     }
 
     // Update user product
-    updateUserProduct(id, updates) {
+    updateUserProduct(id, updates, ownerId) {
         const productIndex = this.userProducts.findIndex(p => p.id === id);
-        if (productIndex !== -1) {
-            this.userProducts[productIndex] = { ...this.userProducts[productIndex], ...updates };
-            this.saveUserProducts();
-            return this.userProducts[productIndex];
+        if (productIndex === -1) return null;
+
+        if (ownerId != null && String(this.userProducts[productIndex].userId) !== String(ownerId)) {
+            return null;
         }
-        return null;
+
+        this.userProducts[productIndex] = {
+            ...this.userProducts[productIndex],
+            ...updates,
+            updatedAt: new Date().toISOString()
+        };
+        this.saveUserProducts();
+        return this.userProducts[productIndex];
     }
 
-    // Delete user product
-    deleteUserProduct(id) {
+    // Soft-delete user product (marks as deleted, keeps cart referential integrity)
+    softDeleteUserProduct(id, ownerId) {
+        return this.updateUserProduct(id, { publicationStatus: 'deleted' }, ownerId);
+    }
+
+    // Hard delete user product
+    deleteUserProduct(id, ownerId) {
+        const product = this.getUserProductById(id);
+        if (!product) return false;
+        if (ownerId != null && String(product.userId) !== String(ownerId)) return false;
+
         this.userProducts = this.userProducts.filter(p => p.id !== id);
         this.saveUserProducts();
-        
-        // Remove from comparison list if present
         this.removeFromComparison(id);
-        
-        // Remove from favorites if present
         this.removeFromFavorites(id);
+        return true;
+    }
+
+    /** Productos visibles públicamente en Explore (activos) */
+    getPublicProducts() {
+        const userPublic = this.userProducts.filter((p) => {
+            const status = p.publicationStatus || 'active';
+            return status === 'active';
+        });
+        const marketplace = window.productsDB.getAllProducts();
+        const all = [...userPublic, ...marketplace];
+        return all.sort((a, b) => {
+            const aFeatured = a.tags && a.tags.includes('featured') ? 1 : 0;
+            const bFeatured = b.tags && b.tags.includes('featured') ? 1 : 0;
+            if (bFeatured !== aFeatured) return bFeatured - aFeatured;
+            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        });
+    }
+
+    /** Comprueba si un producto es visible públicamente */
+    isProductPublic(product) {
+        if (!product) return false;
+        if (!product.isUserProduct) return true;
+        return (product.publicationStatus || 'active') === 'active';
     }
 
     // Get products by category
@@ -233,8 +277,8 @@ class UserProductsDatabase {
         return this.userProducts.filter(product => 
             product.name.toLowerCase().includes(searchTerm) ||
             product.description.toLowerCase().includes(searchTerm) ||
-            product.artisan.name.toLowerCase().includes(searchTerm) ||
-            product.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+            (product.artisan && product.artisan.name.toLowerCase().includes(searchTerm)) ||
+            (product.tags || []).some(tag => tag.toLowerCase().includes(searchTerm))
         );
     }
 
@@ -316,11 +360,13 @@ class UserProductsDatabase {
         });
     }
 
-    // Get product by ID (from both sources)
-    getProductById(id) {
+    // Get product by ID (from both sources) — oculta eliminados/inactivos salvo uso interno
+    getProductById(id, options = {}) {
         const userProduct = this.getUserProductById(id);
-        if (userProduct) return userProduct;
-        
+        if (userProduct) {
+            if (!options.includeHidden && !this.isProductPublic(userProduct)) return null;
+            return userProduct;
+        }
         return window.productsDB.getProductById(id);
     }
 
@@ -357,7 +403,9 @@ class UserProductsDatabase {
 
     // Get user's own products
     getUserOwnProducts(userId) {
-        return this.userProducts.filter(product => product.userId === userId);
+        return this.userProducts.filter(product =>
+            String(product.userId) === String(userId) || String(product.sellerId) === String(userId)
+        );
     }
 
     // Get products by artisan

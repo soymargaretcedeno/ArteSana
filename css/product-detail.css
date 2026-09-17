@@ -1,0 +1,489 @@
+/* Product Detail — ArteSana */
+.product-detail-page {
+    padding-top: 90px;
+    padding-bottom: 3rem;
+    background: var(--body-bg, #FFF8E7);
+    min-height: 80vh;
+}
+
+.product-detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--artesana-wine, #8F1111);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s ease;
+}
+
+.product-detail-back:hover {
+    color: var(--artesana-gold, #D4A017);
+}
+
+.product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.product-detail-gallery {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(43, 33, 24, 0.08);
+    border: 1px solid rgba(43, 33, 24, 0.06);
+}
+
+.product-detail-gallery__main {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+}
+
+.product-detail-thumbs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    overflow-x: auto;
+}
+
+.product-detail-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.product-detail-thumb.is-active,
+.product-detail-thumb:hover {
+    border-color: var(--artesana-wine, #8F1111);
+    transform: scale(1.03);
+}
+
+.product-detail-panel {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 4px 24px rgba(43, 33, 24, 0.08);
+    border: 1px solid rgba(43, 33, 24, 0.06);
+}
+
+.product-detail-category {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--artesana-green, #2F7D4A);
+    margin-bottom: 0.5rem;
+}
+
+.product-detail-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.product-detail-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(212, 160, 23, 0.15);
+    color: var(--artesana-brown, #2B2118);
+}
+
+.product-detail-badge--condition {
+    background: rgba(15, 81, 69, 0.1);
+    color: #0F5145;
+}
+
+.product-detail-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    color: var(--artesana-brown, #2B2118);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 0.75rem;
+}
+
+.product-detail-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--artesana-gold, #D4A017);
+    font-size: 0.95rem;
+}
+
+.product-detail-rating span {
+    color: rgba(43, 33, 24, 0.6);
+}
+
+.product-detail-availability {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.product-detail-availability--in {
+    color: #2F7D4A;
+}
+
+.product-detail-availability--out {
+    color: #8F1111;
+}
+
+.product-detail-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--artesana-wine, #8F1111);
+    margin-bottom: 1rem;
+}
+
+.product-detail-price s {
+    font-size: 1rem;
+    color: rgba(43, 33, 24, 0.45);
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.product-detail-description {
+    color: rgba(43, 33, 24, 0.75);
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+}
+
+.product-detail-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.product-detail-meta-item {
+    background: rgba(255, 248, 231, 0.8);
+    border-radius: 10px;
+    padding: 0.75rem;
+    border-left: 3px solid var(--artesana-terracotta, #B85C38);
+}
+
+.product-detail-meta-item strong {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--artesana-wine, #8F1111);
+    margin-bottom: 0.25rem;
+}
+
+.product-detail-meta-item span {
+    font-size: 0.9rem;
+    color: var(--artesana-brown, #2B2118);
+}
+
+.product-detail-qty {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.product-detail-qty-controls {
+    display: flex;
+    align-items: center;
+    border: 2px solid rgba(143, 17, 17, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.product-detail-qty-btn {
+    background: var(--artesana-wine, #8F1111);
+    color: #fff;
+    border: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.product-detail-qty-input {
+    width: 52px;
+    text-align: center;
+    border: none;
+    font-weight: 600;
+    padding: 0.5rem;
+}
+
+.product-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-detail-actions .btn-add-cart {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-color: #28a745;
+    color: #fff;
+    flex: 1;
+    min-width: 140px;
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+}
+
+.product-detail-actions .btn-add-cart:hover {
+    background: linear-gradient(135deg, #218838, #1aa179);
+    border-color: #218838;
+    color: #fff;
+}
+
+.product-detail-actions .btn-buy-now {
+    background: #0F5145;
+    border-color: #0F5145;
+    color: #fff;
+    flex: 1;
+    min-width: 140px;
+}
+
+.product-detail-actions .btn-buy-now:hover {
+    background: #0a3d34;
+    border-color: #0a3d34;
+    color: #fff;
+}
+
+.product-detail-artisan {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 248, 231, 0.6);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.product-detail-artisan__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(212, 160, 23, 0.4);
+    flex-shrink: 0;
+}
+
+.product-detail-artisan__name {
+    font-weight: 700;
+    color: var(--artesana-brown, #2B2118);
+    margin: 0 0 0.15rem;
+}
+
+.product-detail-artisan__meta {
+    font-size: 0.85rem;
+    color: rgba(43, 33, 24, 0.65);
+    margin: 0;
+}
+
+.product-detail-story {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(43, 33, 24, 0.06);
+    box-shadow: 0 2px 16px rgba(43, 33, 24, 0.04);
+}
+
+.product-detail-story h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    color: var(--artesana-brown, #2B2118);
+    margin-bottom: 0.75rem;
+}
+
+.product-detail-related {
+    margin-top: 2.5rem;
+}
+
+.product-detail-related h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--artesana-brown, #2B2118);
+    margin-bottom: 1.25rem;
+}
+
+.product-detail-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.product-detail-related-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(43, 33, 24, 0.06);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-detail-related-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(43, 33, 24, 0.1);
+    color: inherit;
+}
+
+.product-detail-related-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.product-detail-related-card__body {
+    padding: 0.75rem;
+}
+
+.product-detail-related-card__name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.product-detail-related-card__price {
+    color: var(--artesana-wine, #8F1111);
+    font-weight: 700;
+}
+
+.product-detail-not-found {
+    text-align: center;
+    padding: 4rem 1rem;
+}
+
+@media (max-width: 992px) {
+    .product-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-detail-actions {
+        flex-direction: column;
+    }
+
+    .product-detail-actions .btn {
+        width: 100%;
+    }
+}
+
+[data-theme="dark"] .product-detail-panel,
+[data-theme="dark"] .product-detail-gallery,
+[data-theme="dark"] .product-detail-story,
+[data-theme="dark"] .product-detail-related-card {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .product-detail-title {
+    color: var(--text-color);
+}
+
+/* Cart modal (shared pattern with Explore) */
+.cart-options-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(43, 33, 24, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 1rem;
+}
+
+.cart-options-modal .modal-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.cart-options-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cart-options-modal .modal-header h4 {
+    margin: 0;
+    color: #2F7D4A;
+    font-weight: 600;
+    font-family: 'Playfair Display', serif;
+}
+
+.cart-options-modal .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.cart-options-modal .close-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.cart-options-modal .modal-body p {
+    margin-bottom: 1.25rem;
+    color: #2B2118;
+}
+
+.cart-options-modal .cart-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.cart-options-modal .cart-options .btn {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+}
+
+.cart-options-modal .cart-options .btn-primary {
+    background: #8F1111;
+    border-color: #8F1111;
+}
+
+.cart-options-modal .cart-options .btn-primary:hover {
+    background: #D4A017;
+    border-color: #D4A017;
+    color: #2B2118;
+}
+
+.cart-options-modal .cart-options .btn-outline-primary {
+    border-color: #8F1111;
+    color: #8F1111;
+}
+
+.cart-options-modal .cart-options .btn-outline-primary:hover {
+    background: rgba(143, 17, 17, 0.08);
+}

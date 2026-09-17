@@ -46,9 +46,10 @@
                 : `<div class="messages-no-results">${U.esc(U.t('msg_no_results', 'No se encontraron conversaciones.'))}</div>`;
         },
 
-        bindSearch(container, activeChatId, onSelect) {
+        bindSearch(container, getActiveChatId, onSelect) {
             SearchBar.bind(container, (filter) => {
-                this.updateList(container, activeChatId, filter);
+                const activeId = typeof getActiveChatId === 'function' ? getActiveChatId() : getActiveChatId;
+                this.updateList(container, activeId, filter);
                 this.bindItems(container, onSelect);
             });
         },
