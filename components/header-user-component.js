@@ -50,10 +50,11 @@ class HeaderUserComponent extends HTMLElement {
                 .header-container {
                     max-width: 1200px;
                     margin: 0 auto;
-                    padding: 0 20px;
+                    padding: 0 28px;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    gap: 32px;
                     height: 70px;
                 }
 
@@ -96,7 +97,7 @@ class HeaderUserComponent extends HTMLElement {
                     list-style: none;
                     margin: 0;
                     padding: 0;
-                    gap: 40px;
+                    gap: 54px;
                     align-items: center;
                 }
                 
@@ -141,7 +142,7 @@ class HeaderUserComponent extends HTMLElement {
                 .user-menu {
                     display: flex;
                     align-items: center;
-                    gap: 20px;
+                    gap: 32px;
                 }
 
                 .user-avatar {
