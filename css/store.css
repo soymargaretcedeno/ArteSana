@@ -32,31 +32,87 @@
   background: #8F1111;
   color: #fff;
 }
-.stores-list-section {
-  padding: 40px 0 60px 0;
+.store-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+.store-page .store-main {
+  flex: 1;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hero carousel — mismo patrón que Home / Explore */
+.store-hero-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Sube el texto al centro visual del banner, como en Inicio */
+.store-hero-wrapper .hero-content-overlay {
+  top: -70px;
+  height: 100vh;
+}
+
+.stores-list-section {
+  position: relative;
+  z-index: 1;
+  padding: 40px 0 60px;
+  background: #fcf7de;
+  width: 100%;
+}
+.store-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.store-card-link:hover .store-name {
+  color: #D4A017;
+}
+
 .store-card {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 2px 16px rgba(80,0,0,0.07);
-  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  padding: 1.5rem;
   transition: transform 0.15s, box-shadow 0.15s;
   position: relative;
-  min-width: 270px;
-  max-width: 340px;
-  margin: 0 auto;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  height: 100%;
 }
 .store-card:hover {
   transform: translateY(-8px) scale(1.03);
   box-shadow: 0 8px 32px rgba(162,42,34,0.13);
 }
-.store-card .store-avatar {
-  width: 70px;
-  height: 70px;
+.store-card .store-avatar,
+.store-card .artisan-avatar,
+.store-card .avatar-fallback {
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center top;
   border: 3px solid #8F1111;
-  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.store-card .avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff8e7;
+  color: #8F1111;
+  font-weight: 800;
+  font-size: 1.6rem;
+  border-style: dashed;
 }
 .store-card .store-name {
   font-family: 'Playfair Display', serif;

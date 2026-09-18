@@ -12,7 +12,7 @@
         orders: 'artesana_orders'
     };
 
-    const CHATS_VERSION = '2';
+    const CHATS_VERSION = '3';
     const DIRECTORS_CHAT_ID = 'chat-directivos';
 
     function load(key, fallback) {
@@ -69,28 +69,23 @@
         const version = localStorage.getItem('artesana_chats_version');
         const list = Array.isArray(stored) ? stored : [];
         const hasDirectors = list.some(c => c.type === 'directors' || c.id === DIRECTORS_CHAT_ID);
-        const hasLegacyArtisan = list.some(c => c.artisanId && c.type !== 'directors');
 
-        if (version === CHATS_VERSION && hasDirectors && !hasLegacyArtisan) {
+        if (version === CHATS_VERSION) {
+            if (!hasDirectors) {
+                const withDirectors = [getDirectorsChatDefaults(), ...list];
+                save(STORAGE_KEYS.chats, withDirectors);
+                return withDirectors;
+            }
             return list.length ? list : [getDirectorsChatDefaults()];
         }
 
-        const directorsChat = getDirectorsChatDefaults();
-        const userMessages = list.flatMap(c => (c.messages || []).filter(m =>
-            m.sender === 'buyer' || m.sender === 'user'
-        ));
-
-        if (userMessages.length) {
-            directorsChat.messages.push(...userMessages.map((m, i) => ({
-                ...m,
-                id: m.id || Date.now() + i
-            })));
-            directorsChat.lastMessage = userMessages[userMessages.length - 1].text;
-        }
+        const directorsChat = list.find(c => c.type === 'directors' || c.id === DIRECTORS_CHAT_ID) || getDirectorsChatDefaults();
+        const artisanChats = list.filter(c => c.type === 'artisan' && c.artisanId);
+        const next = [directorsChat, ...artisanChats];
 
         localStorage.setItem('artesana_chats_version', CHATS_VERSION);
-        save(STORAGE_KEYS.chats, [directorsChat]);
-        return [directorsChat];
+        save(STORAGE_KEYS.chats, next);
+        return next;
     }
 
     const PlatformServices = {
@@ -150,6 +145,9 @@
             if ((sender === 'buyer' || sender === 'user') && chat.type === 'directors') {
                 PlatformServices._scheduleDirectorsReply(chatId, msg.text);
             }
+            if ((sender === 'buyer' || sender === 'user') && chat.type === 'artisan') {
+                PlatformServices._scheduleArtisanReply(chatId);
+            }
 
             return msg;
         },
@@ -178,10 +176,50 @@
             return intros[Math.floor(Math.random() * intros.length)] + answer;
         },
 
-        // --- Chat con directivos (único canal) ---
+        _scheduleArtisanReply(chatId) {
+            const delay = 800 + Math.floor(Math.random() * 900);
+            setTimeout(() => {
+                const lang = getLang();
+                const reply = lang === 'en'
+                    ? 'Thanks for writing! I will reply as soon as I can.'
+                    : '¡Gracias por escribir! Te responderé lo más pronto posible.';
+                PlatformServices.sendMessage(chatId, reply, 'artisan');
+                document.dispatchEvent(new CustomEvent('messages:updated', { detail: { chatId } }));
+            }, delay);
+        },
+
+        // --- Chat con vendedor o canal directivo ---
         // API: POST /api/chats
-        startChatWithArtisan() {
-            return PlatformServices.ensureDirectorsChat();
+        startChatWithArtisan(artisan) {
+            if (!artisan || artisan.id == null || artisan.id === '') {
+                return PlatformServices.ensureDirectorsChat();
+            }
+
+            const chats = PlatformServices.getMessageThreads();
+            const artisanId = String(artisan.id);
+            const existing = chats.find(c => c.type === 'artisan' && String(c.artisanId) === artisanId);
+            if (existing) return existing;
+
+            const lang = getLang();
+            const welcome = lang === 'en'
+                ? `Hi! This is the chat with ${artisan.name || 'the artisan'}. Send a message about a product or your order.`
+                : `¡Hola! Este es el chat con ${artisan.name || 'el artesano'}. Escribe sobre un producto o tu pedido.`;
+            const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const chat = {
+                id: 'chat-artisan-' + artisanId,
+                type: 'artisan',
+                artisanId,
+                artisanName: artisan.name || (lang === 'en' ? 'Artisan' : 'Artesano'),
+                artisanAvatar: artisan.avatar || '',
+                lastMessage: welcome,
+                unread: 0,
+                messages: [
+                    { id: Date.now(), sender: 'artisan', text: welcome, time: now }
+                ]
+            };
+            chats.splice(1, 0, chat);
+            save(STORAGE_KEYS.chats, chats);
+            return chat;
         },
 
         // --- Estados de pedidos ---

@@ -113,7 +113,8 @@
             <div class="hero-content">
                 <h1 class="hero-title" data-aos="fade-up" data-i18n="unique_creations">Unique Creations, Authentic Stories</h1>
                 <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200" data-i18n="connecting_artisans">Connecting Panamanian artisans with art lovers worldwide</p>
-                <div class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="400">
+                <div class="d-flex justify-content-center gap-3" data-aos="fade-up" data-aos-delay="400">
+                    <a href="perfil.html#my-store-section" class="btn btn-primary" data-i18n="create_my_store">Create My Store</a>
                     <a href="explorar.html" class="btn btn-primary" data-i18n="explore_handcrafts">Explore Handcrafts</a>
                 </div>
             </div>
@@ -189,6 +190,7 @@
                                 <span data-i18n="global_shipping">Global Shipping</span>
                             </div>
                         </div>
+                        <a href="#about-section" class="btn btn-primary" data-i18n="learn_our_story">Learn Our Story</a>
                     </div>
                 </div>
             </div>
@@ -438,24 +440,10 @@
                 });
             });
 
-            const pendingRedirect = sessionStorage.getItem('artesana_redirect_after_login');
-            if (pendingRedirect) {
-                if (window.localDB?.isLoggedIn?.()) {
-                    sessionStorage.removeItem('artesana_redirect_after_login');
-                    try {
-                        const target = new URL(pendingRedirect, window.location.origin);
-                        const current = new URL(window.location.href);
-                        if (target.pathname !== current.pathname || target.search !== current.search) {
-                            window.location.href = pendingRedirect;
-                        }
-                    } catch (e) {
-                        sessionStorage.removeItem('artesana_redirect_after_login');
-                    }
-                } else {
-                    const authModal = document.querySelector('auth-modal');
-                    if (authModal && typeof authModal.open === 'function') {
-                        setTimeout(() => authModal.open('login'), 500);
-                    }
+            if (sessionStorage.getItem('artesana_redirect_after_login')) {
+                const authModal = document.querySelector('auth-modal');
+                if (authModal && typeof authModal.open === 'function') {
+                    setTimeout(() => authModal.open('login'), 500);
                 }
             }
         });

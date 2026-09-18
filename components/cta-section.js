@@ -38,6 +38,7 @@ class CtaSection extends HTMLElement {
     const subtitle = (window.translations && window.translations[lang] && window.translations[lang][subtitleKey]) || this.getAttribute('subtitle') || 'Become part of a vibrant community of artisans and art lovers. Create your free store or discover unique handcrafts.';
     const buttonText = (window.translations && window.translations[lang] && window.translations[lang][buttonKey]) || this.getAttribute('button-text') || 'Start Now';
     const buttonLink = this.getAttribute('button-link') || 'perfil.html#my-store-section';
+    const buttonAction = this.getAttribute('button-action') || 'register';
     this.shadowRoot.innerHTML = `
       <style>
         .cta-root {
@@ -152,10 +153,25 @@ class CtaSection extends HTMLElement {
         <div class="cta-content">
           <h2 class="cta-title">${title}</h2>
           <p class="cta-subtitle">${subtitle}</p>
-          <button class="cta-btn" onclick="openSignUpModal()">${buttonText}</button>
+          <button class="cta-btn" id="ctaBtn">${buttonText}</button>
         </div>
       </section>
     `;
+
+    const btn = this.shadowRoot.getElementById('ctaBtn');
+    if (btn) {
+      btn.onclick = () => {
+        if (buttonAction === 'create-store' && typeof window.openCreateStoreFlow === 'function') {
+          window.openCreateStoreFlow();
+          return;
+        }
+        if (buttonLink && buttonLink !== '#') {
+          window.location.href = buttonLink;
+          return;
+        }
+        window.openSignUpModal?.();
+      };
+    }
   }
 }
 customElements.define('cta-section', CtaSection);

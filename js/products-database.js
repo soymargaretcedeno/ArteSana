@@ -275,8 +275,14 @@ class ProductsDatabase {
             const userProduct = window.userProductsDB.getUserProductById(id);
             if (userProduct) return userProduct;
         }
+        if (window.PublicStoreService && String(id).indexOf('storeprod-') === 0) {
+            const fromStore = window.PublicStoreService.getProductById(id);
+            if (fromStore) return fromStore;
+        }
         const numId = parseInt(id, 10);
-        if (Number.isNaN(numId)) return undefined;
+        if (Number.isNaN(numId)) {
+            return window.PublicStoreService?.getProductById(id) || undefined;
+        }
         return this.products.find(product => product.id === numId);
     }
 

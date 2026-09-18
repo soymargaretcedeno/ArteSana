@@ -26,7 +26,7 @@
     }
 
     function productUrl(id) {
-        return `product.html?id=${encodeURIComponent(String(id))}`;
+        return `product.html#${encodeURIComponent(String(id))}`;
     }
 
     function formatPrice(price, currency) {
@@ -204,8 +204,12 @@
             ).join('')}</div>`
             : '';
 
+        const artisanStore = product.artisan && window.PublicStoreService
+            ? window.PublicStoreService.getStoreByArtisan(product.artisan.id)
+            : null;
+        const artisanHref = artisanStore ? window.PublicStoreService.storeUrl(artisanStore.id) : 'store.html';
         const artisanBlock = product.artisan
-            ? `<div class="product-detail-artisan">
+            ? `<a class="product-detail-artisan" href="${esc(artisanHref)}">
                     ${product.artisan.avatar ? `<img src="${esc(product.artisan.avatar)}" alt="" class="product-detail-artisan__avatar" loading="lazy">` : ''}
                     <div>
                         <p class="product-detail-artisan__name">${esc(product.artisan.name)}</p>
@@ -213,7 +217,7 @@
                             ${product.artisan.store ? esc(product.artisan.store) + ' · ' : ''}${esc(product.artisan.location || '')}
                         </p>
                     </div>
-               </div>`
+               </a>`
             : '';
 
         const ownProduct = isOwnProduct(product);
@@ -352,9 +356,17 @@
             </a>`).join('');
     }
 
+    function readProductId() {
+        const fromQuery = new URLSearchParams(window.location.search).get('id');
+        if (fromQuery) return fromQuery;
+        const hash = window.location.hash.replace(/^#/, '');
+        if (!hash) return null;
+        if (hash.startsWith('id=')) return decodeURIComponent(hash.slice(3));
+        return decodeURIComponent(hash);
+    }
+
     function init() {
-        const params = new URLSearchParams(window.location.search);
-        const productId = params.get('id');
+        const productId = readProductId();
         const container = document.getElementById('productContainer');
 
         if (!productId || !window.userProductsDB) {
@@ -362,7 +374,8 @@
             return;
         }
 
-        const product = window.userProductsDB.getProductById(productId);
+        const product = window.userProductsDB.getProductById(productId)
+            || window.PublicStoreService?.getProductById(productId);
         if (!product) {
             renderNotFound(container);
             return;

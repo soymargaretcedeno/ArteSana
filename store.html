@@ -11,25 +11,58 @@
     <link rel="stylesheet" href="css/store.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
-<body style="min-height:100vh;display:flex;flex-direction:column;">
+<body class="store-page">
     <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
     <script src="js/i18n.js"></script>
     <script src="components/header-component.js"></script>
     <script src="components/header-user-component.js"></script>
     <script src="components/roles/role-service.js"></script>
     <script>window.renderHeader();</script>
-    <section class="stores-list-section">
-        <div class="container">
-            <div class="row g-4" id="storesGrid">
-                <!-- Store cards will be injected here -->
+
+    <main class="store-main">
+        <!-- Hero igual que Home / Explore -->
+        <div class="store-hero-wrapper">
+            <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" aria-label="Tiendas artesanales">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://mir-s3-cdn-cf.behance.net/project_modules/1400/94fafc153875059.63375a2c3d38a.jpg');"></div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://thumbs.dreamstime.com/b/artes-de-panam%C3%A1-18961136.jpg');"></div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://www.panamaamerica.com.pa/sites/default/files/imagenes/2015/08/03/feria_artesanias-_13.jpg');"></div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://image-tc.galaxy.tf/wijpeg-9x9rcf5hvoizt0edeilnon79r/mercado-de-artesanias-5-de-mayo-2_standard.jpg?crop=106%2C0%2C1689%2C1267');"></div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://mupa.gob.pa/wp-content/uploads/2024/07/mercado-balboa5.jpg');"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-content-overlay">
+                <div class="container">
+                    <div class="hero-content">
+                        <h1 class="hero-title" data-aos="fade-up" data-i18n="store_hero_title">Descubre tiendas artesanales</h1>
+                        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200" data-i18n="store_hero_subtitle">Explora tiendas únicas de artesanos panameños</p>
+                        <div id="storeCreateBtnWrap" class="d-flex justify-content-center gap-3" data-aos="fade-up" data-aos-delay="400">
+                            <button type="button" class="btn btn-primary" id="storeCreateBtn" data-i18n="store_create_btn">Crear mi tienda</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
-    <section id="createStoreBanner" class="stores-hero stores-hero-bottom" style="background: linear-gradient(120deg, rgba(162,42,34,0.45) 0%, rgba(252,247,222,0.45) 100%), url('https://mir-s3-cdn-cf.behance.net/project_modules/1400/94fafc153875059.63375a2c3d38a.jpg'); background-size:cover; background-position:center; min-height:420px; padding: 80px 0 60px 0; text-align:center; margin-top: 2rem; margin-bottom: 3rem;">
-        <h1 style="color:#fff;font-size:3.2rem;font-family:'Playfair Display',serif;font-weight:700;letter-spacing:1px;" data-aos="fade-up" data-i18n="store_hero_title">Discover Artisan Stores</h1>
-        <p style="color:#fbeee0;font-size:1.5rem;line-height:1.5;max-width:700px;margin:22px auto 0 auto;" data-aos="fade-up" data-aos-delay="150" data-i18n="store_hero_subtitle">Browse unique shops from talented Panamanian artisans. Find your next favorite handcraft or get inspired to open your own store!</p>
-        <button id="createStoreBtn" class="btn btn-lg mt-4" style="background:#8F1111;color:#fff;border-radius:30px;font-size:1.3rem;font-weight:700;padding:16px 48px;border:none;box-shadow:0 2px 12px rgba(128,0,0,0.10);transition:background 0.2s;" data-aos="fade-up" data-aos-delay="300" data-i18n="store_create_btn">Create my store</button>
-    </section>
+
+        <section class="stores-list-section">
+            <div class="container">
+                <div class="row g-4" id="storesGrid"></div>
+            </div>
+        </section>
+    </main>
     <footer-component></footer-component>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -71,194 +104,10 @@
         </div>
       </div>
     </div>
+    <script src="components/store/public-store-service.js"></script>
+    <script src="components/store/store-list-page.js"></script>
     <script>
-    // Check for user's own store in localStorage
-    let userStore = null;
-    try {
-      userStore = JSON.parse(localStorage.getItem('myStore'));
-    } catch (e) {}
-    const storeIcon = 'https://cdn-icons-png.flaticon.com/512/2989/2989835.png'; // ícono de tienda moderno y minimalista
-    // Simulated store data with cultural representation
-    const stores = [
-        {
-            avatar: '',
-            name: 'ArteMola (Guna)',
-            desc: 'Colorful molas and textile art from Guna Yala.',
-            cta: 'Visit Store',
-            featured: true,
-            products: [
-                {img: 'https://th.bing.com/th/id/R.f48328c70497e9faba341b77b688c328?rik=LvXXMXJcW5qA%2fQ&riu=http%3a%2f%2fwww.choosepanama.com%2fuploads%2f1%2f1%2f3%2f3%2f11332995%2fmola_orig.jpg&ehk=aU4u1cYEM04G13rFXT%2bNz8GtCBFsWwve8phN4w40Drg%3d&risl=&pid=ImgRaw&r=0', name: 'Mola Textil 1'},
-                {img: 'https://i.etsystatic.com/26283200/r/il/8cb235/2802425507/il_fullxfull.2802425507_f84y.jpg', name: 'Mola Textil 2'},
-                {img: 'https://i.pinimg.com/736x/c0/63/6f/c0636f43c7b8be7e27048ee9139b15a7.jpg', name: 'Mola Textil 3'}
-            ]
-        },
-        {
-            avatar: 'https://i.pinimg.com/736x/de/41/c8/de41c8e9fcf1c07187af9c8ade4a7a0a--colombia-gmail.jpg',
-            name: 'Emberá Jewelry',
-            desc: 'Unique jewelry crafted by Emberá artisans.',
-            cta: 'See Jewelry',
-            featured: false,
-            products: [
-                {img: 'https://i.pinimg.com/736x/7c/d2/78/7cd278d783a5896880e9069390b527b3.jpg', name: 'Collar Emberá'},
-                {img: 'https://th.bing.com/th/id/R.6520208e135e2aac2bec5a310c292d0e?rik=5Z9JJuzk%2fgkZlg&pid=ImgRaw&r=0', name: 'Aretes Emberá'},
-                {img: 'https://th.bing.com/th/id/R.c5460ed9047266bb7f0b52bab3db7e6f?rik=3IMZ16TEnhBI9Q&riu=http%3a%2f%2f2.bp.blogspot.com%2f-NP8n7koDhss%2fUKezOtqE7WI%2fAAAAAAAAABU%2f-j0Pt62bi1A%2fs1600%2fjoyas.jpg&ehk=Ec0nXRI71AEomUC3ZSnSzmQhaaD1DbpOIG1f3QlKPMA%3d&risl=&pid=ImgRaw&r=0', name: 'Pulsera Emberá'}
-            ]
-        },
-        {
-            avatar: '',
-            name: 'Veraguas Handcrafts',
-            desc: 'Handmade hats and crafts from Veraguas.',
-            cta: 'Shop Veraguas',
-            featured: false,
-            products: [
-                {img: 'https://www.panamaamerica.com.pa/sites/default/files/imagenes/2015/08/03/feria_artesanias-_13.jpg', name: 'Sombrero Pintao'},
-                {img: 'https://tse4.mm.bing.net/th/id/OIP.C2ycS0SImLPXcUxkZ6QY3wHaD4?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', name: 'Cestería Veraguas'},
-                {img: 'https://stories.forbestravelguide.com/wp-content/uploads/2017/10/FacelessDolls-DominicanRepublicMinistryofTourism.jpg', name: 'Muñecas artesanales'}
-            ]
-        },
-        {
-            avatar: 'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=400&h=400&fit=crop&crop=faces',
-            name: 'Chiriquí Creative',
-            desc: 'Traditional crafts and textiles from Chiriquí.',
-            cta: 'Explore Chiriquí',
-            featured: false,
-            products: [
-                {img: 'https://tse4.mm.bing.net/th/id/OIP.orEBHEGmEQ_kivmj57pe1wHaE9?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', name: 'Textil Chiriquí'},
-                {img: 'https://1.bp.blogspot.com/-GGe3Sys9vXo/U3F02q1b0_I/AAAAAAAAACU/BGcSO6Xf6Y0/s1600/CIMG1879.JPG', name: 'Cerámica Chiriquí'},
-                {img: 'https://i.pinimg.com/originals/1c/8d/8c/1c8d8c2afc03ee863f5db7541713db55.jpg', name: 'Tallado en madera'}
-            ]
-        },
-        {
-            avatar: '',
-            name: 'Ngäbe-Buglé Creations',
-            desc: 'Traditional bags and beadwork from the Ngäbe-Buglé region.',
-            cta: 'See Handcrafts',
-            featured: false,
-            products: [
-                {img: 'https://i.pinimg.com/originals/a5/fd/9c/a5fd9cb2238429e250fa7c640cf9409c.jpg', name: 'Chácara tradicional'},
-                {img: 'https://th.bing.com/th/id/R.03d292ccd021237079e68f4a6d3336f4?rik=63KwXcqiu%2fIGmw&riu=http%3a%2f%2fwww.panamamio.com%2fsystem%2ffiles%2fimages%2fIMG_0637.preview.jpg&ehk=8IFKdnGsAZlCrC03wEXOU%2b9%2b2orOO9Dh1JQnWYbieuk%3d&risl=&pid=ImgRaw&r=0', name: 'Chaquira Ngäbe'},
-                {img: 'https://th.bing.com/th/id/R.8dc70dba8fbc368e5622fc883cbdc3ea?rik=so47Qftp1vL4xw&pid=ImgRaw&r=0', name: 'Bolso tejido'}
-            ]
-        },
-        {
-            avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=400&h=400&fit=crop&crop=faces',
-            name: 'Colón Afroart',
-            desc: 'Art and accessories with Afro-Antillean influence.',
-            cta: 'Discover Colón',
-            featured: false,
-            products: [
-                {img: 'https://tse2.mm.bing.net/th/id/OIP.qDOr85auzCeqS355yW2K_wHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', name: 'Máscara Congo'},
-                {img: 'https://i.etsystatic.com/24810620/r/il/b848a4/2967338314/il_680x540.2967338314_h27d.jpg', name: 'Collar afro'},
-                {img: 'https://i.pinimg.com/736x/ed/cc/58/edcc582b7a50da41909c2c401ef31aa9--panama-canal-central-america.jpg', name: 'Turbante colorido'}
-            ]
-        },
-        {
-            avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop&crop=faces',
-            name: 'Coclé Ceramics',
-            desc: 'Ceramics inspired by the pre-Columbian culture of Coclé.',
-            cta: 'See Ceramics',
-            featured: true,
-            products: [
-                {img: 'https://th.bing.com/th/id/R.ab11d54b5dfceab0bd417054ffaa78e7?rik=Ln7JJe57VfSCuw&pid=ImgRaw&r=0', name: 'Vasija Coclé'},
-                {img: 'https://objectsmedia.artkhade.com/PlSk18yu-lg.jpg', name: 'Plato decorado'},
-                {img: 'https://i.pinimg.com/736x/f6/fd/6c/f6fd6c862286b4b42ad7087abdafbb1e--costa-rica.jpg', name: 'Jarra pintada'}
-            ]
-        },
-        {
-            avatar: '',
-            name: 'Bocas Creative',
-            desc: 'Handcrafts and weavings from Bocas del Toro.',
-            cta: 'Explore Bocas',
-            featured: false,
-            products: [
-                {img: 'https://th.bing.com/th/id/R.66770062d58daa71b44997399d356ec1?rik=q0n3IQ7X%2fHKgdg&pid=ImgRaw&r=0&sres=1&sresct=1', name: 'Tejido Bocas'},
-                {img: 'https://utp.ac.pa/sites/default/files/img_5346_0.jpg', name: 'Bolso artesanal'},
-                {img: 'https://th.bing.com/th/id/R.92a6a688a0f6207602160f9cdab087bd?rik=owFOXkJKhkqxkA&riu=http%3a%2f%2f2.bp.blogspot.com%2f-TgiL1cJneBE%2fUIRFczUNkhI%2fAAAAAAAAABs%2fP5W7zMZ_g4c%2fs1600%2fDSC00055.JPG&ehk=hz9hrAV1MqEi2p2GT4Y41Dl15zjxbzMybNBdU%2bQ9Q8M%3d&risl=&pid=ImgRaw&r=0', name: 'Cestería de palma'}
-            ]
-        },
-        {
-            avatar: '',
-            name: 'Los Santos Tradition',
-            desc: 'Polleras, hats, and embroidery from Los Santos.',
-            cta: 'See Tradition',
-            featured: false,
-            products: [
-                {img: 'https://tse1.mm.bing.net/th/id/OIP.kTMA9Neki4nog9NVIN0TigHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', name: 'Pollera santeña'},
-                {img: 'https://www.bebeours.com/wp-content/uploads/2022/07/acheter-chapeau-panama-800x534.jpg', name: 'Sombrero Panamá'},
-                {img: 'https://i.pinimg.com/736x/bd/d6/0d/bdd60d9156b2e50cc18e2f0209c8228d--panama-canal-folklore.jpg', name: 'Tembleques'}
-            ]
-        }
-    ];
-    const storesGrid = document.getElementById('storesGrid');
-    stores.forEach((store, idx) => {
-        const card = document.createElement('div');
-        card.className = 'col-md-6 col-lg-4';
-        card.setAttribute('data-aos', 'fade-up');
-        card.setAttribute('data-aos-delay', String(Math.min(idx * 80, 480)));
-        card.innerHTML = `
-            <div class="store-card shadow-sm" style="background: linear-gradient(120deg, #fff 80%, #fbeee0 100%); border-radius: 18px; padding: 1.5rem; min-height: 260px; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; position: relative; overflow: hidden;">
-                <div class="artisan-header" style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
-                  ${store.avatar ? `<img src="${store.avatar}" alt="${store.name}" class="artisan-avatar" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid #8F1111;">` : `<div class='avatar-fallback' style="width:56px;height:56px;border-radius:50%;border:3px dashed #8F1111;display:flex;align-items:center;justify-content:center;background:#fff;color:#8F1111;font-weight:800;">${store.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>`}
-                  <div class="artisan-details" style="flex:1;">
-                    <h3 class="store-name" style="font-size:1.25rem;color:#8F1111;font-weight:700;margin:0 0 4px 0;">${store.name}</h3>
-                    <p class="store-desc" style="color:#6b6657;font-size:1rem;margin:0;">${store.desc}</p>
-                  </div>
-                </div>
-                <div class="popular-products" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-top:8px;">
-                  ${store.products.slice(0,3).map(p => `
-                    <div class='product-mini' style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(80,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center;">
-                      <img src='${p.img}' alt='${p.name}' style="width:100%;height:90px;object-fit:cover;">
-                      <span style="padding:6px 8px;font-size:0.9rem;color:#575443;">${p.name}</span>
-                    </div>
-                  `).join('')}
-                </div>
-            </div>
-        `;
-        storesGrid.appendChild(card);
-    });
-    if (window.AOS) {
-        AOS.init({ duration: 800, once: true, offset: 60 });
-    }
-    // Modal para productos del artesano
-    const modalHtml = `
-    <div class="modal fade" id="artisanProductsModal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" data-i18n="store_modal_title">Artisan's Products</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" id="artisanProductsBody"></div>
-        </div>
-      </div>
-    </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    const artisanProductsModal = new bootstrap.Modal(document.getElementById('artisanProductsModal'));
-    const artisanProductsBody = document.getElementById('artisanProductsBody');
-    document.querySelectorAll('.btn.btn-primary[data-idx]').forEach(btn => {
-        btn.onclick = function() {
-            const idx = this.getAttribute('data-idx');
-            if(idx === 'user' && userStore) {
-                artisanProductsBody.innerHTML = `<div class='d-flex align-items-center mb-4'>${userStore.photo ? `<img src='${userStore.photo}' style='width:60px;height:60px;border-radius:50%;object-fit:cover;margin-right:18px;'>` : ''}<div><h4 style='margin:0;font-weight:700;'>${userStore.name}</h4><div style='color:#8F1111;font-size:1.1rem;'>${userStore.location}</div></div></div><div class='alert alert-info' data-i18n="store_no_products">You have not uploaded products yet. (Simulation)</div>`;
-                artisanProductsModal.show();
-                return;
-            }
-            const store = stores[idx];
-            artisanProductsBody.innerHTML = `<div class='d-flex align-items-center mb-4'><img src='${store.avatar}' style='width:60px;height:60px;border-radius:50%;object-fit:cover;margin-right:18px;'><div><h4 style='margin:0;font-weight:700;'>${store.name}</h4><div style='color:#8F1111;font-size:1.1rem;'>${store.desc}</div></div></div><div class='row g-4'>${store.products.map(p => `<div class='col-md-6'><div class='product-card' style='background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(80,0,0,0.10);padding:1rem;'><img src='${p.img}' alt='${p.name}' style='width:100%;height:180px;object-fit:cover;border-radius:8px;'><div style='padding:10px 0 0 0;'><h5 style='margin:0 0 6px 0;'>${p.name}</h5></div></div></div>`).join('')}</div>`;
-            artisanProductsModal.show();
-        }
-    });
-    // Ocultar banner "Create my store" para vendedores
-    (function initCreateStoreBanner() {
-        const banner = document.getElementById('createStoreBanner');
-        const user = window.RoleService?.getCurrentUser();
-        if (banner && user && window.RoleService.isArtisan(user)) {
-            banner.style.display = 'none';
-        }
-    })();
-
-    // Botón crear tienda — flujo existente (perfil / auth)
-    document.getElementById('createStoreBtn').onclick = function() {
+    window.openCreateStoreFlow = function() {
         const user = window.RoleService?.getCurrentUser();
         if (user) {
             window.location.href = 'perfil.html#create-store';
@@ -266,6 +115,16 @@
         }
         document.querySelector('auth-modal')?.open('register');
     };
+
+    document.getElementById('storeCreateBtn')?.addEventListener('click', () => window.openCreateStoreFlow());
+
+    (function initStoreHero() {
+        const createBtnWrap = document.getElementById('storeCreateBtnWrap');
+        const user = window.RoleService?.getCurrentUser();
+        if (createBtnWrap && user && window.RoleService.isArtisan(user)) {
+            createBtnWrap.style.display = 'none';
+        }
+    })();
     // Lógica para guardar la tienda
     document.getElementById('createStoreForm').onsubmit = function(e) {
       e.preventDefault();

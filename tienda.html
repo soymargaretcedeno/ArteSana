@@ -4,86 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/ArteSana_logo.png">
-    <title>Tienda de Artesana | ArteSana</title>
+    <title>Tienda | ArteSana</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="css/store.css">
-    <style>
-      .products-grid {
-        margin-top: 2.5rem;
-      }
-      .product-card-tienda {
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 2px 16px rgba(80,0,0,0.07);
-        padding: 1.2rem 1.2rem 1.5rem 1.2rem;
-        transition: transform 0.15s, box-shadow 0.15s;
-        position: relative;
-        min-width: 200px;
-        max-width: 320px;
-        margin: 0 auto;
-        text-align: center;
-      }
-      .product-card-tienda:hover {
-        transform: translateY(-8px) scale(1.03);
-        box-shadow: 0 8px 32px rgba(162,42,34,0.13);
-      }
-      .product-card-tienda .product-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.2rem;
-        color: #a22a22;
-        font-weight: 700;
-        margin-bottom: 0.3rem;
-      }
-      .product-card-tienda .product-meta {
-        font-size: 1.05rem;
-        color: #575443;
-        margin-bottom: 0.7rem;
-      }
-      .product-card-tienda .product-badge {
-        display: inline-block;
-        background: #fcf7de;
-        color: #a22a22;
-        border-radius: 12px;
-        padding: 2px 12px;
-        font-size: 0.95rem;
-        margin-right: 6px;
-        margin-bottom: 4px;
-      }
-      .product-card-tienda .product-img {
-        width: 100%;
-        max-width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 12px;
-        margin-bottom: 1rem;
-        border: 2px solid #f3e9d2;
-        background: #f8f6ee;
-      }
-    </style>
+    <link rel="stylesheet" href="css/public-store.css">
 </head>
-<body style="min-height:100vh;display:flex;flex-direction:column;">
+<body>
     <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
+    <script src="js/ecommerce-confirmation.js"></script>
+    <script src="js/product-card-cart.js"></script>
     <script src="js/i18n.js"></script>
     <script src="components/header-component.js"></script>
     <script src="components/header-user-component.js"></script>
+    <script src="components/roles/role-service.js"></script>
     <script>window.renderHeader();</script>
-    <main class="flex-grow-1" style="background:var(--light-bg,#FEFAE0);min-height:80vh;">
-        <div class="container py-5">
-            <div id="storeProfile" class="row mb-5 justify-content-center"></div>
-            <div>
-                <h3 class="mb-4" style="font-family:'Playfair Display',serif;" data-i18n="tienda_products_title">Productos de la tienda</h3>
-                <div id="storeProducts" class="row products-grid g-4"></div>
-            </div>
-        </div>
+
+    <main class="public-store-page">
+        <div class="container" id="publicStoreRoot"></div>
     </main>
+
     <footer-component></footer-component>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/theme.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="components/footer-component.js"></script>
-    <script type="module" src="firebase/tienda.js"></script>
+    <script src="js/services/platform-services.js"></script>
+    <script src="components/store/public-store-service.js"></script>
+    <script src="components/store/public-store-page.js"></script>
+    <script src="js/theme.js"></script>
     <script src="components/auth-modal.js"></script>
     <auth-modal></auth-modal>
+    <script src="js/app-core.js"></script>
 </body>
-</html> 
+</html>
