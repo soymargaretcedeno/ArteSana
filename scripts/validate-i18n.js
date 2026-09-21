@@ -1,0 +1,17 @@
+const fs = require('fs');
+const vm = require('vm');
+const code = fs.readFileSync(require('path').join(__dirname, '../js/i18n.js'), 'utf8');
+const sandbox = { window: {}, localStorage: { getItem: () => 'es' }, document: { addEventListener() {}, querySelectorAll: () => [] } };
+vm.createContext(sandbox);
+const translationsCode = code.match(/window\.translations\s*=\s*(\{[\s\S]*?\n\};)/)[1];
+vm.runInContext('window.translations = ' + translationsCode.replace(/;$/, ''), sandbox);
+const es = sandbox.window.translations.es;
+const en = sandbox.window.translations.en;
+const esKeys = Object.keys(es);
+const enKeys = Object.keys(en);
+const onlyEs = esKeys.filter(k => !(k in en));
+const onlyEn = enKeys.filter(k => !(k in es));
+console.log('ES:', esKeys.length, 'EN:', enKeys.length);
+if (onlyEs.length) console.log('Only ES:', onlyEs.join(', '));
+if (onlyEn.length) console.log('Only EN:', onlyEn.join(', '));
+if (!onlyEs.length && !onlyEn.length) console.log('Key parity OK');

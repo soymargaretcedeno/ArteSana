@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/ArteSana_logo.png">
+    <title>Artisanal Jewelry - ArteSana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <script src="js/local-database.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="components/header-component.js"></script>
+    <script src="components/header-user-component.js"></script>
+    <script>window.renderHeader();</script>
+
+    <!-- Category Hero Section -->
+    <section class="category-hero jewelry-hero">
+        <div class="container text-center">
+            <h1 class="display-4" data-aos="fade-up" data-i18n="jewelry_hero_title">Artisanal Jewelry</h1>
+            <p class="lead" data-aos="fade-up" data-aos-delay="100" data-i18n="jewelry_hero_subtitle">Unique jewelry inspired by Panamanian culture</p>
+        </div>
+    </section>
+
+    <!-- Category Description -->
+    <section class="category-description py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h2 data-i18n="jewelry_section_title">Traditional Panamanian Jewelry</h2>
+                    <p data-i18n="jewelry_section_desc">Discover our collection of artisanal jewelry that fuses ancestral techniques with contemporary designs. Each piece reflects Panama's rich cultural heritage, from beaded necklaces to traditional tembleques.</p>
+                    <div class="category-features">
+                        <div class="feature">
+                            <i class="fas fa-gem"></i>
+                            <span data-i18n="jewelry_feature_materials">Select Materials</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-star"></i>
+                            <span data-i18n="jewelry_feature_designs">Unique Designs</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-award"></i>
+                            <span data-i18n="jewelry_feature_quality">Quality Craftsmanship</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="category-image-grid">
+                        <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/01-CH11.png?v=1676494770" alt="Beaded Necklace">
+                        <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/96-EP26.png?v=1671829074" alt="Traditional Earrings">
+                        <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/01-CH01.png?v=1676483082" alt="Artisanal Bracelet">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-section py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Product Card -->
+                <div class="col-md-4" data-aos="fade-up">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/01-CH11.png?v=1676494770" alt="Emberá Beaded Necklace">
+                            <div class="product-tags">
+                                <span class="tag featured" data-i18n="jewelry_tag_featured">Featured</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn" type="button" data-fav-id="2" aria-label="Favorito"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn add-to-cart-btn" type="button" onclick="addToCartFromCard(2, event)" title="Add to Cart" aria-label="Añadir al carrito"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 data-i18n="jewelry_product1_title">Emberá Beaded Necklace</h3>
+                            <div class="artisan-info">
+                                <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/01-CH11.png?v=1676494770" alt="Artisan">
+                                <span>By Ana Guainora</span>
+                            </div>
+                            <div class="product-meta">
+                                <span class="price">$95.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.9</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/96-EP26.png?v=1671829074" alt="Pollera Hair Ornaments">
+                            <div class="product-tags">
+                                <span class="tag limited" data-i18n="jewelry_tag_limited">Limited Edition</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn" type="button" data-fav-id="2" aria-label="Favorito"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn add-to-cart-btn" type="button" onclick="addToCartFromCard(2, event)" title="Add to Cart" aria-label="Añadir al carrito"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 data-i18n="jewelry_product2_title">Pollera Hair Ornaments</h3>
+                            <div class="artisan-info">
+                                <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/96-EP26.png?v=1671829074" alt="Artisan">
+                                <span>By Maria Sanchez</span>
+                            </div>
+                            <div class="product-meta">
+                                <span class="price">$150.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>5.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card -->
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="product-card-explore">
+                        <div class="product-image">
+                            <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/01-CH08.png?v=1676490522" alt="Artisanal Bracelet">
+                            <div class="product-tags">
+                                <span class="tag category" data-i18n="jewelry_tag_new">New</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn" type="button" data-fav-id="2" aria-label="Favorito"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn add-to-cart-btn" type="button" onclick="addToCartFromCard(2, event)" title="Add to Cart" aria-label="Añadir al carrito"><i class="fas fa-shopping-cart"></i></button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 data-i18n="jewelry_product3_title">Artisanal Bracelet</h3>
+                            <div class="artisan-info">
+                                <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/01-CH08.png?v=1676490522" alt="Artisan">
+                                <span>By Laura Torres</span>
+                            </div>
+                            <div class="product-meta">
+                                <span class="price">$45.00</span>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <footer-component></footer-component>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="components/footer-component.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
+    <script src="js/ecommerce-confirmation.js"></script>
+    <script src="js/product-card-cart.js"></script>
+    <script src="components/auth-modal.js"></script>
+    <auth-modal></auth-modal>
+</body>
+</html> 

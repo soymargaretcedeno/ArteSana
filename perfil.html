@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/ArteSana_logo.png">
+    <title>My Profile - ArteSana</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Dropzone CSS -->
+    <link href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="components/store/store-dashboard.css">
+    <style>
+        .btn-primary {
+            background: #8F1111;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #600000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(128,0,0,0.3);
+        }
+    </style>
+</head>
+<body data-profile-roles="true">
+    <script src="js/local-database.js"></script>
+    <script src="components/roles/role-service.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="components/header-component.js"></script>
+    <script src="components/header-user-component.js"></script>
+    <script>window.renderHeader();</script>
+
+    <!-- Profile Header -->
+    <section class="profile-header" style="background-image: linear-gradient(120deg, rgba(162,42,34,0.45) 0%, rgba(252,247,222,0.45) 100%), url('https://mir-s3-cdn-cf.behance.net/project_modules/1400/94fafc153875059.63375a2c3d38a.jpg'); background-size:cover; background-position:center;">
+        <div class="container position-relative">
+            <div class="profile-cover">
+                <div class="profile-avatar">
+                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" alt="Profile Picture" class="profile-img" id="profileAvatar">
+                    <button class="edit-avatar" id="editAvatarBtn">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name" id="profileName">Ana Solis</h1>
+                    <p class="profile-type" id="profileRole">Artisan</p>
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <span class="number" id="stat-products">0</span>
+                            <span class="label">Products</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number" id="stat-sales">0</span>
+                            <span class="label">Sales</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number" id="stat-rating">0</span>
+                            <span class="label">Rating</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Content -->
+    <section class="profile-content">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3">
+                    <div class="profile-sidebar">
+                        <nav class="profile-nav">
+                            <a href="#" class="nav-link active" data-section="dashboard" data-i18n="profile_dashboard">
+                                <i class="fas fa-home"></i>
+                                <span data-i18n="profile_dashboard">Home</span>
+                            </a>
+                            <a href="#" class="nav-link d-none" data-section="my-store" data-show-role="artisan" data-i18n="profile_my_store">
+                                <i class="fas fa-store"></i>
+                                <span data-i18n="profile_my_store">Mi tienda</span>
+                            </a>
+                            <a href="#" class="nav-link d-none" data-section="my-products" data-show-role="artisan" data-requires-store="true" data-i18n="profile_my_products">
+                                <i class="fas fa-box"></i>
+                                <span data-i18n="profile_my_products">My Products</span>
+                            </a>
+                            <a href="#" class="nav-link" data-section="orders" data-i18n="profile_orders">
+                                <i class="fas fa-shopping-bag"></i>
+                                <span data-i18n="profile_orders">Orders</span>
+                            </a>
+                            <a href="#" class="nav-link" data-section="favorites" data-i18n="profile_favorites">
+                                <i class="fas fa-heart"></i>
+                                <span data-i18n="profile_favorites">Favorites</span>
+                            </a>
+                            <a href="#" class="nav-link" data-section="analytics" data-i18n="profile_analytics">
+                                <i class="fas fa-chart-line"></i>
+                                <span data-i18n="profile_analytics">Analytics</span>
+                            </a>
+                            <a href="#" class="nav-link" data-section="settings" data-i18n="profile_settings">
+                                <i class="fas fa-cog"></i>
+                                <span data-i18n="profile_settings">Settings</span>
+                            </a>
+                            <button type="button" class="nav-link profile-logout-link" id="profileLogoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span data-i18n="logout">Cerrar sesión</span>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+                <!-- Main Content: Secciones dinámicas -->
+                <div class="col-lg-9">
+                    <div id="dashboard-section" class="dashboard-section">
+                        <div class="content-card mb-4">
+                            <h3 id="dashboardTitle" data-i18n="profile_overview">Overview</h3>
+                            <div id="dashboardSellerCards" class="row text-center mb-4 d-none">
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-shopping-cart fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="profile_total_sales">Total Sales</h4>
+                                            <p class="h5 mb-0">1,234 orders</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-dollar-sign fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="profile_revenue">Revenue</h4>
+                                            <p class="h5 mb-0">$12,345</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-star fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="profile_avg_rating">Average Rating</h4>
+                                            <p class="h5 mb-0">4.8/5.0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="dashboardClientCards" class="row text-center mb-4">
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-shopping-bag fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="profile_orders">Órdenes</h4>
+                                            <p class="h5 mb-0" id="dashClientOrders">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-heart fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="profile_favorites">Favoritos</h4>
+                                            <p class="h5 mb-0" id="dashClientFavorites">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="sales-card p-4 shadow-sm rounded">
+                                        <div class="sales-icon mb-2"><i class="fas fa-wallet fa-2x"></i></div>
+                                        <div class="sales-info">
+                                            <h4 data-i18n="role_spending">Gastos</h4>
+                                            <p class="h5 mb-0" id="dashClientSpending">$0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4" id="dashboardActivity">
+                                <h5 data-i18n="profile_recent_activity">Recent Activity</h5>
+                                <ul class="list-group list-group-flush" id="dashboardActivityList"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="my-store-section" class="dashboard-section d-none">
+                        <div id="storeSetupWrap" class="content-card mb-4">
+                            <h3 data-i18n="profile_my_store">Mi tienda</h3>
+                            <div id="createStoreFormWrap">
+                                <p class="text-muted mb-4" data-i18n="role_create_store_desc">Completa la información de tu tienda para comenzar a vender.</p>
+                                <form id="createStoreFormProfile" autocomplete="off">
+                                    <div class="mb-3">
+                                        <label class="form-label" data-i18n="create_store_name_label">Nombre de la tienda</label>
+                                        <input type="text" class="form-control" name="name" required maxlength="32">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" data-i18n="create_store_location_label">Ubicación</label>
+                                        <input type="text" class="form-control" name="location" required maxlength="32">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" data-i18n="create_store_photo_label">Foto (URL)</label>
+                                        <input type="url" class="form-control" name="photo" placeholder="https://...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" data-i18n="create_store_desc_label">Descripción breve</label>
+                                        <textarea class="form-control" name="desc" rows="2" maxlength="80"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" data-i18n="profile_create_store">Crear tienda</button>
+                                </form>
+                                <div id="storeCreateSuccess" class="alert alert-success mt-3 d-none" data-i18n="create_store_success">¡Tienda creada exitosamente!</div>
+                            </div>
+                        </div>
+                        <div id="storePanelContainer" class="content-card mb-4 d-none"></div>
+                    </div>
+                    <!-- Products Section (for simulation) -->
+                    <div id="my-products-section" class="dashboard-section d-none">
+                    <div class="content-card mb-4" id="myProductsSimSection">
+                            <h3 data-i18n="profile_my_products">My Products</h3>
+                        <div class="row g-4" id="myProductsGridSim"></div>
+                    </div>
+                    </div>
+                    <div id="orders-section" class="dashboard-section d-none">
+                        <div class="content-card mb-4">
+                            <h3 data-i18n="profile_orders_title">Orders</h3>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th data-i18n="profile_order_id">Order ID</th>
+                                            <th data-i18n="profile_order_product">Product</th>
+                                            <th data-i18n="profile_order_date">Date</th>
+                                            <th data-i18n="profile_order_status">Status</th>
+                                            <th data-i18n="profile_order_total">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersTableBody">
+                                        <!-- API: GET /api/orders — datos cargados por PlatformServices -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="favorites-section" class="dashboard-section d-none">
+                        <div class="content-card mb-4">
+                            <h3 data-i18n="profile_favorites_title">Favorites</h3>
+                            <div class="row g-4" id="favoritesGrid">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="analytics-section" class="dashboard-section d-none">
+                        <div class="content-card mb-4">
+                            <h3 data-i18n="profile_analytics_title">Analytics</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <canvas id="salesChart" height="180"></canvas>
+                                </div>
+                                <div class="col-md-6">
+                                    <canvas id="ordersChart" height="180"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="settings-section" class="dashboard-section d-none">
+                        <div class="content-card mb-4">
+                            <h3 data-i18n="profile_settings_title">Settings</h3>
+                            <form id="settingsForm">
+                                <div class="mb-3">
+                                    <label class="form-label" data-i18n="profile_name_label">Nombre</label>
+                                    <input type="text" class="form-control" id="settingsNameInput" value="Ana Solis">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" data-i18n="profile_email_label">Email</label>
+                                    <input type="email" class="form-control" id="settingsEmailInput" value="anasolis@gmail.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" data-i18n="profile_notifications_label">Notificaciones</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" checked id="notif1">
+                                        <label class="form-check-label" for="notif1" data-i18n="profile_email_notifications">Email Notifications</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" checked id="notif2">
+                                        <label class="form-check-label" for="notif2" data-i18n="profile_order_updates">Order Updates</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" data-i18n="profile_save_changes">Guardar Cambios</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <div id="footer-component"></div>
+
+    <!-- Modals -->
+    <!-- Avatar Upload Modal -->
+    <div class="modal fade" id="avatarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-i18n="profile_change_avatar">Gestionar Foto de Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <img id="currentAvatarPreview" src="" alt="Avatar actual" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #ddd;">
+                        <p class="mt-2 text-muted" id="avatarStatus">Sin foto de perfil</p>
+                    </div>
+                    
+                    <div class="d-grid gap-3">
+                        <button type="button" class="btn btn-primary" id="uploadAvatarBtn">
+                            <i class="fas fa-upload me-2"></i>Subir Nueva Foto
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" id="removeAvatarBtn" style="display: none;">
+                            <i class="fas fa-trash me-2"></i>Quitar Foto Actual
+                        </button>
+                    </div>
+                    
+                    <div id="avatarUploadSection" style="display: none;">
+                        <hr class="my-4">
+                        <h6>Seleccionar Imagen</h6>
+                        <input type="file" class="form-control" id="avatarFileInput" accept="image/*">
+                        <div class="mt-3">
+                            <img id="avatarPreview" src="" alt="Vista previa" style="display: none; max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 8px;">
+                        </div>
+                        <div class="mt-3 d-flex gap-2">
+                            <button type="button" class="btn btn-success" id="saveAvatarBtn" style="display: none;">
+                                <i class="fas fa-save me-2"></i>Guardar Foto
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="cancelAvatarBtn">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
+    <script src="js/services/platform-services.js"></script>
+    <script src="components/roles/role-service.js"></script>
+    <script src="components/store/store-service.js"></script>
+    <script src="components/store/store-panel.js"></script>
+    <script src="components/roles/profile-role-adapter.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+    <script>
+        // Check if user is logged in and populate profile data
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = window.localDB.getCurrentUser();
+            
+            if (!currentUser) {
+                // Redirect to home if not logged in
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Populate profile data — RoleService adapter refina según rol
+            document.getElementById('profileName').textContent = currentUser.name;
+
+            const profileAvatar = document.getElementById('profileAvatar');
+            if (currentUser.avatar) {
+                profileAvatar.src = currentUser.avatar;
+            } else {
+                profileAvatar.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+            }
+            
+            if (window.ProfileRoleAdapter) {
+                window.ProfileRoleAdapter.apply();
+            } else {
+                document.getElementById('profileRole').textContent = currentUser.role;
+            }
+
+            populateSettingsForm(currentUser);
+
+            const settingsForm = document.getElementById('settingsForm');
+            if (settingsForm) {
+                settingsForm.addEventListener('submit', handleSettingsFormSubmit);
+            }
+        });
+
+        function populateSettingsForm(user) {
+            const nameInput = document.getElementById('settingsNameInput');
+            const emailInput = document.getElementById('settingsEmailInput');
+            const notifEmail = document.getElementById('notif1');
+            const notifOrders = document.getElementById('notif2');
+
+            if (nameInput) nameInput.value = user.name || '';
+            if (emailInput) emailInput.value = user.email || '';
+            if (notifEmail) notifEmail.checked = user.emailNotifications !== false;
+            if (notifOrders) notifOrders.checked = user.orderUpdates !== false;
+        }
+
+        async function handleSettingsFormSubmit(event) {
+            event.preventDefault();
+
+            const currentUser = window.localDB.getCurrentUser();
+            if (!currentUser) return;
+
+            const nameInput = document.getElementById('settingsNameInput');
+            const emailInput = document.getElementById('settingsEmailInput');
+            const notifEmail = document.getElementById('notif1');
+            const notifOrders = document.getElementById('notif2');
+
+            const newName = (nameInput?.value || '').trim();
+            const newEmail = (emailInput?.value || '').trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!newName) {
+                alert('Por favor ingresa tu nombre.');
+                nameInput?.focus();
+                return;
+            }
+
+            if (!newEmail || !emailPattern.test(newEmail)) {
+                alert('Por favor ingresa un correo electrónico válido.');
+                emailInput?.focus();
+                return;
+            }
+
+            const emailChanged = newEmail.toLowerCase() !== (currentUser.email || '').toLowerCase();
+
+            if (emailChanged) {
+                const emailTaken = window.localDB.getAllUsers().some(function (user) {
+                    return String(user.id) !== String(currentUser.id) &&
+                        user.email.toLowerCase() === newEmail.toLowerCase();
+                });
+
+                if (emailTaken) {
+                    alert('Ese correo electrónico ya está registrado por otro usuario.');
+                    emailInput?.focus();
+                    return;
+                }
+            }
+
+            const result = window.localDB.updateProfile(currentUser.id, {
+                name: newName,
+                email: newEmail,
+                emailNotifications: notifEmail ? notifEmail.checked : true,
+                orderUpdates: notifOrders ? notifOrders.checked : true
+            });
+
+            if (!result.success) {
+                alert('Error al guardar los cambios. Inténtalo de nuevo.');
+                return;
+            }
+
+            document.getElementById('profileName').textContent = newName;
+            populateSettingsForm(result.user);
+
+            if (window.renderHeader) {
+                window.renderHeader();
+            }
+
+            if (window.supabaseAuth?.updateUserProfile) {
+                await window.supabaseAuth.updateUserProfile(currentUser.id, {
+                    name: newName,
+                    email: newEmail
+                });
+            }
+
+            alert('Cambios guardados correctamente.');
+        }
+
+        // Stats iniciales (ProfileRoleAdapter los actualiza según rol)
+        document.getElementById('stat-products').textContent = '0';
+        document.getElementById('stat-sales').textContent = '0';
+        document.getElementById('stat-rating').textContent = '0';
+    </script>
+    <script>
+        // Analytics charts
+        if (document.getElementById('salesChart')) {
+            const salesChart = new Chart(document.getElementById('salesChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Ventas',
+                        data: [12, 19, 3, 5, 2, 3],
+                        borderColor: '#a22a22',
+                        backgroundColor: 'rgba(162,42,34,0.1)',
+                        fill: true
+                    }]
+                },
+                options: { responsive: true }
+            });
+            const ordersChart = new Chart(document.getElementById('ordersChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Órdenes',
+                        data: [5, 7, 4, 8, 3, 6],
+                        backgroundColor: '#a22a22'
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+    </script>
+    <script>
+        // Eliminar producto definitivamente
+        function setupDeleteProductButtons() {
+            document.querySelectorAll('.product-card .fa-trash').forEach(btn => {
+                btn.parentElement.onclick = function(e) {
+                    e.preventDefault();
+                    if (confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.')) {
+                        const card = btn.closest('.product-card');
+                        card.remove();
+                        // Aquí puedes agregar una llamada a backend para eliminar el producto de la base de datos si es necesario
+                    }
+                };
+            });
+        }
+        // Ejecutar al cargar la página
+        setupDeleteProductButtons();
+    </script>
+    <!-- Scroll suave a la sección de productos al hacer clic en 'My Products' -->
+    <script>
+        document.querySelectorAll('.profile-nav .nav-link').forEach(link => {
+            if (link.textContent.trim().includes('My Products')) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productsSection = document.querySelector('.content-card.mb-4 h3');
+                    if (productsSection && productsSection.textContent.includes('Recent Products')) {
+                        productsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Resaltar la sección
+                        const card = productsSection.closest('.content-card');
+                        card.classList.add('shadow-lg', 'border', 'border-primary');
+                        setTimeout(() => card.classList.remove('shadow-lg', 'border', 'border-primary'), 1200);
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        window.renderProfileFavorites = function () {
+            const grid = document.getElementById('favoritesGrid');
+            if (!grid || !window.userProductsDB) return;
+            const esc = window.SecurityUtils ? window.SecurityUtils.escapeHtml : (s) => String(s ?? '');
+            const favs = window.userProductsDB.getFavoriteProducts();
+            if (!favs.length) {
+                grid.innerHTML = `<div class="col-12"><p>Aún no tienes favoritos. <a href="explorar.html">Explora artesanías</a> y toca el corazón para guardarlas.</p></div>`;
+                return;
+            }
+            grid.innerHTML = favs.map((p) => {
+                const idJs = String(p.id).replace(/'/g, "\\'");
+                return `
+                <div class="col-md-4">
+                    <div class="product-card shadow-sm">
+                        <div class="product-image">
+                            <img src="${esc(p.mainImage)}" alt="${esc(p.name)}">
+                            <div class="product-actions">
+                                <button class="action-btn fav-on" type="button" aria-label="Quitar de favoritos" onclick="event.stopPropagation(); window.userProductsDB.removeFromFavorites('${idJs}'); window.renderProfileFavorites();">
+                                    <i class="fas fa-heart fav-on"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h5><a href="product.html?id=${encodeURIComponent(String(p.id))}">${esc(p.name)}</a></h5>
+                            <div class="price">$${(Number(p.price) || 0).toFixed(2)}</div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        };
+    </script>
+    <script>
+// Navegación dinámica del dashboard
+const navLinks = document.querySelectorAll('.profile-nav .nav-link');
+const sections = document.querySelectorAll('.dashboard-section');
+document.getElementById('profileLogoutBtn')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (window.handleLogout) window.handleLogout();
+});
+navLinks.forEach(link => {
+    if (!link.getAttribute('data-section')) return;
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Quitar activo de todos
+        navLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        // Mostrar solo la sección correspondiente
+        const sectionId = this.getAttribute('data-section') + '-section';
+        sections.forEach(sec => {
+            if (sec.id === sectionId) {
+                sec.classList.remove('d-none');
+                sec.classList.add('animate__animated', 'animate__fadeIn');
+                setTimeout(() => sec.classList.remove('animate__animated', 'animate__fadeIn'), 800);
+                if (sectionId === 'my-store-section' && window.StorePanel) {
+                    window.StorePanel.showView('dashboard');
+                }
+                if (sectionId === 'favorites-section' && window.renderProfileFavorites) {
+                    window.renderProfileFavorites();
+                }
+            } else {
+                sec.classList.add('d-none');
+            }
+        });
+    });
+});
+(function openFavoritesHash() {
+    const hash = (location.hash || '').replace('#', '');
+    if (hash === 'favorites' || hash === 'favorites-section') {
+        const link = document.querySelector('.profile-nav .nav-link[data-section="favorites"]');
+        if (link) link.click();
+    }
+})();
+</script>
+<!-- Puedes agregar animate.css para animaciones suaves -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="components/auth-modal.js"></script>
+    <auth-modal></auth-modal>
+    <script src="js/utils/auth-guard.js"></script>
+    <script src="js/app-core.js"></script>
+    
+    <!-- Avatar Management Script -->
+    <script>
+        // Avatar management functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const editAvatarBtn = document.getElementById('editAvatarBtn');
+            const avatarModal = document.getElementById('avatarModal');
+            const currentAvatarPreview = document.getElementById('currentAvatarPreview');
+            const avatarStatus = document.getElementById('avatarStatus');
+            const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
+            const removeAvatarBtn = document.getElementById('removeAvatarBtn');
+            const avatarUploadSection = document.getElementById('avatarUploadSection');
+            const avatarFileInput = document.getElementById('avatarFileInput');
+            const avatarPreview = document.getElementById('avatarPreview');
+            const saveAvatarBtn = document.getElementById('saveAvatarBtn');
+            const cancelAvatarBtn = document.getElementById('cancelAvatarBtn');
+            const profileAvatar = document.getElementById('profileAvatar');
+            
+            let selectedFile = null;
+            
+            // Open avatar modal
+            editAvatarBtn.addEventListener('click', function() {
+                const currentUser = window.localDB.getCurrentUser();
+                
+                // Update modal content based on current avatar
+                if (currentUser.avatar) {
+                    currentAvatarPreview.src = currentUser.avatar;
+                    avatarStatus.textContent = 'Foto de perfil actual';
+                    removeAvatarBtn.style.display = 'block';
+                } else {
+                    currentAvatarPreview.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+                    avatarStatus.textContent = 'Sin foto de perfil';
+                    removeAvatarBtn.style.display = 'none';
+                }
+                
+                // Reset upload section
+                avatarUploadSection.style.display = 'none';
+                avatarFileInput.value = '';
+                avatarPreview.style.display = 'none';
+                saveAvatarBtn.style.display = 'none';
+                selectedFile = null;
+                
+                // Show modal
+                const modal = new bootstrap.Modal(avatarModal);
+                modal.show();
+            });
+            
+            // Upload new avatar
+            uploadAvatarBtn.addEventListener('click', function() {
+                avatarUploadSection.style.display = 'block';
+                avatarFileInput.click();
+            });
+            
+            // Handle file selection
+            avatarFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    selectedFile = file;
+                    
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                        alert('Por favor selecciona una imagen válida.');
+                        return;
+                    }
+                    
+                    // Validate file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('La imagen debe ser menor a 5MB.');
+                        return;
+                    }
+                    
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.src = e.target.result;
+                        avatarPreview.style.display = 'block';
+                        saveAvatarBtn.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Save new avatar
+            saveAvatarBtn.addEventListener('click', function() {
+                if (!selectedFile) {
+                    alert('Por favor selecciona una imagen primero.');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    
+                    // Update user avatar in database
+                    const currentUser = window.localDB.getCurrentUser();
+                    const result = window.localDB.updateProfile(currentUser.id, { avatar: imageData });
+                    
+                    if (result.success) {
+                        // Update profile display
+                        profileAvatar.src = imageData;
+                        
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(avatarModal);
+                        modal.hide();
+                        
+                        // Show success message
+                        alert('Foto de perfil actualizada exitosamente.');
+                    } else {
+                        alert('Error al actualizar la foto de perfil.');
+                    }
+                };
+                reader.readAsDataURL(selectedFile);
+            });
+            
+            // Remove current avatar
+            removeAvatarBtn.addEventListener('click', function() {
+                if (confirm('¿Estás seguro de que quieres quitar tu foto de perfil?')) {
+                    const currentUser = window.localDB.getCurrentUser();
+                    const result = window.localDB.updateProfile(currentUser.id, { avatar: null });
+                    
+                    if (result.success) {
+                        // Update profile display
+                        profileAvatar.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+                        
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(avatarModal);
+                        modal.hide();
+                        
+                        // Show success message
+                        alert('Foto de perfil removida exitosamente.');
+                    } else {
+                        alert('Error al remover la foto de perfil.');
+                    }
+                }
+            });
+            
+            // Cancel avatar upload
+            cancelAvatarBtn.addEventListener('click', function() {
+                avatarUploadSection.style.display = 'none';
+                avatarFileInput.value = '';
+                avatarPreview.style.display = 'none';
+                saveAvatarBtn.style.display = 'none';
+                selectedFile = null;
+            });
+        });
+    </script>
+    <script src="js/app-core.js"></script>
+    <script>
+        function orderProductName(order) {
+            if (order.product) return String(order.product);
+            const items = Array.isArray(order.items) ? order.items : [];
+            const names = items.map((item) => item.product?.name || item.name).filter(Boolean);
+            return names.join(', ') || 'Pedido';
+        }
+
+        function orderStatusLabel(order) {
+            if (order.statusLabel) return order.statusLabel;
+            const map = {
+                pending: 'Pendiente',
+                processing: 'Procesando',
+                shipped: 'Enviado',
+                delivered: 'Entregado',
+                cancelled: 'Cancelado'
+            };
+            return map[order.status] || 'Pendiente';
+        }
+
+        function renderOrderStatuses() {
+            if (!window.PlatformServices) return;
+            const tbody = document.getElementById('ordersTableBody');
+            if (!tbody) return;
+            const esc = window.SecurityUtils ? window.SecurityUtils.escapeHtml : (s) => String(s ?? '');
+            const badgeMap = {
+                delivered: 'bg-success',
+                shipped: 'bg-info text-dark',
+                processing: 'bg-warning text-dark',
+                pending: 'bg-secondary',
+                cancelled: 'bg-danger'
+            };
+            const user = window.localDB?.getCurrentUser?.();
+            const orders = window.PlatformServices.getOrders(user);
+            const activity = document.getElementById('dashboardActivityList');
+            if (!orders.length) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">${esc(window.t ? window.t('profile_no_orders', 'Aún no tienes pedidos.') : 'Aún no tienes pedidos.')}</td></tr>`;
+                if (activity) {
+                    activity.innerHTML = `<li class="list-group-item text-muted">${esc(window.t ? window.t('profile_no_activity', 'Aún no hay actividad.') : 'Aún no hay actividad.')}</li>`;
+                }
+                return;
+            }
+            tbody.innerHTML = orders.map(o => {
+                const date = String(o.updatedAt || (o.createdAt || '').slice(0, 10) || '');
+                return `
+                <tr>
+                    <td>#${esc(o.id)}</td>
+                    <td>${esc(orderProductName(o))}</td>
+                    <td>${esc(date)}</td>
+                    <td><span class="badge ${badgeMap[o.status] || 'bg-secondary'}">${esc(orderStatusLabel(o))}</span></td>
+                    <td>$${Number(o.total || 0).toFixed(2)}</td>
+                </tr>`;
+            }).join('');
+            if (activity) {
+                activity.innerHTML = orders.slice(0, 5).map((o) => `
+                    <li class="list-group-item">Pedido #${esc(o.id)} — ${esc(orderProductName(o))} ($${Number(o.total || 0).toFixed(2)})</li>
+                `).join('');
+            }
+        }
+        document.addEventListener('app:ready', renderOrderStatuses);
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.PlatformServices) renderOrderStatuses();
+        });
+    </script>
+</body>
+</html> 

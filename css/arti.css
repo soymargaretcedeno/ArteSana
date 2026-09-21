@@ -1,0 +1,261 @@
+/* Arti: guía del sitio, cambia de pose y esquina según la página y el tema */
+
+.arti-companion {
+    position: fixed;
+    z-index: 9980;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    transition: left 0.75s cubic-bezier(0.22, 0.8, 0.28, 1),
+                right 0.75s cubic-bezier(0.22, 0.8, 0.28, 1),
+                bottom 0.75s cubic-bezier(0.22, 0.8, 0.28, 1),
+                top 0.75s cubic-bezier(0.22, 0.8, 0.28, 1);
+}
+
+.arti-companion[data-corner="right"] {
+    right: 20px;
+    left: auto;
+    bottom: 22px;
+    top: auto;
+}
+
+.arti-companion[data-corner="left"] {
+    left: 20px;
+    right: auto;
+    bottom: 22px;
+    top: auto;
+}
+
+.arti-companion[data-corner="mid-right"] {
+    right: 28px;
+    left: auto;
+    bottom: 120px;
+    top: auto;
+}
+
+.arti-companion[data-corner="top-right"] {
+    right: 18px;
+    left: auto;
+    top: calc(var(--header-offset, 86px) + 10px);
+    bottom: auto;
+}
+
+.arti-companion[hidden],
+.arti-companion.is-hidden,
+.home-page #artiCompanion {
+    display: none !important;
+}
+
+.arti-companion-figure {
+    width: clamp(128px, 12vw, 196px);
+    height: clamp(128px, 12vw, 196px);
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 18px rgba(92, 58, 33, 0.22));
+    animation: arti-bob 3.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.arti-companion[data-pose="shop"] .arti-companion-figure {
+    width: clamp(136px, 12.5vw, 208px);
+    height: clamp(136px, 12.5vw, 208px);
+}
+
+.arti-companion[data-pose="talk"] .arti-companion-figure {
+    width: clamp(124px, 11.5vw, 188px);
+    height: clamp(124px, 11.5vw, 188px);
+}
+
+.arti-hint {
+    background: #fffdf8;
+    color: #5C3A21;
+    border: 1px solid #eadfce;
+    border-radius: 16px 16px 16px 4px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    max-width: 168px;
+    box-shadow: 0 10px 22px rgba(92, 58, 33, 0.12);
+    text-align: left;
+}
+
+.arti-companion[data-corner="left"] .arti-hint {
+    border-radius: 16px 16px 4px 16px;
+}
+
+[data-theme="dark"] .arti-hint {
+    background: #2B2118;
+    color: #F6EFE3;
+    border-color: rgba(242, 200, 114, 0.28);
+}
+
+@keyframes arti-bob {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-9px) rotate(2deg); }
+}
+
+.arti-companion:hover .arti-companion-figure,
+.arti-companion:focus-visible .arti-companion-figure {
+    animation-duration: 1.6s;
+}
+
+.arti-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(92, 58, 33, 0.28);
+    z-index: 12000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.arti-modal.open { display: flex; }
+
+.arti-chat-card {
+    width: min(420px, 100%);
+    background: #fff8f0;
+    border-radius: 24px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(92, 58, 33, 0.18);
+}
+
+.arti-chat-head {
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 14px 16px;
+    background: #F6EFE3;
+    border-bottom: 1px solid #eadfce;
+}
+
+.arti-chat-head img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+}
+
+.arti-chat-head h3 {
+    font-family: 'Playfair Display', serif;
+    color: #5C3A21;
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.arti-chat-head p {
+    margin: 0;
+    color: #8B5E3C;
+    font-size: 0.82rem;
+}
+
+.arti-chat-close {
+    border: none;
+    background: transparent;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: #8B5E3C;
+    cursor: pointer;
+}
+
+.arti-chat-messages {
+    height: 220px;
+    overflow-y: auto;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fff;
+}
+
+.arti-bubble {
+    max-width: 85%;
+    padding: 10px 12px;
+    border-radius: 16px;
+    font-size: 0.88rem;
+    line-height: 1.4;
+}
+
+.arti-bubble-arti {
+    background: #F6EFE3;
+    color: #3d2a1d;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.arti-bubble-user {
+    background: #8B5E3C;
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.arti-chat-prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 16px 10px;
+}
+
+.arti-chat-prompts button {
+    border: 1px solid #eadfce;
+    background: #F6EFE3;
+    color: #6B4423;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+.arti-chat-form {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px 14px;
+    border-top: 1px solid #eadfce;
+}
+
+.arti-chat-form input {
+    flex: 1;
+    border: 1px solid #eadfce;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.arti-chat-form button {
+    border: none;
+    background: #8B5E3C;
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+@media (max-width: 720px) {
+    .arti-companion-figure,
+    .arti-companion[data-pose="shop"] .arti-companion-figure,
+    .arti-companion[data-pose="talk"] .arti-companion-figure {
+        width: 86px;
+        height: 86px;
+    }
+
+    .arti-companion[data-corner="right"],
+    .arti-companion[data-corner="mid-right"],
+    .arti-companion[data-corner="left"] {
+        left: 10px;
+        right: auto;
+        bottom: 16px;
+    }
+
+    .arti-hint { max-width: 132px; font-size: 0.72rem; }
+}

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#8B5E3C">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" href="assets/ArteSana_logo.png">
+    <meta name="description" content="ArteSana conecta artesanos panameños con amantes del arte. Marketplace de artesanías auténticas con envío internacional.">
+    <meta name="keywords" content="artesanías panameñas, marketplace, artesanos, comercio justo">
+    <meta property="og:title" content="ArteSana - Marketplace de Artesanías Panameñas">
+    <meta property="og:description" content="Descubre creaciones únicas de artesanos panameños certificados.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/ArteSana_logo.png">
+    <title data-i18n="page_title_home">ArteSana - Tu marketplace artesanal</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" as="style">
+    
+    <!-- Defer non-critical CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/arti.css">
+    <style>
+        /* Estilos de carga crítica */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--light-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--primary-color);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <!-- Fallback for browsers that don't support preload -->
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    </noscript>
+</head>
+<body data-enhanced-messages="true" class="home-page">
+    <a href="#main-content" class="skip-link" data-i18n="skip_to_content">Saltar al contenido principal</a>
+    <!-- Pantalla de carga -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+    </div>
+    <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
+    <script src="js/ecommerce-confirmation.js"></script>
+    <script src="components/roles/role-service.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-auth.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="components/header-component.js"></script>
+    <script src="components/header-user-component.js"></script>
+    <script>window.renderHeader();</script>
+    <!-- Windows-style Intro Animation -->
+    <!-- <div class="windows-intro" id="windowsIntro">
+        <div class="particles-container" id="particles"></div>
+        <h1 class="artesana-text">ArteSana</h1>
+    </div> -->
+
+    <main id="main-content">
+    <div class="home-wrap">
+        <div class="home-main">
+            <section class="home-hero" aria-label="Banner principal">
+                <div class="home-hero-grid">
+                    <div class="home-hero-copy">
+                        <h1 class="home-hero-title"><span data-i18n="home_hero_line1">Apoyamos el talento</span><br><span data-i18n="home_hero_line2">que nos hace</span> <span class="accent" data-i18n="home_hero_accent">únicos</span></h1>
+                        <p class="home-hero-text" data-i18n="home_hero_text">En ArteSana conectamos a los artesanos panameños con personas que valoran lo hecho a mano y lo auténtico.</p>
+                        <div class="home-hero-actions">
+                            <a href="explorar.html" class="btn-artesana">
+                                <span data-i18n="explore_handcrafts">Explorar artesanías</span>
+                                <span class="arrow">›</span>
+                            </a>
+                            <a href="#about-section" class="home-play">
+                                <span class="home-play-icon">▶</span>
+                                <span data-i18n="home_how_works">Conoce cómo funciona ArteSana</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="home-hero-arti">
+                        <div class="home-bubble" data-i18n-html="home_arti_bubble">¡Hola! Soy <strong>Arti</strong>, tu guía en ArteSana. Descubre, apoya y sé parte del cambio. ❤️</div>
+                        <img src="assets/arti-hero.png" alt="Arti, la mascota de ArteSana">
+                    </div>
+                </div>
+                <div class="home-benefits" aria-label="Beneficios">
+                <div class="home-benefit">
+                    <svg viewBox="0 0 24 24"><path d="M7 11c2-5 4-7 5-7s3 2 5 7c.8 2 .8 4 0 5.5C15.8 18 12 20 12 20s-3.8-2-5-3.5C6.2 15 6.2 13 7 11z"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span data-i18n="home_handmade">Hecho a mano</span>
+                </div>
+                <div class="home-benefit">
+                    <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-7-10a4.5 4.5 0 0 1 7-3.7A4.5 4.5 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg>
+                    <span data-i18n="home_local_support">Apoyo local</span>
+                </div>
+                <div class="home-benefit">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2"/></svg>
+                    <span data-i18n="home_living_culture">Cultura viva</span>
+                </div>
+                <div class="home-benefit">
+                    <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                    <span data-i18n="home_secure_pay">Pago seguro</span>
+                </div>
+                <div class="home-benefit">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="13" height="9" rx="1.5"/><path d="M15 10h4l3 3v3h-7"/><circle cx="6.5" cy="17.5" r="1.5"/><circle cx="17.5" cy="17.5" r="1.5"/></svg>
+                    <span data-i18n="home_ship_panama">Envíos a todo Panamá</span>
+                </div>
+            </div>
+            </section>
+
+            <section aria-labelledby="cats-title">
+                <div class="home-section-head">
+                    <h2 id="cats-title" data-i18n="home_cats_title">Explora por categorías</h2>
+                    <a href="explorar.html" data-i18n="home_see_all">Ver todas</a>
+                </div>
+                <div class="home-cats">
+                    <a class="home-cat" href="explorar.html">
+                        <div class="home-cat-media">
+                            <img src="assets/panama/sombrero-pintao.jpg" alt="Sombrero pintao de Panamá">
+                        </div>
+                        <div class="home-cat-body">
+                            <h3 data-i18n="home_cat_basketry">Cestería</h3>
+                            <p data-i18n="home_cat_basketry_count">128 productos</p>
+                        </div>
+                    </a>
+                    <a class="home-cat" href="textiles.html">
+                        <div class="home-cat-media">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/MolasGuna.jpg" alt="Molas guna de Panamá">
+                        </div>
+                        <div class="home-cat-body">
+                            <h3 data-i18n="home_cat_textiles">Textiles</h3>
+                            <p data-i18n="home_cat_textiles_count">96 productos</p>
+                        </div>
+                    </a>
+                    <a class="home-cat" href="ceramics.html">
+                        <div class="home-cat-media">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Cocle_pedestal_dish.jpg" alt="Cerámica Gran Coclé de Panamá">
+                        </div>
+                        <div class="home-cat-body">
+                            <h3 data-i18n="home_cat_ceramics">Cerámica</h3>
+                            <p data-i18n="home_cat_ceramics_count">78 productos</p>
+                        </div>
+                    </a>
+                    <a class="home-cat" href="jewelry.html">
+                        <div class="home-cat-media">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Panama_Embera0607.jpg" alt="Joyería emberá de Panamá">
+                        </div>
+                        <div class="home-cat-body">
+                            <h3 data-i18n="home_cat_jewelry">Joyería</h3>
+                            <p data-i18n="home_cat_jewelry_count">112 productos</p>
+                        </div>
+                    </a>
+                    <a class="home-cat" href="sculpture.html">
+                        <div class="home-cat-media">
+                            <img src="https://cdn.shopify.com/s/files/1/0575/5106/1081/products/27-CT04.png?v=1671742287" alt="Escultura en madera de Panamá">
+                        </div>
+                        <div class="home-cat-body">
+                            <h3 data-i18n="home_cat_wood">Madera</h3>
+                            <p data-i18n="home_cat_wood_count">85 productos</p>
+                        </div>
+                    </a>
+                    <a class="home-cat home-cat-more" href="explorar.html">
+                        <div class="home-cat-media">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                        </div>
+                        <div class="home-cat-body">
+                            <h3 data-i18n="home_more_cats">Más categorías</h3>
+                            <p data-i18n="home_see_all">Ver todas</p>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <aside class="home-sidebar">
+            <article class="side-card arti">
+                <div class="side-arti-row">
+                    <div>
+                        <h3 data-i18n="home_meet_arti">Conoce a Arti</h3>
+                        <p data-i18n="home_meet_arti_text">Él te ayudará a encontrar lo mejor de nuestra cultura y a apoyar a los artesanos.</p>
+                        <button type="button" class="btn-side" id="openArtiInfo" data-i18n="home_more_arti">Más sobre Arti</button>
+                    </div>
+                    <img src="assets/arti-guide-clear.png" alt="Arti saludando">
+                </div>
+            </article>
+
+            <article class="side-card">
+                <div class="home-section-head" style="margin-bottom:12px;">
+                    <h3 style="margin:0;" data-i18n="home_featured_artisan">Artesano destacado</h3>
+                    <a href="store.html" data-i18n="home_view_profile">Ver perfil</a>
+                </div>
+                <div class="artisan-row">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Panama_Embera0607.jpg" alt="Artesana emberá de Darién">
+                    <div>
+                        <h4>María García</h4>
+                        <p class="muted" data-i18n="home_artisan_craft">Textiles tradicionales</p>
+                        <p class="muted">📍 Boquete, Chiriquí</p>
+                        <p class="stars">★ 4.9 <span class="muted" data-i18n="home_artisan_sales">(128 ventas)</span></p>
+                    </div>
+                </div>
+                <p class="artisan-quote" data-i18n="home_artisan_quote">“Cada tejido cuenta una historia de mi tierra y mi gente.”</p>
+            </article>
+
+            <article class="side-card">
+                <h3 data-i18n="home_why_buy">¿Por qué comprar en ArteSana?</h3>
+                <ul class="why-list">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.4-7-10a4.5 4.5 0 0 1 7-3.7A4.5 4.5 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg>
+                        <span data-i18n="home_why_1">Apoyas directamente a los artesanos y a sus comunidades.</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg>
+                        <span data-i18n="home_why_2">Preservas nuestras tradiciones y cultura panameña.</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 11c2-5 4-7 5-7s3 2 5 7"/></svg>
+                        <span data-i18n="home_why_3">Productos únicos, hechos con amor y dedicación.</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                        <span data-i18n="home_why_4">Compras seguras y protección al comprador.</span>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="side-card chat">
+                <div class="side-chat-row">
+                    <div>
+                        <h3 data-i18n="home_have_questions">¿Tienes dudas?</h3>
+                        <p data-i18n="home_arti_helps">Arti está aquí para ayudarte</p>
+                        <button type="button" class="btn-side solid" id="openArtiChat" data-i18n="home_chat_arti">Chatear con Arti</button>
+                    </div>
+                    <img src="assets/arti-basket-clear.png" alt="Arti">
+                </div>
+            </article>
+        </aside>
+    </div>
+
+    <section class="home-featured" aria-labelledby="featured-title">
+        <div class="home-section-head">
+            <h2 id="featured-title" data-i18n="home_featured_title">Productos destacados</h2>
+            <div class="home-tabs" role="tablist" aria-label="Ordenar productos destacados">
+                <button type="button" class="active" data-home-filter="popular" data-i18n="home_tab_popular">Populares</button>
+                <button type="button" data-home-filter="new" data-i18n="home_tab_new">Nuevos</button>
+                <button type="button" data-home-filter="best" data-i18n="home_tab_best">Mejor vendidos</button>
+            </div>
+            <a href="explorar.html" data-i18n="home_see_everything">Ver todo</a>
+        </div>
+        <div class="home-products" id="homeProducts"></div>
+    </section>
+
+    <section class="home-lower" id="regiones">
+        <div class="home-section-head">
+            <h2 data-i18n="home_regions_title">Regiones de Panamá</h2>
+            <a href="explorar.html" data-i18n="explore_handcrafts">Explorar artesanías</a>
+        </div>
+        <div class="home-cats home-region-cats">
+            <a class="home-cat" href="explorar.html">
+                <div class="home-cat-media"><img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Guna_Yala_Island.jpg" alt="Islas de Guna Yala, Panamá"></div>
+                <div class="home-cat-body"><h3>Guna Yala</h3><p data-i18n="home_region_guna_desc">Molas y textiles</p></div>
+            </a>
+            <a class="home-cat" href="explorar.html">
+                <div class="home-cat-media"><img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Volc%C3%A1n_Bar%C3%BA_desde_Volc%C3%A1n.JPG" alt="Volcán Barú, Chiriquí"></div>
+                <div class="home-cat-body"><h3>Chiriquí</h3><p data-i18n="home_region_chiriqui_desc">Cerámica y café</p></div>
+            </a>
+            <a class="home-cat" href="explorar.html">
+                <div class="home-cat-media"><img src="assets/panama/azuero-pollera.jpg" alt="Pollera panameña de Azuero"></div>
+                <div class="home-cat-body"><h3>Azuero</h3><p data-i18n="home_region_azuero_desc">Polleras y sombreros</p></div>
+            </a>
+            <a class="home-cat" href="explorar.html">
+                <div class="home-cat-media"><img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Panama_Embera_0610.jpg" alt="Comunidad emberá en Darién, Panamá"></div>
+                <div class="home-cat-body"><h3>Emberá-Wounaan</h3><p data-i18n="home_region_embera_desc">Cestería y chaquiras</p></div>
+            </a>
+        </div>
+    </section>
+
+    <div class="arti-modal" id="artiModal" role="dialog" aria-modal="true" aria-labelledby="artiModalTitle">
+        <div class="arti-modal-card arti-chat-card">
+            <div class="arti-chat-head">
+                <img id="artiChatPose" src="assets/arti-hero.png" alt="Arti">
+                <div>
+                    <h3 id="artiModalTitle" data-i18n="arti_title">Hola, soy Arti</h3>
+                    <p data-i18n="arti_subtitle">Tu guía en ArteSana</p>
+                </div>
+                <button type="button" class="arti-chat-close" id="closeArtiModal" aria-label="Cerrar" data-i18n-aria="close">×</button>
+            </div>
+            <div class="arti-chat-messages" id="artiChatMessages"></div>
+            <div class="arti-chat-prompts">
+                <button type="button" data-arti-prompt="categorias" data-i18n="arti_prompt_cats">Categorías</button>
+                <button type="button" data-arti-prompt="artesanos" data-i18n="arti_prompt_artisans">Artesanos</button>
+                <button type="button" data-arti-prompt="vender" data-i18n="arti_prompt_sell">Quiero vender</button>
+                <button type="button" data-arti-prompt="envios" data-i18n="arti_prompt_ship">Envíos</button>
+            </div>
+            <form class="arti-chat-form" id="artiChatForm">
+                <input id="artiChatInput" type="text" placeholder="Escríbele a Arti..." data-i18n-placeholder="arti_input_ph" autocomplete="off">
+                <button type="submit" data-i18n="arti_send">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="about-story" id="about-section">
+        <div class="about-story-banner">
+            <img class="about-story-photo" src="https://upload.wikimedia.org/wikipedia/commons/f/f4/MolasGuna.jpg" alt="Molas guna en Guna Yala, Panamá" width="1600" height="1066">
+            <div class="about-story-overlay">
+                <p class="about-kicker" data-i18n="about_us">Nuestra Historia</p>
+                <h2 data-i18n="preserving_art">Preservamos el arte, conectamos historias.</h2>
+                <p data-i18n="about_lead">ArteSana nació con una idea sencilla: darle a los artesanos panameños un espacio donde sus creaciones puedan llegar más lejos sin perder su esencia.</p>
+                <a href="#nuestra-historia" class="about-story-cta" data-i18n="learn_our_story">Conoce nuestra historia →</a>
+            </div>
+        </div>
+
+        <div class="about-feat-grid">
+            <article class="about-feat">
+                <i class="fas fa-hands-helping"></i>
+                <strong data-i18n="certified_artisans">Artesanos locales</strong>
+                <span data-i18n="about_feat_artisans_desc">Apoyamos el talento y trabajo de nuestros artesanos.</span>
+            </article>
+            <article class="about-feat">
+                <i class="fas fa-award"></i>
+                <strong data-i18n="authentic_products">Productos auténticos</strong>
+                <span data-i18n="about_feat_authentic_desc">Cada creación conserva su esencia y tradición.</span>
+            </article>
+            <article class="about-feat">
+                <i class="fas fa-globe-americas"></i>
+                <strong data-i18n="global_shipping">De Panamá al mundo</strong>
+                <span data-i18n="about_feat_world_desc">Conectamos nuestras artesanías con compradores de todo el mundo.</span>
+            </article>
+        </div>
+
+        <article class="about-origin" id="nuestra-historia">
+            <div class="about-origin-visual">
+                <img src="assets/panama/mola-manos.webp" alt="Artesana guna cosiendo una mola" width="1600" height="1066">
+            </div>
+            <div class="about-origin-copy">
+                <p class="about-kicker" data-i18n="learn_our_story">Conoce nuestra historia →</p>
+                <h2 data-i18n="story_title">¿Cómo nació ArteSana?</h2>
+                <p class="lead" data-i18n="story_lead">ArteSana nació de una preocupación y una idea: ¿cómo podemos ayudar a que el talento de nuestros artesanos panameños llegue a más personas?</p>
+                <p data-i18n="about_p2">Creemos que cada pieza artesanal cuenta una historia. Detrás de una mola, una joya, una pieza de cerámica o un tejido, existen conocimientos, tradiciones y años de dedicación que forman parte de nuestra identidad.</p>
+                <p data-i18n="story_p2">Nos dimos cuenta de que muchos artesanos tienen productos únicos y llenos de historia, pero no siempre cuentan con las herramientas digitales necesarias para mostrarlos y venderlos fácilmente.</p>
+                <p data-i18n="story_p3">Así nació ArteSana, como una plataforma creada para conectar el talento artesanal panameño con compradores de Panamá y del mundo. Queremos que cada artesano tenga la oportunidad de mostrar su trabajo, contar la historia detrás de sus creaciones y crecer sin dejar atrás sus raíces.</p>
+                <p class="about-closing" data-i18n="about_closing">ArteSana no solo vende artesanías. Comparte historias, cultura e identidad.</p>
+                <p class="about-closing" data-i18n="story_closing">Porque creemos que cada artesanía es más que un producto: es una parte de nuestra cultura que merece ser conocida y valorada.</p>
+            </div>
+        </article>
+    </section>
+
+    <!-- Team Carousel Section (editable + animated) -->
+    <section class="team-carousel-section py-5">
+        <div class="container">
+            <h2 class="team-title text-center" data-aos="fade-up" data-i18n="our_team">Nuestro equipo</h2>
+            <p class="team-subtitle text-center mb-4" data-aos="fade-up" data-aos-delay="100" data-i18n="meet_our_team">Conoce a quienes crearon esta web</p>
+            <div id="team-carousel-root" data-aos="fade-up" data-aos-delay="200"></div>
+        </div>
+    </section>
+
+    <!-- Team Wide Photo (above About Us) -->
+    <section class="team-wide-photo">
+        <figure class="team-frame">
+            <img src="assets/equipo-grupal.jpg" alt="Equipo ArteSana" data-i18n-alt="team_photo_alt" class="team-wide-img" loading="lazy">
+        </figure>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-6" data-aos="fade-up">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3><span class="counter" data-target="500">0</span></h3>
+                        <p data-i18n="active_artisans">Active Artisans</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <h3><span class="counter" data-target="5000">0</span></h3>
+                        <p data-i18n="unique_products">Unique Products</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <h3><span class="counter" data-target="10000">0</span></h3>
+                        <p data-i18n="satisfied_customers">Satisfied Customers</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3><span class="counter" data-target="30">0</span></h3>
+                        <p data-i18n="countries_reached">Countries Reached</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="historias">
+        <div class="container">
+            <h2 class="text-center mb-4" data-aos="fade-up" data-i18n="testimonials_title">Testimonials</h2>
+            <div class="video-embed" data-aos="fade-up" data-aos-delay="100">
+                <div class="responsive-video card-video">
+                    <iframe 
+                        src="https://www.youtube.com/embed/XpSAM_Xnp9o?si=rz8YSivDU5YAl_9f" 
+                        title="Testimonials"
+                        loading="lazy"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+<!--Aplicar el ancla del header componente-->
+<a id="contact-link"></a>
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="contact-info contact-info-card h-100">
+                        <div class="contact-intro">
+                            <h6 class="subtitle" data-i18n="contact_subtitle">Contact Us</h6>
+                            <h2 class="contact-title" data-i18n="contact_title">Have Any Questions?</h2>
+                            <p class="lead" data-i18n="contact_lead">We're here to help. Contact us through any of these channels:</p>
+                        </div>
+                        <div class="contact-methods">
+                            <div class="contact-method">
+                                <div class="icon-circle">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div>
+                                    <h5 class="method-title" data-i18n="contact_call">Call Us</h5>
+                                    <a href="tel:+50763962388" class="method-link">+507 6396-2388</a>
+                                </div>
+                            </div>
+                            <div class="contact-method">
+                                <div class="icon-circle">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h5 class="method-title" data-i18n="contact_email">Email Us</h5>
+                                    <a href="mailto:ArteSana919@gmail.com" class="method-link">ArteSana919@gmail.com</a>
+                                </div>
+                            </div>
+                            <div class="contact-method" id="contactVisitBlock" hidden>
+                                <div class="icon-circle">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <h5 class="method-title" data-i18n="contact_visit">Visit Us</h5>
+                                    <p class="method-text" id="contactAddressText" data-i18n="contact_address"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-badges">
+                            <span class="contact-badge" data-i18n="reply_24h">Respondemos en 24h</span>
+                        </div>
+
+                        <div class="contact-cta">
+                            <a href="https://wa.me/50763962388" target="_blank" rel="noopener" class="btn contact-whatsapp-btn">
+                                <i class="fab fa-whatsapp"></i>
+                                <span data-i18n="chat_whatsapp">Chat on WhatsApp</span>
+                            </a>
+                            <div class="contact-social" id="contactSocial" hidden></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="contact-form contact-form-card h-100">
+                        <form novalidate aria-label="Formulario de contacto">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="contactName" class="visually-hidden">Nombre</label>
+                                        <input type="text" id="contactName" name="name" class="form-control" placeholder="Your Name" data-i18n="contact_name_placeholder" required autocomplete="name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="contactEmail" class="visually-hidden">Email</label>
+                                        <input type="email" id="contactEmail" name="email" class="form-control" placeholder="Your Email" data-i18n="contact_email_placeholder" required autocomplete="email">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactSubject" class="visually-hidden">Asunto</label>
+                                <input type="text" id="contactSubject" name="subject" class="form-control" placeholder="Subject" data-i18n="contact_subject_placeholder" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactMessage" class="visually-hidden">Mensaje</label>
+                                <textarea id="contactMessage" name="message" class="form-control" rows="5" placeholder="Your Message" data-i18n="contact_message_placeholder" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" data-i18n="send_message">Send Message</button>
+                            <small class="privacy-note" data-i18n="contact_privacy">Tu mensaje se envía a ArteSana919@gmail.com</small>
+                        </form>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <!-- Footer Component -->
+    <footer-component></footer-component>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="components/auth-modal.js"></script>
+    <auth-modal></auth-modal>
+    <script src="components/footer-component.js"></script>
+    <script src="js/arti-chat.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/team.js"></script>
+    <script>
+        // Ocultar pantalla de carga cuando todo esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 250);
+            }
+        });
+
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.pointerEvents = 'none';
+                loadingScreen.style.display = 'none';
+            }
+            
+            // Inicializar tooltips de Bootstrap
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        (function initHomeUi() {
+            const grid = document.getElementById('homeProducts');
+            const tabs = document.querySelectorAll('.home-tabs button[data-home-filter]');
+            if (!grid || !tabs.length) return;
+
+            const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[char]));
+
+            const fallback = [
+                { id: 1, name: 'Mola tradicional', nameKey: 'prod_mola', artisan: { store: 'Nubia Textiles' }, price: 45, mainImage: 'https://cdn.shopify.com/s/files/1/0575/5106/1081/products/05-M1.png?v=1676999151', rating: 4.9, reviews: 23, createdAt: '2024-01-15', featured: true, tags: ['featured'] },
+                { id: 'home-iraca', name: 'Bolso de iraca', nameKey: 'prod_iraca', artisan: { store: 'Artesanías del Sol' }, price: 35, mainImage: 'https://cdn.shopify.com/s/files/1/0575/5106/1081/products/02-TC01.png?v=1672263174', rating: 4.6, reviews: 18, createdAt: '2024-03-12', featured: true, tags: ['featured'] },
+                { id: 3, name: 'Jarrón decorativo', nameKey: 'prod_vase', artisan: { store: 'Arte en Barro' }, price: 28, mainImage: 'https://cdn.shopify.com/s/files/1/0575/5106/1081/products/08-OV1.png?v=1671828992', rating: 4.8, reviews: 31, createdAt: '2024-01-10', featured: true, tags: ['featured'] },
+                { id: 2, name: 'Collar de semillas', nameKey: 'prod_necklace', artisan: { store: 'Raíces y Colores' }, price: 22, mainImage: 'https://cdn.shopify.com/s/files/1/0575/5106/1081/products/01-CH11.png?v=1676494770', rating: 4.7, reviews: 15, createdAt: '2024-02-20', featured: false, tags: ['new'] },
+                { id: 6, name: 'Tortuga de madera', nameKey: 'prod_turtle', artisan: { store: 'Madera Viva' }, price: 30, mainImage: 'https://cdn.shopify.com/s/files/1/0575/5106/1081/products/27-CT04.png?v=1671742287', rating: 4.8, reviews: 12, createdAt: '2024-02-28', featured: false, tags: [] },
+                { id: 4, name: 'Sombrero pintado', nameKey: 'prod_hat', artisan: { store: 'Tradición Azuero' }, price: 25, mainImage: 'https://cdn.shopify.com/s/files/1/0575/5106/1081/products/26-S07.png?v=1672257853', rating: 4.6, reviews: 9, createdAt: '2024-03-05', featured: false, tags: ['new'] },
+                { id: 5, name: 'Bolso Ngäbe', nameKey: 'prod_ngabe_bag', artisan: { store: 'Ngäbe-Buglé Creations' }, price: 150, mainImage: 'https://cdn.shopify.com/s/files/1/0575/5106/1081/products/31-CG10.png?v=1675868018', rating: 4.9, reviews: 8, createdAt: '2024-03-18', featured: true, tags: ['featured', 'new'] },
+                { id: 'user_1', name: 'Mola Tradicional Guna', nameKey: 'prod_mola_guna', artisan: { store: "Ana's Handcrafts" }, price: 125, mainImage: 'https://cdn.shopify.com/s/files/1/0575/5106/1081/products/05-M3.png?v=1677351029', rating: 4.9, reviews: 23, createdAt: '2024-03-20', featured: true, tags: ['featured', 'new'] }
+            ];
+
+            const catalog = () => {
+                const fromDb = window.userProductsDB?.getPublicProducts?.() || [];
+                return fromDb.length ? fromDb : fallback;
+            };
+
+            const sortProducts = (filter) => {
+                const list = catalog().slice();
+                if (filter === 'new') {
+                    list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+                } else if (filter === 'best') {
+                    list.sort((a, b) => (Number(b.reviews) || 0) - (Number(a.reviews) || 0) || (Number(b.rating) || 0) - (Number(a.rating) || 0));
+                } else {
+                    list.sort((a, b) => {
+                        const aHot = (a.featured || (a.tags || []).includes('featured')) ? 1 : 0;
+                        const bHot = (b.featured || (b.tags || []).includes('featured')) ? 1 : 0;
+                        if (bHot !== aHot) return bHot - aHot;
+                        return (Number(b.rating) || 0) - (Number(a.rating) || 0) || (Number(b.reviews) || 0) - (Number(a.reviews) || 0);
+                    });
+                }
+                const seen = new Set();
+                return list.filter((product) => {
+                    const key = String(product.id);
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                }).slice(0, 8);
+            };
+
+            const productName = (product) => {
+                if (product.nameKey && window.t) return window.t(product.nameKey, product.name);
+                const map = {
+                    'Mola tradicional': 'prod_mola',
+                    'Bolso de iraca': 'prod_iraca',
+                    'Jarrón decorativo': 'prod_vase',
+                    'Collar de semillas': 'prod_necklace',
+                    'Tortuga de madera': 'prod_turtle',
+                    'Sombrero pintado': 'prod_hat',
+                    'Bolso Ngäbe': 'prod_ngabe_bag',
+                    'Mola Tradicional Guna': 'prod_mola_guna'
+                };
+                const key = map[product.name];
+                return key && window.t ? window.t(key, product.name) : product.name;
+            };
+
+            const render = (filter) => {
+                grid.innerHTML = sortProducts(filter).map((product) => {
+                    const artisan = product.artisan || {};
+                    const store = artisan.store || artisan.name || 'ArteSana';
+                    const image = product.mainImage || (product.images && product.images[0]) || '';
+                    const price = Number(product.price || 0).toFixed(2);
+                    const id = esc(product.id);
+                    const displayName = productName(product);
+                    const favLabel = window.t ? window.t('favorite_aria', 'Favorito') : 'Favorito';
+                    return `
+                    <article class="home-product">
+                        <a href="product.html?id=${encodeURIComponent(product.id)}">
+                            <div class="home-product-media">
+                                <img src="${esc(image)}" alt="${esc(displayName)}">
+                            </div>
+                            <div class="home-product-body">
+                                <h3>${esc(displayName)}</h3>
+                                <p class="meta">${esc(store)}</p>
+                                <div class="home-price">B/. ${price}</div>
+                            </div>
+                        </a>
+                        <button type="button" class="home-fav" data-fav-id="${id}" aria-label="${esc(favLabel)}"><i class="fas fa-heart"></i></button>
+                    </article>`;
+                }).join('');
+                window.dispatchEvent(new CustomEvent('artesana:favorites-changed'));
+            };
+
+            tabs.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    tabs.forEach((tab) => tab.classList.remove('active'));
+                    btn.classList.add('active');
+                    render(btn.getAttribute('data-home-filter') || 'popular');
+                });
+            });
+
+            render('popular');
+            window.addEventListener('languageChanged', () => {
+                const active = document.querySelector('.home-tabs button.active');
+                render(active ? active.getAttribute('data-home-filter') : 'popular');
+            });
+        })();
+
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Intro animación (solo si el elemento existe en DOM)
+        document.addEventListener('DOMContentLoaded', function() {
+            const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
+            const introElement = document.getElementById('windowsIntro');
+            
+            if (introElement) {
+                if (!hasSeenIntro) {
+                    introElement.style.display = 'flex';
+                    sessionStorage.setItem('hasSeenIntro', 'true');
+                    createParticles();
+                } else {
+                    introElement.style.display = 'none';
+                }
+            }
+
+            // Handle contact link click
+            const contactLinks = document.querySelectorAll('a[href="#contact-link"]');
+            contactLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+                    
+                    if (!window.location.pathname.endsWith('index.html') && !window.location.pathname.endsWith('/')) {
+                        window.location.href = baseUrl + 'index.html#contact-link';
+                    } else {
+                        const contactSection = document.getElementById('contact-link');
+                        if (contactSection) {
+                            contactSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+
+            if (sessionStorage.getItem('artesana_redirect_after_login')) {
+                const authModal = document.querySelector('auth-modal');
+                if (authModal && typeof authModal.open === 'function') {
+                    setTimeout(() => authModal.open('login'), 500);
+                }
+            }
+        });
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            if (!container) return;
+            const particleCount = 80;
+            const radius = 150;
+
+            container.innerHTML = '';
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const angle = (i / particleCount) * Math.PI * 2;
+                particle.style.animationDelay = `${Math.random() * 0.2}s`;
+                particle.style.setProperty('--angle', `${angle}rad`);
+                particle.style.setProperty('--radius', `${radius}px`);
+                container.appendChild(particle);
+            }
+        }
+
+        window.addEventListener('resize', debounce(createParticles, 250));
+
+        function debounce(fn, wait) {
+            let t;
+            return function () {
+                clearTimeout(t);
+                t = setTimeout(fn, wait);
+            };
+        }
+
+        // Handle hash navigation on page load
+        window.addEventListener('load', function() {
+            if (window.location.hash === '#contact-link') {
+                // Add a small delay to ensure the page is fully loaded
+                setTimeout(() => {
+                    const contactSection = document.getElementById('contact-link');
+                    if (contactSection) {
+                        contactSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 100);
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const counters = document.querySelectorAll('.counter');
+            const animateCounter = (counter) => {
+                const target = +counter.getAttribute('data-target');
+                let count = 0;
+                const increment = Math.ceil(target / 200);
+                const updateCount = () => {
+                    if (count < target) {
+                        count = Math.min(count + increment, target);
+                        counter.innerText = `${count}+`;
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        counter.innerText = `${target}+`;
+                    }
+                };
+                updateCount();
+            };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            counters.forEach(counter => observer.observe(counter));
+        });
+    </script>
+    <script src="components/messages/messages-init.js"></script>
+    <script src="js/app-core.js"></script>
+    <script>
+// Actualizar placeholders del formulario de contacto al cambiar idioma
+function updateContactPlaceholders() {
+  const lang = localStorage.getItem('lang') || 'es';
+  const translations = window.translations && window.translations[lang];
+  if (!translations) return;
+  const nameInput = document.querySelector('input[data-i18n="contact_name_placeholder"]');
+  const emailInput = document.querySelector('input[data-i18n="contact_email_placeholder"]');
+  const subjectInput = document.querySelector('input[data-i18n="contact_subject_placeholder"]');
+  const messageTextarea = document.querySelector('textarea[data-i18n="contact_message_placeholder"]');
+  if (nameInput) nameInput.placeholder = translations["contact_name_placeholder"] || nameInput.placeholder;
+  if (emailInput) emailInput.placeholder = translations["contact_email_placeholder"] || emailInput.placeholder;
+  if (subjectInput) subjectInput.placeholder = translations["contact_subject_placeholder"] || subjectInput.placeholder;
+  if (messageTextarea) messageTextarea.placeholder = translations["contact_message_placeholder"] || messageTextarea.placeholder;
+}
+// Llamar al cargar
+updateContactPlaceholders();
+// Llamar cada vez que cambie el idioma
+const originalSetLanguage = window.setLanguage;
+window.setLanguage = function(lang, options) {
+  const result = originalSetLanguage ? originalSetLanguage(lang, options) : true;
+  updateContactPlaceholders();
+  return result;
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/ArteSana_logo.png">
+    <title>Compare Products - ArteSana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .compare-container {
+            background: var(--light-bg, #FEFAE0);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        
+        .compare-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .compare-title {
+            font-family: 'Playfair Display', serif;
+            color: #a22a22;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .compare-subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .compare-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(162,42,34,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(162,42,34,0.25);
+        }
+        
+        .product-image-container {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.1);
+        }
+        
+        .product-badges {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .product-badge {
+            background: rgba(162,42,34,0.9);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .product-badge.featured {
+            background: rgba(255,193,7,0.9);
+            color: #333;
+        }
+        
+        .product-badge.new {
+            background: rgba(40,167,69,0.9);
+        }
+        
+        .product-badge.user-product {
+            background: rgba(13,110,253,0.9);
+        }
+        
+        .product-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            color: #a22a22;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .action-btn:hover {
+            background: #a22a22;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .action-btn.active {
+            background: #a22a22;
+            color: white;
+        }
+        
+        .action-btn.favorite {
+            background: rgba(220,53,69,0.9);
+            color: white;
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #a22a22;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .product-artisan {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .artisan-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .product-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .product-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .meta-item {
+            text-align: center;
+            padding: 0.75rem;
+            background: #f8f6ee;
+            border-radius: 12px;
+        }
+        
+        .meta-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .meta-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #a22a22;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .stars {
+            color: #ffc107;
+            font-size: 1rem;
+        }
+        
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .product-price {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .price-current {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #a22a22;
+        }
+        
+        .price-original {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 1rem;
+        }
+        
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tag {
+            background: #fcf7de;
+            color: #a22a22;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .product-actions-bottom {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: #800000;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background: #600000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(128,0,0,0.3);
+        }
+        
+        .btn-outline {
+            border: 2px solid #800000;
+            color: #800000;
+            background: transparent;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-outline:hover {
+            background: #800000;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(162,42,34,0.15);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-title {
+            font-family: 'Playfair Display', serif;
+            color: #a22a22;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-text {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .comparison-table {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(162,42,34,0.15);
+            margin-top: 3rem;
+        }
+        
+        .table-header {
+            background: #a22a22;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .table-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .table-content {
+            padding: 2rem;
+        }
+        
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 200px 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+        
+        .comparison-label {
+            font-weight: 600;
+            color: #a22a22;
+        }
+        
+        .comparison-value {
+            text-align: center;
+            color: #333;
+        }
+        
+        .comparison-value.highlight {
+            background: #fcf7de;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .clear-comparison {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .clear-comparison:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.error {
+            background: #f44336;
+        }
+        
+        @media (max-width: 768px) {
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .comparison-label {
+                background: #f8f6ee;
+                padding: 0.5rem;
+                border-radius: 8px;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="js/local-database.js"></script>
+    <script src="js/products-database.js"></script>
+    <script src="js/user-products-database.js"></script>
+    <script src="js/ecommerce-confirmation.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="components/header-component.js"></script>
+    <script src="components/header-user-component.js"></script>
+    <script>window.renderHeader();</script>
+
+    <div class="compare-container">
+        <div class="container">
+            <div class="compare-header">
+                <h1 class="compare-title">Compare Products</h1>
+                <p class="compare-subtitle">Compare your favorite products side by side to make the best decision</p>
+            </div>
+
+            <div id="compareContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <footer-component></footer-component>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="components/footer-component.js"></script>
+    <script src="components/auth-modal.js"></script>
+    <auth-modal></auth-modal>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Load comparison on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComparison();
+        });
+
+        // Load comparison products
+        function loadComparison() {
+            const comparisonProducts = window.userProductsDB.getComparisonProducts();
+            const container = document.getElementById('compareContent');
+            
+            if (comparisonProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" data-aos="fade-up">
+                        <div class="empty-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h3 class="empty-title">No Products to Compare</h3>
+                        <p class="empty-text">Add products to your comparison list to see them side by side.</p>
+                        <a href="explorar.html" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag"></i> Browse Products
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Render product cards
+            const productsGrid = comparisonProducts.map((product, index) => `
+                <div class="product-card" data-aos="fade-up" data-aos-delay="${index * 100}">
+                    <div class="product-image-container">
+                        <img src="${product.mainImage}" alt="${product.name}" class="product-image">
+                        
+                        <div class="product-badges">
+                            ${product.isUserProduct ? '<span class="product-badge user-product">User Product</span>' : ''}
+                            ${product.featured ? '<span class="product-badge featured">Featured</span>' : ''}
+                            ${product.tags.includes('new') ? '<span class="product-badge new">New</span>' : ''}
+                        </div>
+                        
+                        <div class="product-actions">
+                            <button class="action-btn favorite ${window.userProductsDB.isInFavorites(product.id) ? 'active' : ''}" 
+                                    onclick="toggleFavorite('${product.id}')" title="Add to Favorites">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                            <button class="action-btn" onclick="removeFromComparison('${product.id}')" title="Remove from Comparison">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <div class="product-artisan">
+                            <img src="${product.artisan.avatar}" alt="${product.artisan.name}" class="artisan-avatar">
+                            <span>By ${product.artisan.name}</span>
+                        </div>
+                        
+                        <p class="product-description">${product.description}</p>
+                        
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Price</div>
+                                <div class="meta-value">$${product.price.toFixed(2)}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Rating</div>
+                                <div class="meta-value">${product.rating}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Stock</div>
+                                <div class="meta-value">${product.stock}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Weight</div>
+                                <div class="meta-value">${product.weight}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="product-rating">
+                            <div class="stars">
+                                ${'★'.repeat(Math.floor(product.rating))}${'☆'.repeat(5 - Math.floor(product.rating))}
+                            </div>
+                            <span class="rating-text">(${product.reviews} reviews)</span>
+                        </div>
+                        
+                        <div class="product-price">
+                            <div>
+                                <span class="price-current">$${product.price.toFixed(2)}</span>
+                                ${product.originalPrice > product.price ? `<span class="price-original">$${product.originalPrice.toFixed(2)}</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="product-tags">
+                            ${product.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                        
+                        <div class="product-actions-bottom">
+                            <button class="btn btn-primary" onclick="addToCart('${product.id}')">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                            <a href="product.html?id=${product.id}" class="btn btn-outline">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render comparison table
+            const comparisonTable = `
+                <div class="comparison-table" data-aos="fade-up">
+                    <div class="table-header">
+                        <h3 class="table-title">Detailed Comparison</h3>
+                    </div>
+                    <div class="table-content">
+                        ${generateComparisonTable(comparisonProducts)}
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Comparing ${comparisonProducts.length} Products</h3>
+                    <button class="clear-comparison" onclick="clearComparison()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+                <div class="compare-grid">
+                    ${productsGrid}
+                </div>
+                ${comparisonTable}
+            `;
+        }
+
+        // Generate comparison table
+        function generateComparisonTable(products) {
+            const comparisonFields = [
+                { label: 'Name', field: 'name' },
+                { label: 'Price', field: 'price', format: 'currency' },
+                { label: 'Original Price', field: 'originalPrice', format: 'currency' },
+                { label: 'Rating', field: 'rating' },
+                { label: 'Reviews', field: 'reviews' },
+                { label: 'Stock', field: 'stock' },
+                { label: 'Category', field: 'category' },
+                { label: 'Dimensions', field: 'dimensions' },
+                { label: 'Weight', field: 'weight' },
+                { label: 'Materials', field: 'materials', format: 'array' },
+                { label: 'Shipping Days', field: 'shipping.estimatedDays' },
+                { label: 'Artisan', field: 'artisan.name' },
+                { label: 'Location', field: 'artisan.location' }
+            ];
+
+            return comparisonFields.map(field => `
+                <div class="comparison-row">
+                    <div class="comparison-label">${field.label}</div>
+                    ${products.map(product => {
+                        let value = getNestedValue(product, field.field);
+                        
+                        if (field.format === 'currency') {
+                            value = value ? `$${value.toFixed(2)}` : 'N/A';
+                        } else if (field.format === 'array') {
+                            value = Array.isArray(value) ? value.join(', ') : 'N/A';
+                        }
+                        
+                        return `<div class="comparison-value">${value || 'N/A'}</div>`;
+                    }).join('')}
+                </div>
+            `).join('');
+        }
+
+        // Get nested object value
+        function getNestedValue(obj, path) {
+            return path.split('.').reduce((current, key) => current && current[key], obj);
+        }
+
+        // Toggle favorite
+        function toggleFavorite(productId) {
+            const isInFavorites = window.userProductsDB.isInFavorites(productId);
+            
+            if (isInFavorites) {
+                window.userProductsDB.removeFromFavorites(productId);
+                window.ecommerceConfirmation.showFavoriteConfirmation(productId, false);
+            } else {
+                window.userProductsDB.addToFavorites(productId);
+                window.ecommerceConfirmation.showFavoriteConfirmation(productId, true);
+            }
+            
+            // Update button state
+            const button = event.target.closest('.action-btn');
+            button.classList.toggle('active');
+        }
+
+        // Remove from comparison
+        function removeFromComparison(productId) {
+            window.userProductsDB.removeFromComparison(productId);
+            window.ecommerceConfirmation.showComparisonConfirmation(productId, false);
+            loadComparison();
+        }
+
+        // Clear comparison
+        function clearComparison() {
+            if (confirm('Are you sure you want to clear all products from comparison?')) {
+                window.userProductsDB.clearComparison();
+                window.ecommerceConfirmation.showEnhancedToast('Comparison cleared', 'success');
+                loadComparison();
+            }
+        }
+
+        // Add to cart
+        function addToCart(productId) {
+            const success = window.productsDB.addToCart(productId, 1);
+            if (success) {
+                window.ecommerceConfirmation.showCartConfirmation(productId, 1);
+            } else {
+                window.ecommerceConfirmation.showEnhancedToast('Failed to add product to cart', 'error');
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+    <script src="js/theme.js"></script>
+</body>
+</html> 
